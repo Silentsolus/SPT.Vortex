@@ -1,298 +1,681 @@
-const GAME_NAME = 'Escape From Tarkov: SPT';
-const GAME_ID = 'eftsptaki';
-const DLL_FILE_EXT = '.dll'
+/* SPT Forge Vortex Extension (index.js)
+ *
+ * Notes (testing build):
+ * - Forge API key + SPT version are hardcoded defaults below (can still be overridden by env vars).
+ * - Enrich scans the Vortex staging folder, extracts Forge GUID/version from BepInEx plugin DLLs
+ *   (BepInPlugin attribute) or falls back to heuristics for server-only mods.
+ * - Update checks Forge /mods/updates using GUID:version pairs.
+ */
 
 const path = require('path');
 const https = require('https');
-const { fs, log } = require('vortex-api');
 
-const FORGE_BASE = 'https://forge.sp-tarkov.com';
+const { actions, fs, log, types, util } = require('vortex-api');
 
-// ----------------------
-// Small HTTPS JSON helper (no dependencies)
-// ----------------------
+// -----------------------------
+// Hardcoded defaults (testing)
+// -----------------------------
+const HARD_CODED_FORGE_API_KEY = process.env.FORGE_API_KEY || '2GmqDh3JjHMejll8WeHMBnbi0O4JIOgVFQnl7PnW0dbb7e57';
+const HARD_CODED_SPT_VERSION = process.env.SPT_VERSION || '4.0.11';
+
+// -----------------------------
+// Game constants
+// -----------------------------
+const GAME_ID = 'eftsptaki';
+const GAME_NAME = 'Escape From Tarkov: SPT';
+
+// -----------------------------
+// Settings (optional; hardcoded defaults used if empty)
+// -----------------------------
+const SETTINGS_PATH = ['settings', 'sptvortex'];
+const ACTION_SET_KEY = 'sptvortex-set-forge-key';
+const ACTION_SET_SPT = 'sptvortex-set-spt-version';
+const ACTION_ENRICH = 'sptvortex-enrich-mods';
+const ACTION_UPDATES = 'sptvortex-check-updates';
+
+function getSettings(state) {
+  const s = util.getSafe(state, SETTINGS_PATH, {});
+  return (s && typeof s === 'object') ? s : {};
+}
+
+function settingsReducer(state = {}, action) {
+  if (action?.type === 'SPTVORTEX_SET_SETTING') {
+    const { key, value } = action.payload || {};
+    if (typeof key !== 'string') return state;
+    return { ...state, [key]: value };
+  }
+  return state;
+}
+
+function getForgeConfig(api) {
+  const state = api.store.getState();
+  const s = getSettings(state);
+
+  const apiKey = String((s.forgeApiKey && s.forgeApiKey.trim()) || HARD_CODED_FORGE_API_KEY || '').trim();
+  const sptVersion = String((s.sptVersion && s.sptVersion.trim()) || HARD_CODED_SPT_VERSION || '').trim();
+
+  return { apiKey, sptVersion };
+}
+
+
+// Vortex API compatibility: notifications
+// Different Vortex versions expose different notification helpers.
+function showNotification(api, message, type = 'info', timeout = 4000) {
+  try {
+    if (api && typeof api.sendNotification === 'function') {
+      // Minimal notification payload (extra fields are ignored by Vortex)
+      api.sendNotification({
+        type,
+        message,
+        title: 'SPT Forge',
+        displayMS: timeout,
+        timeout,
+      });
+      return;
+    }
+
+    // Some versions expose showNotification(message, type, timeout)
+    if (api && typeof api.showNotification === 'function') {
+      showNotification(api, message, type, timeout);
+      return;
+    }
+
+    // Error fallback
+    if (type === 'error' && api && typeof api.showErrorNotification === 'function') {
+      api.showErrorNotification('SPT Forge', new Error(message), { allowReport: false });
+      return;
+    }
+
+    // Very old/limited APIs
+    if (api && typeof api.showDialog === 'function') {
+      api.showDialog(type === 'error' ? 'error' : 'info', 'SPT Forge', { text: message }, [
+        { label: 'Close' },
+      ]);
+      return;
+    }
+  } catch (err) {
+    // Never let notification issues crash the extension
+    console.error('[SPT Forge] Notification failed:', err);
+  }
+
+  // Last resort
+  console.log(`[SPT Forge] [${type}] ${message}`);
+}
+
+// -----------------------------
+// Helpers: Forge API (HTTPS JSON)
+// -----------------------------
 function httpsJson(url, headers = {}) {
   return new Promise((resolve, reject) => {
-    const u = new URL(url);
-    const req = https.request(
-      {
-        method: 'GET',
-        hostname: u.hostname,
-        path: u.pathname + u.search,
-        headers,
-      },
-      (res) => {
-        let data = '';
-        res.on('data', (chunk) => (data += chunk));
-        res.on('end', () => {
-          let parsed;
-          try {
-            parsed = JSON.parse(data);
-          } catch (e) {
-            return reject(
-              new Error(`Non-JSON response (${res.statusCode}): ${data.slice(0, 300)}`)
-            );
-          }
-          if (res.statusCode < 200 || res.statusCode >= 300) {
-            return reject(
-              new Error(`HTTP ${res.statusCode}: ${parsed?.message || data.slice(0, 300)}`)
-            );
-          }
-          resolve(parsed);
-        });
-      }
-    );
+    const req = https.request(url, { method: 'GET', headers }, (res) => {
+      const chunks = [];
+      res.on('data', (c) => chunks.push(c));
+      res.on('end', () => {
+        const body = Buffer.concat(chunks).toString('utf8');
+        let json = null;
+        try { json = JSON.parse(body); } catch (_) {}
+        resolve({ status: res.statusCode || 0, ok: (res.statusCode || 0) >= 200 && (res.statusCode || 0) < 300, json, body });
+      });
+    });
     req.on('error', reject);
     req.end();
   });
 }
 
-function parseForgeModIdFromUrl(maybeUrl) {
-  if (!maybeUrl) return null;
-  try {
-    const u = new URL(maybeUrl);
-    // Forge mod pages look like: https://forge.sp-tarkov.com/mod/791/slug...
-    const m = u.pathname.match(/\/mod\/(\d+)(\/|$)/i);
-    return m ? m[1] : null;
-  } catch (_) {
-    return null;
-  }
+function forgeHeaders(apiKey) {
+  const headers = { 'Accept': 'application/json' };
+  if (apiKey) headers['Authorization'] = `Bearer ${apiKey}`;
+  return headers;
 }
 
-function getInstalledModsForForge(api) {
-  const state = api.getState?.();
-  const all = state?.persistent?.mods?.[GAME_ID] || {};
+function buildForgeModsUrl(params) {
+  const qs = new URLSearchParams();
+  if (params?.per_page) qs.set('per_page', String(params.per_page));
+  if (params?.page) qs.set('page', String(params.page));
 
-  // all is an object keyed by modId; values are IMod-ish objects
-  const mods = Object.values(all);
-
-  // Build identifier:version pairs. Identifier can be forge mod_id or GUID.
-  // We'll try:
-  //  - attributes.sptForgeModId
-  //  - parse from attributes.source (Forge URL)
-  //  - attributes.sptForgeGuid
-  // Version we try:
-  //  - mod.version
-  //  - attributes.version
-  return mods
-    .map((m) => {
-      const attrs = m.attributes || {};
-      const version = m.version || attrs.version;
-      const forgeModId = attrs.sptForgeModId || parseForgeModIdFromUrl(attrs.source);
-      const forgeGuid = attrs.sptForgeGuid;
-
-      const identifier = forgeModId || forgeGuid;
-      if (!identifier || !version) return null;
-
-      return {
-        vortexModId: m.id,
-        name: m.name || attrs.name || m.id,
-        identifier,
-        version,
-        source: attrs.source,
-      };
-    })
-    .filter(Boolean);
-}
-
-async function checkForgeUpdatesFlow(context) {
-  // Ask user for API token + target SPT version
-  const dialogRes = await context.api.showDialog(
-    'question',
-    'SPT Forge: Check mod updates',
-    {
-      text:
-        'Enter your Forge API token and your target SPT version.\n' +
-        'Token: Forge profile → API Tokens.\n\n' +
-        'Tip: For best results, set each mod’s “Source” to its Forge mod page URL (e.g. https://forge.sp-tarkov.com/mod/791/...).',
-      input: [
-        {
-          id: 'token',
-          label: 'Forge API Token (Bearer …)',
-          value: '',
-        },
-        {
-          id: 'sptVersion',
-          label: 'Target SPT Version (e.g. 4.0.11)',
-          value: '',
-        },
-      ],
-      checkboxes: [
-        {
-          id: 'autoDownload',
-          text: 'Download “safe updates” after checking',
-          value: false,
-        },
-      ],
-      options: {
-        order: ['text', 'input', 'checkboxes'],
-      },
-    },
-    [
-      { label: 'Cancel' },
-      { label: 'Check' },
-    ]
-  );
-
-  if (!dialogRes || dialogRes.action !== 'Check') return;
-
-  const token = (dialogRes.input?.token || '').trim();
-  const sptVersion = (dialogRes.input?.sptVersion || '').trim();
-  const autoDownload = !!dialogRes.checkboxes?.autoDownload;
-
-  if (!token || !sptVersion) {
-    context.api.showDialog('error', 'Missing info', {
-      text: 'You must provide both a Forge API token and an SPT version.',
-    }, [{ label: 'OK' }]);
-    return;
-  }
-
-  const installed = getInstalledModsForForge(context.api);
-  if (installed.length === 0) {
-    context.api.showDialog('info', 'No eligible mods found', {
-      text:
-        `I couldn't find any installed mods with BOTH:\n` +
-        `- a version, and\n` +
-        `- a Forge identifier (mod_id or GUID).\n\n` +
-        `Workaround: set the mod’s Source to its Forge page URL (contains /mod/<id>/) and ensure Version is filled.`,
-    }, [{ label: 'OK' }]);
-    return;
-  }
-
-  const modsParam = installed.map((m) => `${m.identifier}:${m.version}`).join(',');
-  const url =
-    `${FORGE_BASE}/api/v0/mods/updates` +
-    `?mods=${encodeURIComponent(modsParam)}` +
-    `&spt_version=${encodeURIComponent(sptVersion)}`;
-
-  let payload;
-  try {
-    payload = await httpsJson(url, {
-      Authorization: `Bearer ${token}`,
-      Accept: 'application/json',
-      'Content-Type': 'application/json',
+  if (params?.filter && typeof params.filter === 'object') {
+    Object.entries(params.filter).forEach(([k, v]) => {
+      if (v === undefined || v === null || v === '') return;
+      qs.append(`filter[${k}]`, String(v));
     });
-  } catch (e) {
-    log('error', 'Forge update check failed', e);
-    context.api.showDialog('error', 'Forge request failed', {
-      text: String(e?.message || e),
-    }, [{ label: 'OK' }]);
-    return;
+  }
+  return `https://forge.sp-tarkov.com/api/v0/mods?${qs.toString()}`;
+}
+
+async function forgeGetModByGuid(apiKey, guid) {
+  const url = buildForgeModsUrl({ per_page: 1, filter: { guid } });
+  const r = await httpsJson(url, forgeHeaders(apiKey));
+  if (!r.ok || !r.json || r.json.success !== true) return null;
+  const data = Array.isArray(r.json.data) ? r.json.data : [];
+  return data.length ? data[0] : null;
+}
+
+async function forgeGetModBySlug(apiKey, slug) {
+  const url = buildForgeModsUrl({ per_page: 1, filter: { slug } });
+  const r = await httpsJson(url, forgeHeaders(apiKey));
+  if (!r.ok || !r.json || r.json.success !== true) return null;
+  const data = Array.isArray(r.json.data) ? r.json.data : [];
+  return data.length ? data[0] : null;
+}
+
+async function forgeGetModByName(apiKey, name) {
+  const url = buildForgeModsUrl({ per_page: 1, filter: { name } });
+  const r = await httpsJson(url, forgeHeaders(apiKey));
+  if (!r.ok || !r.json || r.json.success !== true) return null;
+  const data = Array.isArray(r.json.data) ? r.json.data : [];
+  return data.length ? data[0] : null;
+}
+
+async function forgeGetUpdates(apiKey, sptVersion, modsList) {
+  // modsList: array of { guid, version }
+  const modsParam = modsList
+    .filter((m) => m && m.guid && m.version)
+    .map((m) => `${m.guid}:${m.version}`)
+    .join(',');
+
+  const url = `https://forge.sp-tarkov.com/api/v0/mods/updates?mods=${encodeURIComponent(modsParam)}&spt_version=${encodeURIComponent(sptVersion)}`;
+  const r = await httpsJson(url, forgeHeaders(apiKey));
+  return r;
+}
+
+// -----------------------------
+// Helpers: Vortex staging path + mod list
+// -----------------------------
+function getStagingPath(api, gameId) {
+  const state = api.store.getState();
+  const installPath = util.getSafe(state, ['settings', 'mods', 'installPath', gameId], null)
+    || util.getSafe(state, ['settings', 'mods', 'installPath', 'default'], null)
+    || util.getSafe(state, ['settings', 'mods', 'stagingPath', gameId], null)
+    || util.getSafe(state, ['settings', 'mods', 'stagingPath', 'default'], null);
+
+  if (typeof installPath === 'string' && installPath.length) return installPath;
+
+  // Windows fallback: %APPDATA%\Vortex\<gameId>\mods
+  if (process.platform === 'win32' && process.env.APPDATA) {
+    return path.join(process.env.APPDATA, 'Vortex', gameId, 'mods');
   }
 
-  const data = payload?.data || {};
-  const updates = data.updates || [];
-  const blocked = data.blocked_updates || [];
-  const uptodate = data.up_to_date || [];
-  const incompatible = data.incompatible_with_spt || [];
+  return null;
+}
 
-  // Build a readable summary
-  const lines = [];
-  lines.push(`[b]Target SPT:[/b] ${data.spt_version || sptVersion}`);
-  lines.push('');
-  lines.push(`[b]Updates available:[/b] ${updates.length}`);
-  updates.slice(0, 50).forEach((u) => {
-    lines.push(
-      `• ${u.current_version?.name || u.current_version?.guid || u.current_version?.mod_id}` +
-      `: ${u.current_version?.version} → ${u.recommended_version?.version}` +
-      (u.recommended_version?.fika_compatibility ? ` (Fika: ${u.recommended_version.fika_compatibility})` : '')
-    );
+function getModsForGame(api, gameId) {
+  const state = api.store.getState();
+  const mods = util.getSafe(state, ['persistent', 'mods', gameId], {});
+  return mods && typeof mods === 'object' ? Object.values(mods) : [];
+}
+
+function stripArchiveExt(name) {
+  return String(name || '').replace(/\.(zip|7z|rar)$/i, '');
+}
+
+function stripTrailingVersion(name) {
+  // Examples: Tyfon-UIFixes-5.3.0 -> Tyfon-UIFixes
+  return String(name || '').replace(/([._-])\d+(?:\.\d+)*$/i, '').replace(/[-_.]+$/g, '');
+}
+
+async function listDirsOnce(root) {
+  try {
+    const entries = await fs.readdirAsync(root);
+    const out = [];
+    for (const e of entries) {
+      const p = path.join(root, e);
+      try {
+        const st = await fs.statAsync(p);
+        if (st.isDirectory()) out.push(e);
+      } catch (_) {}
+    }
+    return out;
+  } catch (_) {
+    return [];
+  }
+}
+
+function resolveStageFolderName(mod, stagingDirNames) {
+  const attr = (mod && mod.attributes) ? mod.attributes : {};
+  const candidates = [];
+
+  if (typeof mod.installationPath === 'string') candidates.push(mod.installationPath);
+  if (typeof attr.installationPath === 'string') candidates.push(attr.installationPath);
+
+  if (typeof attr.fileName === 'string') candidates.push(stripArchiveExt(attr.fileName));
+  if (typeof attr.archiveName === 'string') candidates.push(stripArchiveExt(attr.archiveName));
+  if (typeof mod.archiveFileName === 'string') candidates.push(stripArchiveExt(mod.archiveFileName));
+
+  if (typeof attr.name === 'string') candidates.push(attr.name);
+  if (typeof mod.id === 'string') candidates.push(mod.id);
+
+  const expanded = [];
+  candidates.forEach((c) => {
+    if (!c) return;
+    expanded.push(c);
+    expanded.push(stripTrailingVersion(c));
   });
-  if (updates.length > 50) lines.push(`…and ${updates.length - 50} more`);
 
-  lines.push('');
-  lines.push(`[b]Blocked updates:[/b] ${blocked.length}`);
-  blocked.slice(0, 20).forEach((b) => {
-    lines.push(
-      `• ${b.current_version?.name || b.current_version?.guid || b.current_version?.mod_id}` +
-      `: ${b.current_version?.version} (latest ${b.latest_version?.version})` +
-      ` — ${b.block_reason}`
-    );
-  });
-  if (blocked.length > 20) lines.push(`…and ${blocked.length - 20} more`);
+  for (const c of expanded) {
+    const exact = stagingDirNames.find((d) => d === c);
+    if (exact) return exact;
+    const ci = stagingDirNames.find((d) => d.toLowerCase() === String(c).toLowerCase());
+    if (ci) return ci;
+  }
 
-  lines.push('');
-  lines.push(`[b]Up-to-date:[/b] ${uptodate.length}`);
-  lines.push(`[b]Incompatible with SPT:[/b] ${incompatible.length}`);
+  for (const c of expanded) {
+    const cLow = String(c).toLowerCase();
+    const hit = stagingDirNames.find((d) => d.toLowerCase().includes(cLow) || cLow.includes(d.toLowerCase()));
+    if (hit) return hit;
+  }
 
-  const res2 = await context.api.showDialog(
-    'info',
-    'SPT Forge update results',
-    { bbcode: lines.join('\n') },
-    autoDownload ? [{ label: 'OK' }] : [{ label: 'OK' }, { label: 'Download safe updates' }]
-  );
+  return null;
+}
 
-  const shouldDownload = autoDownload || (res2?.action === 'Download safe updates');
+// -----------------------------
+// Helpers: scan staged mod folder for Forge GUID/version
+// -----------------------------
+async function walkFiles(dir, opts) {
+  const {
+    maxFiles = 200,
+    maxDepth = 6,
+    filter = () => true,
+  } = opts || {};
 
-  if (shouldDownload && updates.length > 0) {
-    // Download each recommended_version.link
-    // (Forge notes links may be externally hosted; Vortex will just download the URL.)
-    for (const u of updates) {
-      const link = u.recommended_version?.link;
-      if (!link) continue;
+  const out = [];
 
-      const name = u.current_version?.name || u.current_version?.slug || `forge-mod-${u.current_version?.mod_id || 'update'}`;
-      const fileName = `${name}-${u.recommended_version?.version || 'latest'}.zip`;
+  async function rec(cur, depth) {
+    if (out.length >= maxFiles) return;
+    if (depth > maxDepth) return;
 
-      context.api.events.emit('start-download-url', link, fileName);
+    let entries = [];
+    try { entries = await fs.readdirAsync(cur); } catch (_) { return; }
+
+    for (const e of entries) {
+      if (out.length >= maxFiles) return;
+      const p = path.join(cur, e);
+
+      let st;
+      try { st = await fs.statAsync(p); } catch (_) { continue; }
+
+      if (st.isDirectory()) {
+        await rec(p, depth + 1);
+      } else if (st.isFile()) {
+        if (filter(p, st)) out.push(p);
+      }
+    }
+  }
+
+  await rec(dir, 0);
+  return out;
+}
+
+function pickBestGuid(candidates) {
+  const uniq = Array.from(new Set(candidates.filter(Boolean).map((s) => String(s).trim())));
+  const preferred = uniq.filter((g) => /^com\.[a-z0-9_.-]+\.[a-z0-9_.-]+$/i.test(g));
+  const pool = preferred.length ? preferred : uniq;
+  pool.sort((a, b) => a.length - b.length);
+  return pool[0] || null;
+}
+
+async function extractFromDll(dllPath) {
+  try {
+    const buf = await fs.readFileAsync(dllPath);
+    const text = buf.toString('latin1');
+
+    const pluginRe = /BepInPlugin\s*\(\s*"([^"]+)"\s*,\s*"([^"]+)"\s*,\s*"([^"]+)"\s*\)/g;
+    const matches = [];
+    let m;
+    while ((m = pluginRe.exec(text)) !== null) {
+      matches.push({ guid: m[1], name: m[2], version: m[3] });
+      if (matches.length >= 10) break;
     }
 
-    context.api.events.emit(
-      'show-balloon',
-      'SPT Forge',
-      `Started ${updates.length} download(s) for available updates.`
-    );
+    if (matches.length) {
+      const bestGuid = pickBestGuid(matches.map((x) => x.guid));
+      const best = matches.find((x) => x.guid === bestGuid) || matches[0];
+      return { guid: best.guid || null, version: best.version || null, displayName: best.name || null };
+    }
+
+    const guidRe = /\bcom\.[a-z0-9_.-]{3,}\b/ig;
+    const guids = [];
+    while ((m = guidRe.exec(text)) !== null) {
+      guids.push(m[0]);
+      if (guids.length >= 50) break;
+    }
+    const bestGuid = pickBestGuid(guids);
+
+    let version = null;
+    if (bestGuid) {
+      const idx = text.toLowerCase().indexOf(bestGuid.toLowerCase());
+      if (idx >= 0) {
+        const window = text.slice(Math.max(0, idx - 200), Math.min(text.length, idx + 200));
+        const verRe = /\b\d+\.\d+\.\d+(?:\.\d+)?\b/;
+        const vm = verRe.exec(window);
+        if (vm) version = vm[0];
+      }
+    }
+
+    return { guid: bestGuid, version, displayName: null };
+  } catch (_) {
+    return { guid: null, version: null, displayName: null };
   }
 }
 
-// ----------------------
-// Original extension logic + added action button
-// ----------------------
+function guessGuidsFromFolderName(folderName) {
+  const base = stripTrailingVersion(stripArchiveExt(folderName));
+  const guesses = [];
+
+  const m = /^([A-Za-z0-9_]+)[-_ ](.+)$/.exec(base);
+  if (m) {
+    const author = m[1].toLowerCase();
+    const modPartRaw = m[2];
+
+    const modPartCompact = modPartRaw.replace(/[^A-Za-z0-9]/g, '').toLowerCase();
+    const modPartSlug = modPartRaw
+      .replace(/([a-z])([A-Z])/g, '$1-$2')
+      .replace(/[^A-Za-z0-9]+/g, '-')
+      .replace(/^-+|-+$/g, '')
+      .toLowerCase();
+
+    if (author && modPartCompact) guesses.push(`com.${author}.${modPartCompact}`);
+    if (author && modPartSlug) guesses.push(`com.${author}.${modPartSlug.replace(/-/g, '')}`);
+  }
+
+  if (/^com\./i.test(base) && base.split('.').length >= 3) guesses.push(base);
+
+  return Array.from(new Set(guesses));
+}
+
+async function extractForgeMetaFromStagedFolder(modRootAbs, stageFolderName) {
+  const out = {
+    guid: null,
+    version: null,
+    displayName: null,
+    evidence: [],
+    guesses: [],
+  };
+
+  const bepinPlugins = path.join(modRootAbs, 'BepInEx', 'plugins');
+  try {
+    const st = await fs.statAsync(bepinPlugins);
+    if (st.isDirectory()) {
+      const dlls = await walkFiles(bepinPlugins, {
+        maxFiles: 50,
+        maxDepth: 6,
+        filter: (p) => p.toLowerCase().endsWith('.dll'),
+      });
+
+      for (const dll of dlls) {
+        const info = await extractFromDll(dll);
+        if (info.guid) out.evidence.push({ type: 'dll', file: dll, guid: info.guid, version: info.version });
+        if (!out.guid && info.guid) {
+          out.guid = info.guid;
+          out.version = info.version || out.version;
+          out.displayName = info.displayName || out.displayName;
+        }
+      }
+    }
+  } catch (_) {}
+
+  const serverMods = path.join(modRootAbs, 'user', 'mods');
+  try {
+    const st = await fs.statAsync(serverMods);
+    if (st.isDirectory()) {
+      const pkgs = await walkFiles(serverMods, {
+        maxFiles: 10,
+        maxDepth: 4,
+        filter: (p) => path.basename(p).toLowerCase() === 'package.json',
+      });
+
+      for (const pkg of pkgs) {
+        try {
+          const raw = await fs.readFileAsync(pkg, 'utf8');
+          const j = JSON.parse(raw);
+          const v = j.version ? String(j.version) : null;
+          out.evidence.push({ type: 'package.json', file: pkg, version: v });
+          if (!out.version && v) out.version = v;
+          if (!out.displayName && j.name) out.displayName = String(j.name);
+        } catch (_) {}
+      }
+    }
+  } catch (_) {}
+
+  out.guesses = guessGuidsFromFolderName(stageFolderName);
+  if (!out.guid && out.guesses.length) out.guid = out.guesses[0];
+
+  return out;
+}
+
+// -----------------------------
+// Prepare for modding (optional wrappers)
+// -----------------------------
+async function prepareForModding(api, discovery) {
+  const sptDir = discovery.path;
+  if (!sptDir || typeof sptDir !== 'string') return Promise.resolve();
+
+  // SPT mod archives already contain the correct directory structure (user/mods and/or BepInEx/plugins)
+  // and are designed to be extracted into the SPT root folder. We deploy to the game root (queryModPath: '.')
+  // so here we just ensure the common folders exist and are writable.
+  try { await fs.ensureDirWritableAsync(path.join(sptDir, 'user', 'mods')); } catch (_) {}
+  try { await fs.ensureDirWritableAsync(path.join(sptDir, 'BepInEx', 'plugins')); } catch (_) {}
+
+  return Promise.resolve();
+}
+
+// -----------------------------
+// Enrich + Update actions
+// -----------------------------
+async function enrichMods(api) {
+  const { apiKey } = getForgeConfig(api);
+  if (!apiKey || apiKey === 'PASTE_FORGE_API_KEY_HERE') {
+    showNotification(api, 'SPT Forge: missing API key (hardcoded)', 'warning', 6000);
+    log('warn', '[sptvortex] missing Forge API key; set HARD_CODED_FORGE_API_KEY or FORGE_API_KEY env var');
+    return;
+  }
+
+  const staging = getStagingPath(api, GAME_ID);
+  if (!staging) {
+    showNotification(api, 'SPT Forge: could not determine Vortex staging folder', 'error', 6000);
+    return;
+  }
+
+  const mods = getModsForGame(api, GAME_ID);
+  const stagingDirs = await listDirsOnce(staging);
+
+  log('info', `[sptvortex] enrich: staging=${staging}, mods=${mods.length}, dirs=${stagingDirs.length}`);
+
+  const cacheByGuid = new Map();
+
+  let enriched = 0;
+  let skipped = 0;
+
+  for (const mod of mods) {
+    const stageName = resolveStageFolderName(mod, stagingDirs);
+    if (!stageName) {
+      skipped++;
+      log('info', `[sptvortex] enrich: skip (no stage match) mod=${mod?.id || '(unknown)'} name=${mod?.attributes?.name || ''}`);
+      continue;
+    }
+
+    const rootAbs = path.join(staging, stageName);
+    const meta = await extractForgeMetaFromStagedFolder(rootAbs, stageName);
+
+    if (!meta.guid) {
+      skipped++;
+      log('info', `[sptvortex] enrich: skip (no guid) stage=${stageName}`);
+      continue;
+    }
+
+    let forgeMod = cacheByGuid.get(meta.guid) || null;
+    if (!forgeMod) {
+      forgeMod = await forgeGetModByGuid(apiKey, meta.guid);
+    }
+
+    if (!forgeMod && meta.guesses && meta.guesses.length) {
+      for (const g of meta.guesses) {
+        forgeMod = await forgeGetModByGuid(apiKey, g);
+        if (forgeMod) {
+          meta.guid = g;
+          break;
+        }
+      }
+    }
+
+    if (!forgeMod) {
+      const slugGuess = stripTrailingVersion(stripArchiveExt(stageName))
+        .replace(/([a-z])([A-Z])/g, '$1-$2')
+        .replace(/[^A-Za-z0-9]+/g, '-')
+        .replace(/^-+|-+$/g, '')
+        .toLowerCase();
+      if (slugGuess) forgeMod = await forgeGetModBySlug(apiKey, slugGuess);
+    }
+
+    if (!forgeMod && meta.displayName) {
+      forgeMod = await forgeGetModByName(apiKey, meta.displayName);
+    }
+
+    if (!forgeMod) {
+      skipped++;
+      log('info', `[sptvortex] enrich: skip (no forge match) stage=${stageName}, guid=${meta.guid}`);
+      continue;
+    }
+
+    cacheByGuid.set(forgeMod.guid, forgeMod);
+
+    const attrUpdates = {
+      forgeGuid: forgeMod.guid,
+      forgeId: String(forgeMod.id),
+      forgeSlug: forgeMod.slug,
+      forgeName: forgeMod.name,
+      forgeOwner: forgeMod.owner?.name || '',
+      forgeDetailUrl: forgeMod.detail_url || '',
+      forgeThumbnail: forgeMod.thumbnail || '',
+      version: meta.version || mod?.attributes?.version || '',
+      source: `sptforge:${forgeMod.guid}`,
+    };
+
+    if (forgeMod.thumbnail) attrUpdates.pictureUrl = forgeMod.thumbnail;
+    if (forgeMod.teaser) attrUpdates.description = forgeMod.teaser;
+
+    Object.entries(attrUpdates).forEach(([k, v]) => {
+      if (v === undefined || v === null) return;
+      api.store.dispatch(actions.setModAttribute(GAME_ID, mod.id, k, v));
+    });
+
+    enriched++;
+  }
+
+  showNotification(api, 'SPT Forge: Enrich complete', 'success', 4000, {
+    message: `Enriched: ${enriched}, Skipped: ${skipped}\nStaging: ${staging}`,
+  });
+
+  log('info', `[sptvortex] enrich done: enriched=${enriched}, skipped=${skipped}`);
+}
+
+async function checkUpdates(api) {
+  const { apiKey, sptVersion } = getForgeConfig(api);
+  if (!apiKey || apiKey === 'PASTE_FORGE_API_KEY_HERE') {
+    showNotification(api, 'SPT Forge: missing API key (hardcoded)', 'warning', 6000);
+    return;
+  }
+
+  const mods = getModsForGame(api, GAME_ID);
+  const list = [];
+  for (const mod of mods) {
+    const guid = mod?.attributes?.forgeGuid || (typeof mod?.attributes?.source === 'string' ? String(mod.attributes.source).replace(/^sptforge:/, '') : null);
+    const version = mod?.attributes?.version || null;
+    if (guid && version) list.push({ guid, version, mod });
+  }
+
+  if (!list.length) {
+    showNotification(api, 'SPT Forge: no mods enriched yet (run Enrich first)', 'warning', 6000);
+    return;
+  }
+
+  const r = await forgeGetUpdates(apiKey, sptVersion, list);
+  if (!r.ok || !r.json || r.json.success !== true) {
+    showNotification(api, 'SPT Forge: update check failed (see log)', 'error', 7000);
+    log('warn', '[sptvortex] updates failed', { status: r.status, body: (r.body || '').slice(0, 500) });
+    return;
+  }
+
+  const data = r.json.data || {};
+  const updates = Array.isArray(data.updates) ? data.updates : [];
+  const blocked = Array.isArray(data.blocked_updates) ? data.blocked_updates : [];
+  const incompatible = Array.isArray(data.incompatible_with_spt) ? data.incompatible_with_spt : [];
+
+  const lines = [];
+  if (updates.length) {
+    lines.push('Updates available:');
+    updates.slice(0, 15).forEach((u) => {
+      const name = u?.name || u?.mod?.name || u?.guid || 'unknown';
+      const cur = u?.current_version || u?.installed_version || '';
+      const latest = u?.latest_version || u?.version || '';
+      lines.push(`- ${name}: ${cur} -> ${latest}`);
+    });
+    if (updates.length > 15) lines.push(`...and ${updates.length - 15} more`);
+  } else {
+    lines.push('No updates found.');
+  }
+
+  if (blocked.length) lines.push(`Blocked updates: ${blocked.length}`);
+  if (incompatible.length) lines.push(`Incompatible with SPT ${sptVersion}: ${incompatible.length}`);
+
+  api.showDialog('info', 'SPT Forge updates', { text: lines.join('\n') }, [{ label: 'Close' }]);
+}
+
+// -----------------------------
+// Main
+// -----------------------------
 function main(context) {
-  context.requireExtension('modtype-bepinex');
+  context.registerReducer(SETTINGS_PATH, settingsReducer);
 
   context.registerGame({
     id: GAME_ID,
     name: GAME_NAME,
     mergeMods: true,
     supportedTools: [],
-    queryModPath: () => '',
+    queryPath: () => Promise.resolve(undefined),
+    queryModPath: () => '.',
     logo: 'gameart.jpg',
-    executable: () => (process.platform === 'win32' ? 'SPT.Server.cmd' : 'SPT.Server.sh'),
+    executable: () => (process.platform === 'win32' ? 'SPT.Launcher.exe' : 'EscapeFromTarkov.exe'),
     requiredFiles: ['EscapeFromTarkov.exe'],
-    setup: prepareForModding,
+    setup: (discovery) => prepareForModding(context.api, discovery),
     environment: {},
     details: {},
   });
 
-  // Adds a top-right button in Vortex UI
-  context.registerAction(
-    'global-icons',
-    100,
-    'refresh',
-    {},
-    'SPT Forge: Check Updates',
-    () => checkForgeUpdatesFlow(context)
-  );
-}
+  context.registerAction('settings', ACTION_SET_KEY, 150, 'Set SPT Forge API key', async () => {
+    const res = await context.api.showDialog('question', 'SPT Forge API key', {
+      text: 'Enter Forge API key (will be saved in Vortex settings).',
+      input: [{ id: 'k', label: 'Forge API key', type: 'text' }],
+    }, [{ label: 'Cancel' }, { label: 'Save' }]);
 
-async function prepareForModding(discovery) {
-  const sptDir = discovery.path;
-
-  const win_target = path.join(sptDir, 'SPT.Server.cmd');
-  await fs.copyAsync(path.join(__dirname, 'wrappers', 'spt-server.cmd'), win_target, {
-    overwrite: true,
+    if (res?.action !== 'Save') return;
+    const key = String(res.input?.k || '').trim();
+    context.api.store.dispatch({ type: 'SPTVORTEX_SET_SETTING', payload: { key: 'forgeApiKey', value: key } });
+    showNotification(api,  'SPT Forge: API key saved', 'success', 3000);
   });
 
-  const linux_target = path.join(sptDir, 'SPT.Server.sh');
-  await fs.copyAsync(path.join(__dirname, 'wrappers', 'spt-server.sh'), linux_target, {
-    overwrite: true,
-  });
-  await fs.chmodAsync(linux_target, 0o755);
+  context.registerAction('settings', ACTION_SET_SPT, 151, 'Set SPT version', async () => {
+    const res = await context.api.showDialog('question', 'SPT version', {
+      text: 'Enter your SPT version (e.g. 4.0.11).',
+      input: [{ id: 'v', label: 'SPT version', type: 'text' }],
+    }, [{ label: 'Cancel' }, { label: 'Save' }]);
 
-  return await fs.ensureDirWritableAsync(path.join(discovery.path, 'BepInEx'));
+    if (res?.action !== 'Save') return;
+    const v = String(res.input?.v || '').trim();
+    context.api.store.dispatch({ type: 'SPTVORTEX_SET_SETTING', payload: { key: 'sptVersion', value: v } });
+    showNotification(api,  'SPT Forge: SPT version saved', 'success', 3000);
+  });
+
+  // Forge actions (Mods list toolbar)
+  // The 'mod-icons' group is known to render as buttons in the Mods page (see Vortex wiki examples).
+  context.registerAction('mod-icons', 200, 'refresh', {}, 'Forge: Enrich', () => enrichMods(context.api));
+  context.registerAction('mod-icons', 210, 'download', {}, 'Forge: Check Updates', () => checkUpdates(context.api));
+
+  // Optional: duplicate these in the dashboard Tools tile as well
+  context.registerAction('game-tools', 200, 'refresh', {}, 'Forge: Enrich', () => enrichMods(context.api));
+  context.registerAction('game-tools', 210, 'download', {}, 'Forge: Check Updates', () => checkUpdates(context.api));
+
+  return true;
 }
 
-module.exports = {
-  default: main,
-};
+module.exports = main;
+module.exports.default = main;

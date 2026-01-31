@@ -1,0 +1,2 @@
+apiKey=2GmqDh3JjHMejll8WeHMBnbi0O4JIOgVFQnl7PnW0dbb7e57
+sptVersion=4.0.11
