@@ -631,7 +631,7 @@ function main(context) {
     name: GAME_NAME,
     mergeMods: true,
     supportedTools: [],
-    queryPath: () => Promise.resolve(undefined),
+    queryPath: () => ``,
     queryModPath: () => '.',
     logo: 'gameart.jpg',
     executable: () => (process.platform === 'win32' ? 'SPT.Launcher.exe' : 'EscapeFromTarkov.exe'),
