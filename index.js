@@ -305,12 +305,54 @@ async function walkFiles(dir, opts) {
   return out;
 }
 
+function normalizeGuid(guid) {
+  return String(guid || '').trim().toLowerCase();
+}
+
 function pickBestGuid(candidates) {
-  const uniq = Array.from(new Set(candidates.filter(Boolean).map((s) => String(s).trim())));
+  const uniq = Array.from(new Set(candidates.filter(Boolean).map((s) => normalizeGuid(s))));
   const preferred = uniq.filter((g) => /^com\.[a-z0-9_.-]+\.[a-z0-9_.-]+$/i.test(g));
   const pool = preferred.length ? preferred : uniq;
   pool.sort((a, b) => a.length - b.length);
   return pool[0] || null;
+}
+
+function pickBestDllEvidence(items) {
+  const stats = new Map();
+  const preferBepin = items.some((item) => item?.matchType === 'bepin');
+  const pool = preferBepin ? items.filter((item) => item?.matchType === 'bepin') : items;
+
+  for (const item of pool) {
+    if (!item?.guid) continue;
+    const guid = normalizeGuid(item.guid);
+    const cur = stats.get(guid) || {
+      guid,
+      count: 0,
+      bepinCount: 0,
+      versionCount: 0,
+      version: null,
+      displayName: null,
+    };
+
+    cur.count += 1;
+    if (item.matchType === 'bepin') cur.bepinCount += 1;
+    if (item.version) {
+      cur.versionCount += 1;
+      if (!cur.version || item.matchType === 'bepin') cur.version = item.version;
+    }
+    if (item.displayName && !cur.displayName) cur.displayName = item.displayName;
+
+    stats.set(guid, cur);
+  }
+
+  const sorted = Array.from(stats.values()).sort((a, b) => {
+    if (b.bepinCount !== a.bepinCount) return b.bepinCount - a.bepinCount;
+    if (b.versionCount !== a.versionCount) return b.versionCount - a.versionCount;
+    if (b.count !== a.count) return b.count - a.count;
+    return a.guid.length - b.guid.length;
+  });
+
+  return sorted[0] || null;
 }
 
 async function extractFromDll(dllPath) {
@@ -318,24 +360,29 @@ async function extractFromDll(dllPath) {
     const buf = await fs.readFileAsync(dllPath);
     const text = buf.toString('latin1');
 
-    const pluginRe = /BepInPlugin\s*\(\s*"([^"]+)"\s*,\s*"([^"]+)"\s*,\s*"([^"]+)"\s*\)/g;
+    const pluginRe = /BepInPlugin\s*\(\s*["']([^"']+)["']\s*,\s*["']([^"']+)["']\s*,\s*["']([^"']+)["']\s*\)/g;
     const matches = [];
     let m;
     while ((m = pluginRe.exec(text)) !== null) {
-      matches.push({ guid: m[1], name: m[2], version: m[3] });
+      matches.push({ guid: normalizeGuid(m[1]), name: m[2], version: m[3] });
       if (matches.length >= 10) break;
     }
 
     if (matches.length) {
       const bestGuid = pickBestGuid(matches.map((x) => x.guid));
       const best = matches.find((x) => x.guid === bestGuid) || matches[0];
-      return { guid: best.guid || null, version: best.version || null, displayName: best.name || null };
+      return {
+        guid: best.guid || null,
+        version: best.version || null,
+        displayName: best.name || null,
+        matchType: 'bepin',
+      };
     }
 
     const guidRe = /\bcom\.[a-z0-9_.-]{3,}\b/ig;
     const guids = [];
     while ((m = guidRe.exec(text)) !== null) {
-      guids.push(m[0]);
+      guids.push(normalizeGuid(m[0]));
       if (guids.length >= 50) break;
     }
     const bestGuid = pickBestGuid(guids);
@@ -351,9 +398,9 @@ async function extractFromDll(dllPath) {
       }
     }
 
-    return { guid: bestGuid, version, displayName: null };
+    return { guid: bestGuid, version, displayName: null, matchType: 'pattern' };
   } catch (_) {
-    return { guid: null, version: null, displayName: null };
+    return { guid: null, version: null, displayName: null, matchType: null };
   }
 }
 
@@ -373,11 +420,11 @@ function guessGuidsFromFolderName(folderName) {
       .replace(/^-+|-+$/g, '')
       .toLowerCase();
 
-    if (author && modPartCompact) guesses.push(`com.${author}.${modPartCompact}`);
-    if (author && modPartSlug) guesses.push(`com.${author}.${modPartSlug.replace(/-/g, '')}`);
+    if (author && modPartCompact) guesses.push(normalizeGuid(`com.${author}.${modPartCompact}`));
+    if (author && modPartSlug) guesses.push(normalizeGuid(`com.${author}.${modPartSlug.replace(/-/g, '')}`));
   }
 
-  if (/^com\./i.test(base) && base.split('.').length >= 3) guesses.push(base);
+  if (/^com\./i.test(base) && base.split('.').length >= 3) guesses.push(normalizeGuid(base));
 
   return Array.from(new Set(guesses));
 }
@@ -391,27 +438,35 @@ async function extractForgeMetaFromStagedFolder(modRootAbs, stageFolderName) {
     guesses: [],
   };
 
-  const bepinPlugins = path.join(modRootAbs, 'BepInEx', 'plugins');
-  try {
-    const st = await fs.statAsync(bepinPlugins);
-    if (st.isDirectory()) {
-      const dlls = await walkFiles(bepinPlugins, {
-        maxFiles: 50,
-        maxDepth: 6,
-        filter: (p) => p.toLowerCase().endsWith('.dll'),
-      });
+  const dllEvidence = [];
+  const dlls = await walkFiles(modRootAbs, {
+    maxFiles: 120,
+    maxDepth: 10,
+    filter: (p) => p.toLowerCase().endsWith('.dll'),
+  });
 
-      for (const dll of dlls) {
-        const info = await extractFromDll(dll);
-        if (info.guid) out.evidence.push({ type: 'dll', file: dll, guid: info.guid, version: info.version });
-        if (!out.guid && info.guid) {
-          out.guid = info.guid;
-          out.version = info.version || out.version;
-          out.displayName = info.displayName || out.displayName;
-        }
-      }
+  for (const dll of dlls) {
+    const info = await extractFromDll(dll);
+    if (info.guid) {
+      const evidence = {
+        type: 'dll',
+        file: dll,
+        guid: info.guid,
+        version: info.version,
+        displayName: info.displayName,
+        matchType: info.matchType,
+      };
+      out.evidence.push(evidence);
+      dllEvidence.push(evidence);
     }
-  } catch (_) {}
+  }
+
+  const bestDll = pickBestDllEvidence(dllEvidence);
+  if (bestDll?.guid) {
+    out.guid = bestDll.guid;
+    out.version = bestDll.version || out.version;
+    out.displayName = bestDll.displayName || out.displayName;
+  }
 
   const serverMods = path.join(modRootAbs, 'user', 'mods');
   try {
