@@ -1,0 +1,66 @@
+Root: C:\Users\Alex\AppData\Roaming\Vortex\eftsptaki\mods
+Mods: 24
+
+BotCallsigns_v2.0.3
+
+Croupier_2_0_4
+
+DrakiaXYZ-BigBrain-1.4.0
+  DLL  BepInEx/plugins/DrakiaXYZ-BigBrain.dll
+
+DrakiaXYZ-GildedKeyStorage-2.0.4
+  DLL  BepInEx/plugins/DrakiaXYZ-GildedKeyStorage-Client.dll
+
+DrakiaXYZ-Waypoints-1.8.1
+  DLL  BepInEx/plugins/DrakiaXYZ-Waypoints/DrakiaXYZ-Waypoints.dll
+
+DynamicMaps-1.0.5
+  DLL  BepInEx/plugins/DynamicMaps/DynamicMaps.dll
+
+EOTechFix
+  DLL  BepInEx/plugins/EOTechFix.dll
+
+LevelEnduranceAndStrength
+  DLL  BepInEx/plugins/OrionsMods/LevelEnduranceAndStrength/LevelEnduranceAndStrength.dll
+
+SAIN.4.3.1
+  DLL  BepInEx/plugins/SAIN/SAIN.dll
+
+ShadowFlickerFix
+  DLL  BepInEx/plugins/shadowflickerfix.dll
+
+StartCollectorEarly
+
+TaskAutomation-1.2.3
+  DLL  BepInEx/plugins/TaskAutomation.dll
+
+Terkoiz-Skipper
+  DLL  BepInEx/plugins/Terkoiz.Skipper.dll
+
+Twitch-Players-3.0.8
+
+Tyfon-UIFixes-5.3.1
+  DLL  BepInEx/plugins/Tyfon.UIFixes.dll
+  DLL  BepInEx/plugins/Tyfon.UIFixes.Net.dll
+
+WTT-.Artem
+
+WTT-CommonLib-v2.0.11
+  DLL  BepInEx/plugins/WTT-ClientCommonLib/WTT-ClientCommonLib.dll
+  DLL  BepInEx/plugins/WTT-ClientCommonLib/WTT-ClientCommonLibFika.dll
+
+Wara-ModdingStatsHelper-1.1.1
+  DLL  BepInEx/plugins/Wara-ModdingStatsHelper.dll
+
+WolfiksHeavyTroopers1.1.0
+
+acidphantasm-botplacementsystem
+  DLL  BepInEx/plugins/acidphantasm-botplacementsystem/acidphantasm-botplacementsystem.dll
+
+acidphantasm-brightlasers
+
+acidphantasm-progressiontracker
+
+acidphantasm-progressivebotsystem
+
+shibdib-livelikeexperience-1.3.2
