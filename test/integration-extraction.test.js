@@ -39,6 +39,22 @@ async function test() {
   assert(dllInfo2.guid === 'me.sol.sain', 'Expected to extract slug GUID me.sol.sain from weird DLL');
   assert(dllInfo2.version === '4.3.1', 'Expected to extract version 4.3.1 from weird DLL');
 
+  // Should ignore pure version-like tokens when extracting GUIDs
+  const dllPath3 = path.join(dllDir, 'VersionOnly.dll');
+  fs.writeFileSync(dllPath3, 'Some text v4.7.1 another token 4.7.1', 'latin1');
+  const dllInfo3 = await extractFromDll(dllPath3);
+  console.log('DLL info 3:', dllInfo3);
+  assert(dllInfo3.guid === null, 'Expected to not treat v4.7.1 as a GUID');
+
+  // Validate we can extract a com.* GUID even when segments include nulls and uppercase letters
+  const dllPath4 = path.join(dllDir, 'TaskAutomation.dll');
+  // Insert com.KnotScripts.TaskAutomation with interleaved nulls to simulate binary embedding
+  const awkward = 'prefix\u0000com\u0000.KnotScripts\u0000.TaskAutomation\u0000suffix 1.2.3';
+  fs.writeFileSync(dllPath4, awkward, 'latin1');
+  const dllInfo4 = await extractFromDll(dllPath4);
+  console.log('DLL info 4:', dllInfo4);
+  assert(dllInfo4.guid && dllInfo4.guid.includes('knotscripts.taskautomation'), 'Expected to extract com.KnotScripts.TaskAutomation (normalized) from awkward DLL');
+
   const meta = await extractForgeMetaFromStagedFolder(modFolder, 'TestMod');
   console.log('Extracted meta:', meta);
 

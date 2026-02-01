@@ -95,11 +95,11 @@ function showNotification(api, message, type = 'info', timeout = 4000) {
     }
   } catch (err) {
     // Never let notification issues crash the extension
-    console.error('[SPT Forge] Notification failed:', err);
+    try { log('warn', `[sptvortex] Notification failed: ${String(err)}`); } catch (_) { console.error('[SPT Forge] Notification failed:', err); }
   }
 
-  // Last resort
-  console.log(`[SPT Forge] [${type}] ${message}`);
+  // Last resort: prefer Vortex logger to avoid stray console output in prod; fallback to console if necessary
+  try { log('info', `[sptvortex] ${type}: ${message}`); } catch (_) { console.log(`[SPT Forge] [${type}] ${message}`); }
 }
 
 // -----------------------------
@@ -351,8 +351,8 @@ function findBestMatch(mod, searchResults) {
   const rawName = (mod && (mod.attributes && (mod.attributes.name || mod.attributes.title)) )
     ? (mod.attributes.name || mod.attributes.title)
     : (mod && (mod.LocalName || mod.localName) ? (mod.LocalName || mod.localName) : '');
-  const localName = (typeof rawName === 'string') ? rawName.trim() : '';
-
+  // Prefer stripping trailing version tokens for matching (e.g., Croupier_2_0_4 -> Croupier)
+  const localName = (typeof rawName === 'string') ? stripTrailingVersion(rawName).trim() : '';
   // 1. Exact normalized name match
   for (const r of searchResults) {
     if (normalizeName(r.name) === normalizeName(localName)) {
@@ -400,9 +400,11 @@ function findBestMatch(mod, searchResults) {
     const nameScore = fuzzyScorePercent(localName, r.name || '');
     const slugScore = r.slug ? fuzzyScorePercent(localName, r.slug) : 0;
     const score = Math.max(nameScore, slugScore);
+    log('debug', `[sptvortex] findBestMatch: candidate='${r.name || r.slug || r.guid}' nameScore=${nameScore} slugScore=${slugScore} score=${score}`);
     if (score > bestScore) { bestScore = score; best = r; }
   }
 
+  log('debug', `[sptvortex] findBestMatch: bestScore=${bestScore} threshold=${MatchingConstants.MinimumFuzzyMatchScore} bestGuid=${best?.guid || ''}`);
   if (!best || bestScore < MatchingConstants.MinimumFuzzyMatchScore) return null;
 
   const confidence = Math.floor((bestScore * MatchingConstants.FuzzyNameConfidence) / 100.0);
@@ -422,7 +424,14 @@ async function searchWithTerms(modObj, metaObj, stageNameArg, apiKeyArg) {
     if (!term) continue;
     try {
       const results = await forgeClient.fuzzySearch(apiKeyArg, term);
-      if (!Array.isArray(results) || !results.length) continue;
+      if (!Array.isArray(results) || !results.length) {
+        log('debug', `[sptvortex] searchWithTerms: term='${term}' returned 0 results`);
+        continue;
+      }
+      log('debug', `[sptvortex] searchWithTerms: term='${term}' returned ${results.length} results top=${results.slice(0,5).map(r=> (r.name||r.slug||r.guid)).join(';')}`);
+      try {
+        log('debug', `[sptvortex] searchWithTerms: top result details: ${JSON.stringify(results[0], null, 0).slice(0,300)}`);
+      } catch (_) {}
 
       const fb = findBestMatch(modObj, results);
       if (fb && fb.Result) {
@@ -469,8 +478,17 @@ function buildSearchTerms(mod, meta, stageName) {
 
   // Add main name and a suffix-trimmed form. Keep only if they contain letters.
   if (/[a-z]/i.test(localName)) add(localName);
+  // Add camel-split variant for localName (e.g., 'StartCollectorEarly' -> 'Start Collector Early')
+  try {
+    const camelLocal = localName.replace(/([a-z])([A-Z])/g, '$1 $2');
+    if (camelLocal && camelLocal !== localName && /[a-z]/i.test(camelLocal)) add(camelLocal);
+  } catch (_) {}
   const withoutSuffix = removeComponentSuffix(localName);
   if (withoutSuffix && withoutSuffix !== localName && /[a-z]/i.test(withoutSuffix)) add(withoutSuffix);
+  try {
+    const camelWithout = withoutSuffix.replace(/([a-z])([A-Z])/g, '$1 $2');
+    if (camelWithout && camelWithout !== withoutSuffix && /[a-z]/i.test(camelWithout)) add(camelWithout);
+  } catch (_) {}
 
   // Extract from GUIDs (skip numeric-only results)
   if (meta?.guid) {
@@ -487,6 +505,66 @@ function buildSearchTerms(mod, meta, stageName) {
   // DLL display names (ignore numeric-only names)
   const dllNames = (meta?.evidence || []).filter(e => e.type === 'dll' && e.displayName).map(e => e.displayName);
   dllNames.forEach((dn) => { if (/[a-z]/i.test(dn)) add(dn); });
+
+  // Extract tokens from DLL evidence 'guid' or file/class tokens (e.g., "btaskautomation.monobehaviours.updatemonobehaviour")
+  if (meta?.evidence && meta.evidence.length) {
+    for (const ev of meta.evidence) {
+      if (!ev) continue;
+      const tokens = new Set();
+      if (ev.guid && typeof ev.guid === 'string') {
+        const parts = ev.guid.split(/[^A-Za-z0-9]+/).filter(Boolean);
+        for (const p of parts) {
+          const pt = p.trim();
+          if (pt.length >= 3 && /[a-z]/i.test(pt)) tokens.add(pt);
+          // strip single-letter prefixes like 'bTaskAutomation' -> 'TaskAutomation'
+          if (/^[a-zA-Z]{1}[A-Z][a-zA-Z0-9]+$/.test(p)) {
+            const stripped = p.slice(1);
+            if (stripped.length >= 3 && /[a-z]/i.test(stripped)) tokens.add(stripped);
+          }
+          // also add substring heuristics (e.g., 'btaskautomation' -> 'taskautomation')
+          if (/^b[a-z]{3,}/i.test(p)) {
+            const s2 = p.replace(/^b/i, '');
+            if (s2.length >= 3) tokens.add(s2);
+          }
+        }
+      }
+      if (ev.file && typeof ev.file === 'string') {
+        const base = path.basename(ev.file, path.extname(ev.file));
+        if (base && /[a-z]/i.test(base)) tokens.add(base);
+      }
+      for (const t of Array.from(tokens)) {
+        if (/[a-z]/i.test(t)) {
+          add(t);
+          // Add lowercase and stripped variants to improve fuzzy hits (e.g., btaskautomation -> taskautomation)
+          const stripped = t.replace(/^b/i, '');
+          if (stripped && stripped !== t && /[a-z]/i.test(stripped)) add(stripped);
+          // Add camel-split variant: 'TaskAutomation' -> 'Task Automation'
+          const camel = t.replace(/([a-z])([A-Z])/g, '$1 $2');
+          if (camel !== t) add(camel);
+          // Also add lowercase token
+          add(String(t).toLowerCase());
+
+          // Heuristic: for long combined tokens like 'taskautomation', add a split with a space after first 4 letters (e.g., 'task automation')
+          try {
+            const clean = String(t).replace(/[^A-Za-z]/g, '');
+            if (clean.length >= 8) {
+              const splitAt = 4;
+              const first = clean.slice(0, splitAt);
+              const rest = clean.slice(splitAt);
+              const spaced = `${first} ${rest}`;
+              if (spaced.trim() && /[a-z]/i.test(rest)) {
+                add(spaced);
+                // capitalized
+                add(`${first.charAt(0).toUpperCase() + first.slice(1)} ${rest.charAt(0).toUpperCase() + rest.slice(1)}`);
+              }
+              // also hyphenated form
+              add(`${first}-${rest}`);
+            }
+          } catch (_) {}
+        }
+      }
+    }
+  }
 
   // Slugified forms (ignore ones that are numeric-only)
   const s1 = slugify(localName);
@@ -1174,6 +1252,7 @@ async function extractFromDll(dllPath) {
     if (matches.length) {
       const bestGuid = pickBestGuid(matches.map((x) => x.guid));
       const best = matches.find((x) => x.guid === bestGuid) || matches[0];
+      log('debug', `[sptvortex] extractFromDll: found BepInPlugin matches: ${matches.map(m=>m.guid).slice(0,5).join(',')}`);
       return {
         guid: best.guid || null,
         version: best.version || null,
@@ -1193,9 +1272,49 @@ async function extractFromDll(dllPath) {
     const guidRe = /\bcom\.[a-z0-9_.-]{3,}\b/ig;
     const guids = [];
     while ((m = guidRe.exec(text)) !== null) {
-      guids.push(normalizeGuid(m[0]));
+      const token = m[0];
+      const ctxIdx = Math.max(0, m.index - 40);
+      const ctx = text.slice(ctxIdx, Math.min(text.length, m.index + 40)).replace(/\s+/g, ' ');
+      log('debug', `[sptvortex] extractFromDll: guid token match='${token}' ctx='${ctx.slice(0,60)}'`);
+      guids.push(normalizeGuid(token));
       if (guids.length >= 50) break;
     }
+
+    // Fallback: try cleaning null bytes and re-run GUID regex (handles awkward binary embeddings)
+    if (!guids.length) {
+      try {
+        const cleaned = text.replace(/\u0000/g, '');
+        let m2 = null;
+        while ((m2 = guidRe.exec(cleaned)) !== null) {
+          guids.push(normalizeGuid(m2[0]));
+          if (guids.length >= 50) break;
+        }
+        // If still none, fall back to scanning for 'com' then assemble token skipping nulls
+        if (!guids.length) {
+          const lc = text.toLowerCase();
+          let idx2 = lc.indexOf('com');
+          const maxScanLen = 200;
+          while (idx2 >= 0) {
+            // require a dot somewhere soon to avoid matching 'com' as unrelated text
+            const look = lc.slice(idx2, Math.min(lc.length, idx2 + 20));
+            if (!look.includes('.')) { idx2 = lc.indexOf('com', idx2 + 3); continue; }
+            let token = '';
+            for (let k = idx2; k < Math.min(text.length, idx2 + maxScanLen); k++) {
+              const ch = text[k];
+              if (!ch) break; // safety
+              if (ch === '\u0000') continue;
+              if (/^[A-Za-z0-9._-]$/.test(ch)) token += ch; else break;
+            }
+            if (token && token.length >= 6 && token.split('.').length >= 3) {
+              guids.push(normalizeGuid(token));
+              break;
+            }
+            idx2 = lc.indexOf('com', idx2 + 3);
+          }
+        }
+      } catch (_) {}
+    }
+
     const bestGuid = pickBestGuid(guids);
 
     let version = null;
@@ -1209,13 +1328,21 @@ async function extractFromDll(dllPath) {
 
     // If any slug has a version nearby, prefer it
     if (slugs.length) {
+      log('debug', `[sptvortex] extractFromDll: candidate slugs=${slugs.slice(0,5).join(',')}`);
       for (const s of slugs) {
+        // Skip version-like tokens (e.g., 'v4.7.1' or '4.7.1') and tokens without any letters
+        const sTrim = String(s || '').trim();
+        const sLower = sTrim.toLowerCase();
+        if (/^[v]?\d+(?:\.\d+)*$/.test(sLower)) continue; // pure version token
+        if (!/[a-z]/i.test(sTrim)) continue; // must contain at least one letter
+
         const idx2 = text.toLowerCase().indexOf(s.toLowerCase());
         if (idx2 >= 0) {
           const window = text.slice(Math.max(0, idx2 - 200), Math.min(text.length, idx2 + 200));
           const verRe = /\b\d+\.\d+\.\d+(?:\.\d+)?\b/;
           const vm = verRe.exec(window);
           if (vm) {
+            log('debug', `[sptvortex] extractFromDll: slug chosen='${sTrim}' ver='${vm[0]}'`);
             return { guid: normalizeGuid(s), version: vm[0], displayName: asmName || null, matchType: 'pattern' };
           }
         }
@@ -1236,7 +1363,11 @@ async function extractFromDll(dllPath) {
     if (!bestGuid) {
       if (slugs.length) {
         const s0 = slugs[0];
-        return { guid: normalizeGuid(s0), version: null, displayName: asmName || null, matchType: 'pattern' };
+        // Avoid returning pure version tokens as GUIDs (e.g., 'v4.7.1') and require at least one letter
+        const s0Trim = String(s0 || '').trim();
+        if (!/^[v]?\d+(?:\.\d+)*$/.test(s0Trim.toLowerCase()) && /[a-z]/i.test(s0Trim)) {
+          return { guid: normalizeGuid(s0), version: null, displayName: asmName || null, matchType: 'pattern' };
+        }
       }
     }
 
@@ -1296,7 +1427,7 @@ async function extractForgeMetaFromStagedFolder(modRootAbs, stageFolderName) {
 
   for (const dll of dlls) {
     const info = await extractFromDll(dll);
-    if (info.guid) {
+    if (info && info.guid) {
       const evidence = {
         type: 'dll',
         file: dll,
@@ -1308,6 +1439,20 @@ async function extractForgeMetaFromStagedFolder(modRootAbs, stageFolderName) {
       out.evidence.push(evidence);
       dllEvidence.push(evidence);
     }
+  }
+
+  // Fallback: if we found DLL files but none yielded GUID evidence, add DLL basenames as displayName evidence
+  if (dlls.length && dllEvidence.length === 0) {
+    for (const d of dlls.slice(0, 10)) {
+      try {
+        const base = path.basename(d, path.extname(d));
+        if (base) {
+          out.evidence.push({ type: 'dll', file: d, displayName: base, matchType: 'fallback' });
+        }
+      } catch (_) {}
+    }
+    // Prefer a display name derived from the stage folder if present
+    if (!out.displayName && stageFolderName) out.displayName = stripTrailingVersion(stageFolderName);
   }
 
   const bestDll = pickBestDllEvidence(dllEvidence);
@@ -1517,6 +1662,23 @@ async function enrichMods(api) {
 
   log('info', `[sptvortex] enrich: staging=${staging}, mods=${mods.length}, dirs=${stagingDirs.length}`);
 
+  // Diagnostic: list the mods we will iterate over with concise identifying attributes
+  try {
+    const modSummaries = mods.map((m) => ({ id: m.id, name: m?.attributes?.name || '', installationPath: m?.installationPath || m?.attributes?.installationPath || '', fileName: m?.attributes?.fileName || m?.attributes?.archiveName || m?.archiveFileName || '' }));
+    log('debug', `[sptvortex] enrich: mods list ${JSON.stringify(modSummaries, null, 0).slice(0, 1000)}`);
+
+    // Diagnostic: staging dirs not referenced by any mod (unmatched staging folders)
+    try {
+      const matched = new Set();
+      for (const m of mods) {
+        try { const s = resolveStageFolderName(m, stagingDirs); if (s) matched.add(s); } catch (_) {}
+      }
+      const unmatched = stagingDirs.filter((d) => !matched.has(d));
+      log('debug', `[sptvortex] enrich: unmatched staging dirs count=${unmatched.length} sample=${unmatched.slice(0,10).join(',')}`);
+    } catch (_) {}
+
+  } catch (_) {}
+
   const cacheByGuid = new Map();
 
   let enriched = 0;
@@ -1536,9 +1698,10 @@ async function enrichMods(api) {
     const evidenceTypes = (meta.evidence || []).slice(0,5).map((e) => `${e.type}${e.guid ? ':' + e.guid : ''}`).join(';');
     log('debug', `[sptvortex] enrich: meta stage=${stageName} guid=${meta.guid} ver=${meta.version} displayName=${meta.displayName} guesses=${guessSample || 'none'} evidence=${evidenceTypes || 'none'}`);
 
-    if (!meta.guid) {
+    // If we have no GUID and no evidence (DLL/package.json/guesses/displayName), skip; otherwise continue and attempt fuzzy mapping
+    if (!meta.guid && (!meta.evidence || meta.evidence.length === 0) && (!meta.guesses || meta.guesses.length === 0) && !meta.displayName) {
       skipped++;
-      log('info', `[sptvortex] enrich: skip (no guid) stage=${stageName}`);
+      log('info', `[sptvortex] enrich: skip (no guid/evidence) stage=${stageName}`);
       continue;
     }
 
@@ -1576,10 +1739,12 @@ async function enrichMods(api) {
       candidateGuid = null;
     }
     // 1. Try GUID lookups
-    if (candidateGuid) {
+    if (candidateGuid && !forgeMod) {
       forgeMod = cacheByGuid.get(candidateGuid) || null;
       if (!forgeMod) forgeMod = await forgeClient.getModByGuid(apiKey, candidateGuid);
       if (forgeMod) log('debug', `[sptvortex] enrich: matched by GUID stage=${stageName} guid=${candidateGuid}`);
+    } else if (candidateGuid && forgeMod) {
+      log('debug', `[sptvortex] enrich: skipping candidate GUID lookup because mod already matched via mapping for stage=${stageName}`);
     }
 
     if (!forgeMod && meta.guesses && meta.guesses.length) {
@@ -1604,8 +1769,21 @@ async function enrichMods(api) {
       const searchRes = await searchWithTerms(mod, meta, stageName, apiKey);
       if (searchRes && searchRes.best && searchRes.bestScore >= MatchingConstants.MinimumFuzzyMatchScore) {
         forgeMod = searchRes.best;
-        meta.guid = meta.guid || forgeMod.guid;
-        log('info', `[sptvortex] enrich: matched stage=${stageName} -> ${forgeMod.guid} (${forgeMod.name}) score=${searchRes.bestScore}`);
+        // If the search result is partial (no guid), try to fetch full detail by id/slug
+        if ((!forgeMod.guid || !forgeMod.guid.trim()) && (forgeMod.id || forgeMod.slug)) {
+          log('debug', `[sptvortex] enrich: candidate missing guid, fetching detail for id=${forgeMod.id} slug=${forgeMod.slug}`);
+          try {
+            const d = await (module.exports && module.exports.helpers && module.exports.helpers.forgeGetModDetail ? module.exports.helpers.forgeGetModDetail(apiKey, forgeMod.id || forgeMod.slug) : forgeGetModDetail(apiKey, forgeMod.id || forgeMod.slug));
+            if (d) {
+              forgeMod = d;
+              log('debug', `[sptvortex] enrich: fetched detail for candidate id=${forgeMod.id} guid=${forgeMod.guid}`);
+            }
+          } catch (e) { log('warn', `[sptvortex] enrich: failed to fetch mod detail: ${String(e)}`); }
+        }
+
+        meta.guid = meta.guid || forgeMod.guid || null;
+        log('info', `[sptvortex] enrich: matched stage=${stageName} -> ${forgeMod.guid || ''} (${forgeMod.name || ''}) score=${searchRes.bestScore}`);
+        if (!forgeMod.guid) log('warn', `[sptvortex] enrich: match for stage=${stageName} missing guid even after fetching detail`);
       } else if (searchRes && searchRes.best) {
         log('debug', `[sptvortex] enrich: top candidate for stage=${stageName} was ${searchRes.best.guid} (${searchRes.best.name}) with score=${searchRes.bestScore} < ${MatchingConstants.MinimumFuzzyMatchScore}`);
       }
@@ -2039,6 +2217,84 @@ function main(context) {
       context.api.showDialog('info', 'SPT Forge: Diagnostic report', { text: report }, [{ label: 'Close' }]);
     } catch (e) {
       log('warn', `[sptvortex] mod-icons diagnose action failed: ${String(e)}`);
+    }
+  });
+
+  // New action: Fetch full Forge mod detail (global)
+  context.registerAction('game-tools', 225, 'info', {}, 'Forge: Fetch mod detail', async () => {
+    try {
+      const res = await context.api.showDialog('question', 'SPT Forge: Fetch mod detail', {
+        text: 'Enter mod GUID or slug (e.g., com.author.modname or author-slug):',
+        input: [{ id: 'g', label: 'GUID or slug', type: 'text' }],
+      }, [{ label: 'Cancel' }, { label: 'Fetch' }]);
+      if (!res || res.action !== 'Fetch') return;
+      const idOrSlug = String(res.input && res.input.g || '').trim();
+      if (!idOrSlug) { showNotification(context.api, 'No GUID/slug provided', 'warning'); return; }
+
+      const apiKey = getForgeConfig(context.api).apiKey;
+      const detail = await (module.exports && module.exports.helpers && module.exports.helpers.forgeGetModDetail ? module.exports.helpers.forgeGetModDetail(apiKey, idOrSlug) : forgeGetModDetail(apiKey, idOrSlug));
+      if (!detail) {
+        context.api.showDialog('info', 'SPT Forge: Mod detail', { text: `No detail found for '${idOrSlug}'` }, [{ label: 'Close' }]);
+        return;
+      }
+
+      const lines = [];
+      lines.push(`Name: ${detail.name || ''}`);
+      lines.push(`GUID: ${detail.guid || ''}`);
+      lines.push(`ID: ${detail.id || ''}`);
+      lines.push(`Slug: ${detail.slug || ''}`);
+      if (detail.teaser) lines.push(`Teaser: ${detail.teaser}`);
+      if (detail.description) lines.push(`Description: ${String(detail.description).slice(0,1000)}`);
+      if (detail.versions && detail.versions.length) lines.push(`Versions: ${detail.versions.map(v=>v.version).join(', ')}`);
+      if (detail.releases && detail.releases.length) lines.push(`Releases: ${detail.releases.map(r=>r.name || r.filename).join(', ')}`);
+      lines.push('\nFull JSON:\n' + JSON.stringify(detail, null, 2));
+
+      context.api.showDialog('info', 'SPT Forge: Mod detail', { text: lines.join('\n') }, [{ label: 'Close' }]);
+    } catch (e) {
+      showNotification(context.api, `Fetch detail failed: ${String(e)}`, 'error');
+    }
+  });
+
+  // Per-mod action: Fetch full Forge mod detail for selected mod
+  context.registerAction('mod-icons', 225, 'info', {}, 'Forge: Fetch mod detail', async (selected) => {
+    try {
+      let idOrSlug = null;
+      if (selected && selected.id) {
+        const mods = getModsForGame(context.api, GAME_ID);
+        const m = mods.find(x => x.id === selected.id || x.id === selected.id.toString());
+        if (m) idOrSlug = m.attributes && (m.attributes.forgeGuid || (typeof m.attributes.source === 'string' ? String(m.attributes.source).replace(/^sptforge:/, '') : null) || m.attributes.forgeId || m.attributes.forgeSlug);
+      }
+      if (!idOrSlug) {
+        const res = await context.api.showDialog('question', 'SPT Forge: Fetch mod detail', {
+          text: 'Enter mod GUID or slug (e.g., com.author.modname or author-slug):',
+          input: [{ id: 'g', label: 'GUID or slug', type: 'text' }],
+        }, [{ label: 'Cancel' }, { label: 'Fetch' }]);
+        if (!res || res.action !== 'Fetch') return;
+        idOrSlug = String(res.input && res.input.g || '').trim();
+        if (!idOrSlug) { showNotification(context.api, 'No GUID/slug provided', 'warning'); return; }
+      }
+
+      const apiKey = getForgeConfig(context.api).apiKey;
+      const detail = await (module.exports && module.exports.helpers && module.exports.helpers.forgeGetModDetail ? module.exports.helpers.forgeGetModDetail(apiKey, idOrSlug) : forgeGetModDetail(apiKey, idOrSlug));
+      if (!detail) {
+        context.api.showDialog('info', 'SPT Forge: Mod detail', { text: `No detail found for '${idOrSlug}'` }, [{ label: 'Close' }]);
+        return;
+      }
+
+      const lines = [];
+      lines.push(`Name: ${detail.name || ''}`);
+      lines.push(`GUID: ${detail.guid || ''}`);
+      lines.push(`ID: ${detail.id || ''}`);
+      lines.push(`Slug: ${detail.slug || ''}`);
+      if (detail.teaser) lines.push(`Teaser: ${detail.teaser}`);
+      if (detail.description) lines.push(`Description: ${String(detail.description).slice(0,1000)}`);
+      if (detail.versions && detail.versions.length) lines.push(`Versions: ${detail.versions.map(v=>v.version).join(', ')}`);
+      if (detail.releases && detail.releases.length) lines.push(`Releases: ${detail.releases.map(r=>r.name || r.filename).join(', ')}`);
+      lines.push('\nFull JSON:\n' + JSON.stringify(detail, null, 2));
+
+      context.api.showDialog('info', 'SPT Forge: Mod detail', { text: lines.join('\n') }, [{ label: 'Close' }]);
+    } catch (e) {
+      showNotification(context.api, `Fetch detail failed: ${String(e)}`, 'error');
     }
   });
 

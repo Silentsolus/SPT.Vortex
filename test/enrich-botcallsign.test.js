@@ -39,12 +39,13 @@ async function test() {
     showNotification: () => {}
   };
 
-  // Stub fuzzySearch to include the correct CSG
+  // Stub fuzzySearch to return a match only for the split 'Bot Callsigns' term (simulate API behavior)
+  const originalFuzzy = idx.helpers.forgeClient.fuzzySearch;
   idx.helpers.forgeClient.fuzzySearch = async (apiKey, term) => {
-    return [
-      { id: 1, guid: 'com.some.other', slug: 'other', name: 'Other' },
-      { id: 2, guid: 'com.harmonyzt.botcallsigns', slug: 'botcallsigns', name: 'BotCallsigns' }
-    ];
+    if (/bot\s*callsigns/i.test(term) || /botcallsigns/i.test(term)) {
+      return [ { id: 2, guid: 'com.harmonyzt.botcallsigns', slug: 'botcallsigns', name: 'Bot Callsigns' } ];
+    }
+    return [];
   };
 
   // Add forge key

@@ -1,0 +1,33 @@
+# Node dependencies
+node_modules/
+
+# Logs
+logs/
+vortexlog*.txt
+*.log
+
+# Editor / OS
+.vscode/
+*.code-workspace
+.DS_Store
+Thumbs.db
+
+# Test artifacts
+coverage/
+test/output/
+
+# Build / dist
+dist/
+build/
+
+# Temp files
+*.tmp
+*.bak
+*.swp
+
+# Local plugin installs and user-specific directories (do not commit installed copies)
+plugins/
+AppData/
+
+# Ignore local artifacts created by tools
+*.tgz
