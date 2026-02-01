@@ -27,6 +27,39 @@ namespace CheckMods.Tests
             // Assert - test logger captured the debug message
             Assert.Contains(logger.Entries, e => e.LogLevel == LogLevel.Debug && e.Message.Contains("API Response"));
         }
+
+        [Fact]
+        public async Task GetJsonResponseStringAsync_RespectsEnvVarForTruncation()
+        {
+            // Arrange - produce a very large JSON body and set env to disable truncation
+            var bigJson = $"{{\"big\":\"{new string('x', 33000)}\"}}";
+            var handler = new DelegatingHandlerStub(new HttpResponseMessage(HttpStatusCode.OK)
+            {
+                Content = new StringContent(bigJson)
+            });
+
+            var httpClient = new HttpClient(handler);
+            var logger = new TestLogger<CheckMods.Services.ForgeApiService>();
+            var service = new CheckMods.Services.ForgeApiService(httpClient, logger);
+
+            try
+            {
+                Environment.SetEnvironmentVariable("FORGE_LOG_TRUNCATE_MAX", "-1"); // disable truncation
+
+                // Act
+                var result = await service.GetAllSptVersionsAsync("https://example.invalid/api/spt/versions?sort=-version&per_page=15");
+
+                // Assert - ensure we logged a debug message and it was not marked truncated
+                Assert.Contains(logger.Entries, e => e.LogLevel == LogLevel.Debug && e.Message.Contains("API Response"));
+                Assert.DoesNotContain(logger.Entries, e => e.LogLevel == LogLevel.Debug && e.Message.Contains("(truncated)"));
+                // Ensure that the message contains part of the big payload
+                Assert.Contains(logger.Entries, e => e.LogLevel == LogLevel.Debug && e.Message.Contains("\"big\":\"xxxxx"));
+            }
+            finally
+            {
+                Environment.SetEnvironmentVariable("FORGE_LOG_TRUNCATE_MAX", null);
+            }
+        }
     }
 
     // Very small test logger to capture entries

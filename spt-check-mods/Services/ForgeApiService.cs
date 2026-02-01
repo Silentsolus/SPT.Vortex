@@ -20,9 +20,25 @@ namespace CheckMods.Services
             _logger = logger;
         }
 
-        private static string TruncateForLog(string s, int max = 32_000)
+        /// <summary>
+        /// Truncate a string for logging. The default max has been increased to capture more API response bodies
+        /// during debug runs. You can override or disable truncation with the env var <c>FORGE_LOG_TRUNCATE_MAX</c>.
+        /// Set it to 0 or a negative value to disable truncation.
+        /// </summary>
+        private static string TruncateForLog(string s, int max = 200_000)
         {
             if (s is null) return string.Empty;
+
+            // Allow runtime override via environment variable so CI / local debugging can capture full responses
+            var env = Environment.GetEnvironmentVariable("FORGE_LOG_TRUNCATE_MAX");
+            if (!string.IsNullOrEmpty(env) && int.TryParse(env, out var envMax))
+            {
+                max = envMax;
+            }
+
+            // Non-positive max disables truncation
+            if (max <= 0) return s;
+
             return s.Length <= max ? s : s.Substring(0, max) + "... (truncated)";
         }
 
