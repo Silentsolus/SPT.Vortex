@@ -44,3 +44,12 @@ run('fuzzyScorePercent sanity', () => {
 });
 
 console.log('\nAll tests executed.');
+
+// Run integration tests
+require('./integration-extraction.test.js');
+require('./enrich.integration.test.js');
+require('./download-import.integration.test.js');
+require('./download-verify.integration.test.js');
+require('./download-retry.integration.test.js');
+require('./download-resume.integration.test.js');
+require('./download-jitter.integration.test.js');

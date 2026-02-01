@@ -1,0 +1,11 @@
+{
+  "name": "spt-vortex",
+  "version": "1.0.0",
+  "description": "SPT-Forge integration for Vortex (download, verify, import)",
+  "scripts": {
+    "test": "node test/run-tests.js",
+    "install:vortex": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/install-to-vortex.ps1"
+  },
+  "author": "",
+  "license": "MIT"
+}

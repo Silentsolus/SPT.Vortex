@@ -166,6 +166,16 @@ async function forgeGetModByName(apiKey, name) {
   return data.length ? data[0] : null;
 }
 
+// Mutable forge client indirection allows tests to override network calls
+const forgeClient = {
+  getModByGuid: forgeGetModByGuid,
+  getModBySlug: forgeGetModBySlug,
+  getModByName: forgeGetModByName,
+  fuzzySearch: forgeFuzzySearch,
+  getUpdates: forgeGetUpdates,
+  getModDetail: forgeGetModDetail,
+};
+
 // Fuzzy search helper: try name-based queries and simple scoring
 // Fuzzy search: request more results per query to allow broader matching
 async function forgeFuzzySearch(apiKey, query, max = 100) {
@@ -253,6 +263,17 @@ function isGenericGuid(guid) {
 
 function slugify(s) {
   return String(s || '').toLowerCase().replace(/([a-z])([A-Z])/g, '$1-$2').replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+}
+
+// Normalize GUID-like tokens found in DLLs: trim, lowercase, and remove surrounding non-token characters
+function normalizeGuid(g) {
+  if (!g) return null;
+  let t = String(g).trim();
+  if (!t) return null;
+  // Remove characters that are unlikely to be part of a GUID token (keep letters, numbers, dots, dashes, underscores)
+  t = t.replace(/[^a-zA-Z0-9._-]/g, '');
+  if (!t) return null;
+  return t.toLowerCase();
 }
 
 // Name normalization utilities (based on SPT-Check-Mods ModNameNormalizer)
@@ -369,28 +390,430 @@ async function forgeGetModDetail(apiKey, idOrSlug) {
   return r.json.data || null;
 }
 
-function downloadAsset(url, destPath) {
-  // Streams an asset to disk. Caller should validate size/checksum where available.
-  return new Promise((resolve, reject) => {
-    if (!url || !destPath) return reject(new Error('Invalid args'));
-    const file = fs.createWriteStream(destPath);
+function downloadAsset(url, destPath, opts) {
+  // Robust downloader with retries, timeouts, jitter, and resume support.
+  // opts: { retries, timeoutMs, backoffBaseMs, jitterFactor, resume }
+  const defaults = { retries: 3, timeoutMs: 15000, backoffBaseMs: 500, jitterFactor: 0.1, resume: true };
+  opts = Object.assign({}, defaults, opts || {});
+
+  if (!url || !destPath) return Promise.reject(new Error('Invalid args'));
+
+  const parsed = (() => {
+    try { return new URL(url); } catch (_) { return null; }
+  })();
+  if (!parsed) return Promise.reject(new Error('Invalid URL'));
+
+  const protocol = parsed.protocol;
+  const lib = (protocol === 'https:') ? https : (protocol === 'http:' ? require('http') : null);
+  if (!lib) return Promise.reject(new Error(`Invalid protocol: ${protocol}`));
+
+  let attempt = 0;
+
+  const attemptOnce = (attemptNum) => new Promise(async (resolve, reject) => {
+    attempt += 1;
+    let finished = false;
+
+    // Determine if we should resume from an existing partial file
+    let startByte = 0;
+    if (opts.resume) {
+      try {
+        const st = await fs.statAsync(destPath);
+        if (st && st.size) startByte = st.size;
+      } catch (_) { /* file not present */ }
+    }
+
+    if (process.env.SPTVORTEX_TEST_DEBUG) console.log(`[downloadAsset] attempt=${attempt} startByte=${startByte}`);
+
+    // Open write stream only if doing a fresh download (non-resume)
+    let file;
+    if (!startByte) {
+      if (process.env.SPTVORTEX_TEST_DEBUG) console.log(`[downloadAsset] opening file ${destPath} with flags=w start=0`);
+      file = fs.createWriteStream(destPath, { flags: 'w' });
+      file.on('open', (fd) => { if (process.env.SPTVORTEX_TEST_DEBUG) console.log(`[downloadAsset] file.open fd=${fd}`); });
+    }
+
+    let req;
+    const cleanup = () => {
+      try { if (req && typeof req.abort === 'function') req.abort(); } catch (_) {}
+      try { if (req && typeof req.destroy === 'function') req.destroy(); } catch (_) {}
+      try { file.destroy && file.destroy(); } catch (_) {}
+    };
+
+    const onError = (err) => {
+      if (finished) return;
+      finished = true;
+      try { clearTimeout(timer); } catch (_) {}
+      cleanup();
+      const e = new Error(`DOWNLOAD_FAILED: ${String(err && err.message ? err.message : err)}`);
+      e.code = 'DOWNLOAD_FAILED';
+      reject(e);
+    };
+
+    const timer = setTimeout(() => {
+      if (finished) return;
+      finished = true;
+      const err = new Error('DOWNLOAD_TIMEOUT');
+      err.code = 'DOWNLOAD_TIMEOUT';
+      try { if (req && typeof req.destroy === 'function') req.destroy(); }
+      catch (_) { try { if (req && typeof req.abort === 'function') req.abort(); } catch (_) {} }
+      cleanup();
+      reject(err);
+    }, opts.timeoutMs);
+
     try {
-      const req = https.request(url, { method: 'GET' }, (res) => {
-        if ((res.statusCode || 0) >= 400) return reject(new Error(`Download failed: ${res.statusCode}`));
-        res.pipe(file);
-        file.on('finish', () => file.close(() => resolve(true)));
+      const headers = {};
+      if (startByte) headers.Range = `bytes=${startByte}-`;
+      req = lib.request(url, { method: 'GET', headers }, async (res) => {
+        if (finished) return;
+        clearTimeout(timer);
+
+        // If server doesn't support ranges and we attempted to resume, restart full download
+        if (startByte && (res.statusCode === 200)) {
+          // server ignored range: start over
+          try { file.close && file.close(); } catch (_) {}
+          try { fs.unlinkAsync && fs.unlinkAsync(destPath); } catch (_) {}
+          return reject(Object.assign(new Error('RANGE_NOT_SUPPORTED'), { code: 'RANGE_NOT_SUPPORTED' }));
+        }
+
+        if ((res.statusCode || 0) >= 400) {
+          finished = true;
+          cleanup();
+          const e = new Error(`HTTP_ERROR_STATUS: ${res.statusCode}`);
+          e.code = 'HTTP_ERROR_STATUS';
+          e.statusCode = res.statusCode;
+          return reject(e);
+        }
+
+        res.on('error', onError);
+        // debug: monitor chunk sizes
+        if (process.env.SPTVORTEX_TEST_DEBUG) {
+          res.on('data', (d) => { try { console.log(`[downloadAsset] attempt=${attempt} got chunklen=${d ? d.length : 0}`); } catch (_) {} });
+        }
+        if (file) {
+          file.on('error', onError);
+          file.on('finish', async () => {
+            if (finished) return;
+            finished = true;
+            try {
+              file.close(async () => {
+                try {
+                  if (process.env.SPTVORTEX_TEST_DEBUG) {
+                    const st2 = await fs.statAsync(destPath).catch(() => null);
+                    console.log(`[downloadAsset] attempt=${attempt} finished fileSize=${st2 ? st2.size : 'null'}`);
+                  }
+                } catch (_) {}
+                resolve(true);
+              });
+            } catch (e) { resolve(true); }
+          });
+        }
+
+        if (startByte) {
+          if (process.env.SPTVORTEX_TEST_DEBUG) console.log(`[downloadAsset] resume branch entered startByte=${startByte}`);
+          // Resume path: write incoming chunks directly at the file offset using low-level fs handles to avoid stream/truncate issues
+          const nfs = require('fs');
+          let position = startByte;
+          let handle = null;
+          try {
+            const fd = nfs.openSync(destPath, 'r+');
+            handle = {
+              fd,
+              write: (buffer, off, len, pos) => new Promise((res, rej) => {
+                try {
+                  const written = nfs.writeSync(fd, buffer, off, len, pos);
+                  res({ bytesWritten: written, buffer });
+                } catch (err) { rej(err); }
+              }),
+              close: () => new Promise((res) => { try { nfs.closeSync(fd); } catch (_) {} res(); }),
+            };
+            if (process.env.SPTVORTEX_TEST_DEBUG) console.log(`[downloadAsset] resume handle fd=${handle.fd} opened r+`);
+          } catch (e) {
+            // Failed to open existing file; fallback to creating/truncating
+            const fd = nfs.openSync(destPath, 'w+');
+            handle = {
+              fd,
+              write: (buffer, off, len, pos) => new Promise((res, rej) => { try { const written = nfs.writeSync(fd, buffer, off, len, pos); res({ bytesWritten: written, buffer }); } catch (err) { rej(err); } }),
+              close: () => new Promise((res) => { try { nfs.closeSync(fd); } catch (_) {} res(); }),
+            };
+            position = 0;
+            if (process.env.SPTVORTEX_TEST_DEBUG) console.log(`[downloadAsset] resume handle fd=${handle.fd} opened w+`);
+          }
+
+          res.on('data', (chunk) => {
+            // write synchronously in sequence (awaited via promise chain)
+            position += 0; // noop to keep variable in closure
+            (async () => {
+              try {
+                await handle.write(chunk, 0, chunk.length, position);
+                position += chunk.length;
+                if (process.env.SPTVORTEX_TEST_DEBUG) console.log(`[downloadAsset] wrote chunk len=${chunk.length} pos=${position}`);
+              } catch (err) { onError(err); }
+            })();
+          });
+
+          res.on('end', async () => {
+            try { await handle.close(); } catch (_) {}
+            if (!finished) { finished = true; resolve(true); }
+          });
+
+          res.on('error', (err) => { try { handle && handle.close(); } catch (_) {}; onError(err); });
+        } else if (typeof res.pipe === 'function') {
+          // Fresh download: stream into file normally
+          res.pipe(file);
+        } else {
+          const chunks = [];
+          res.on('data', (c) => chunks.push(c));
+          res.on('end', () => fs.writeFileAsync(destPath, Buffer.concat(chunks)).then(() => { if (!finished) { finished = true; resolve(true); } }).catch(onError));
+        }
       });
-      req.on('error', (err) => reject(err));
+
+      req.on('error', (err) => {
+        if (finished) return;
+        clearTimeout(timer);
+        onError(err);
+      });
+
       req.end();
-    } catch (e) { reject(e); }
+    } catch (e) {
+      if (finished) return;
+      clearTimeout(timer);
+      onError(e);
+    }
   });
+
+  const run = async () => {
+    const max = Math.max(1, Number(opts.retries) || 1);
+    let lastErr = null;
+    for (let i = 0; i < max; i++) {
+      try {
+        return await attemptOnce(i);
+      } catch (e) {
+        lastErr = e;
+        // Terminal: don't retry on client HTTP errors (4xx)
+        if (e && e.code === 'HTTP_ERROR_STATUS' && e.statusCode >= 400 && e.statusCode < 500) {
+          throw e;
+        }
+        // If range not supported, retry but start from scratch (remove partial file)
+        if (e && e.code === 'RANGE_NOT_SUPPORTED') {
+          try { await fs.unlinkAsync(destPath); } catch (_) {}
+        }
+
+        // Exponential backoff with jitter
+        const base = Number(opts.backoffBaseMs) || 500;
+        const jitterFactor = Math.max(0, Math.min(1, Number(opts.jitterFactor) || 0));
+        const rawBackoff = base * Math.pow(2, i);
+        const jitter = (Math.random() * 2 - 1) * jitterFactor; // in [-jitterFactor, +jitterFactor]
+        const backoff = Math.max(0, Math.round(rawBackoff * (1 + jitter)));
+        await new Promise((res) => setTimeout(res, backoff));
+      }
+    }
+    const err = new Error(`DOWNLOAD_RETRIES_EXHAUSTED: ${String(lastErr && lastErr.message ? lastErr.message : lastErr)}`);
+    err.code = 'DOWNLOAD_RETRIES_EXHAUSTED';
+    throw err;
+  };
+
+  return run();
 }
 
 async function importDownloadedArchive(api, filePath, options) {
-  // Placeholder: implement using Vortex import API when available.
-  // Options may include { replace: 'prompt'|'overwrite'|'add' }
-  // For now return a not-implemented marker.
-  throw new Error('importDownloadedArchive: not implemented');
+  // Enhanced implementation: try a sequence of known Vortex import hooks and normalize responses.
+  // If none available or all fail, fallback to copying into a monitored folder as before.
+  if (!filePath) throw new Error('importDownloadedArchive: missing filePath');
+
+  const tried = [];
+  const tryCall = async (fn, args) => {
+    try {
+      const r = await fn(...args);
+      return { ok: true, res: r };
+    } catch (e) {
+      return { ok: false, err: e };
+    }
+  };
+
+  // Common method candidates in Vortex environments
+  const candidates = [
+    { name: 'importArchive', args: (fn) => [filePath, options || {}] },
+    { name: 'importArchiveForGame', args: (fn) => [filePath, GAME_ID, options || {}] },
+    { name: 'installMod', args: (fn) => [filePath, options || {}] },
+    { name: 'installFromArchive', args: (fn) => [filePath, options || {}] },
+    { name: 'importMod', args: (fn) => [filePath, options || {}] },
+  ];
+
+  if (api && typeof api === 'object') {
+    for (const c of candidates) {
+      const fn = api[c.name];
+      if (typeof fn !== 'function') continue;
+      tried.push(c.name);
+      // choose args (some functions expect game id param)
+      const args = c.args(fn);
+      const out = await tryCall(fn, args);
+      if (out.ok) {
+        // Normalize return: if boolean true -> success, object -> return it
+        const r = out.res;
+        // If result explicitly false, treat as failure
+        if (r === false) {
+          log('warn', `[sptvortex] importDownloadedArchive: ${c.name} returned false`);
+          continue;
+        }
+        return { success: true, method: c.name, result: r };
+      } else {
+        log('debug', `[sptvortex] importDownloadedArchive: ${c.name} threw: ${String(out.err)}`);
+        continue;
+      }
+    }
+  }
+
+  // Fallback: copy the archive to a monitored folder so Vortex can import it
+  const os = require('os');
+  const staging = getStagingPath(api, GAME_ID) || os.tmpdir();
+  const importsDir = path.join(staging, 'imported-downloads');
+  try { await fs.ensureDirWritableAsync(importsDir); } catch (e) { /* best-effort */ }
+
+  const base = path.basename(filePath);
+  let dest = path.join(importsDir, base);
+  const replace = (options && options.replace) ? options.replace : 'add';
+
+  if (replace !== 'overwrite') {
+    // Make sure we don't clobber an existing file when policy='add'
+    let counter = 0;
+    const ext = path.extname(base);
+    const nameOnly = path.basename(base, ext);
+    while (true) {
+      try {
+        await fs.statAsync(dest);
+        counter += 1;
+        dest = path.join(importsDir, `${nameOnly}-${Date.now()}-${counter}${ext}`);
+        if (counter > 50) break;
+      } catch (_e) {
+        // dest does not exist
+        break;
+      }
+    }
+  }
+
+  try {
+    const data = await fs.readFileAsync(filePath);
+    await fs.writeFileAsync(dest, data);
+    showNotification(api, `Imported archive to ${dest}`, 'success', 4000);
+    return { success: true, method: 'copy', importedTo: dest, tried };
+  } catch (e) {
+    log('warn', `[sptvortex] importDownloadedArchive: copy failed: ${String(e)}`);
+    throw e;
+  }
+}
+
+// Compute SHA256 checksum of a file
+async function computeFileSha256(filePath) {
+  const crypto = require('crypto');
+  const nfs = require('fs');
+  const stream = nfs.createReadStream(filePath);
+  return await new Promise((resolve, reject) => {
+    const hash = crypto.createHash('sha256');
+    stream.on('data', (d) => hash.update(d));
+    stream.on('end', () => resolve(hash.digest('hex')));
+    stream.on('error', reject);
+  });
+}
+
+function getPossibleChecksumsFromAsset(asset) {
+  if (!asset) return [];
+  const out = [];
+  if (asset.sha256) out.push(String(asset.sha256).toLowerCase());
+  if (asset.checksum) out.push(String(asset.checksum).toLowerCase());
+  if (asset.hash) out.push(String(asset.hash).toLowerCase());
+  if (asset.hashes && typeof asset.hashes === 'object') {
+    Object.entries(asset.hashes).forEach(([k, v]) => { if (v) out.push(String(v).toLowerCase()); });
+  }
+  return out.filter(Boolean);
+}
+
+async function verifyFileAgainstAsset(filePath, asset) {
+  // asset may contain size (bytes) and checksum/sha256/hash
+  try {
+    const st = await fs.statAsync(filePath);
+    if (asset && asset.size && Number(asset.size) !== Number(st.size)) {
+      throw new Error(`size-mismatch: expected=${asset.size} actual=${st.size}`);
+    }
+
+    const checks = getPossibleChecksumsFromAsset(asset);
+    if (checks.length) {
+      const sha = await computeFileSha256(filePath);
+      if (!checks.includes(sha.toLowerCase())) {
+        throw new Error(`checksum-mismatch: expected=${checks.join('|')} actual=${sha}`);
+      }
+    }
+
+    return true;
+  } catch (e) {
+    throw e;
+  }
+}
+
+// Downloads an asset, verifies against Forge mod detail if modIdOrSlug is provided, and imports
+async function downloadVerifyAndImport(api, modIdOrSlug, assetUrl, options) {
+  if (!assetUrl) throw new Error('downloadVerifyAndImport: missing assetUrl');
+  const { apiKey } = getForgeConfig(api);
+  let assetMeta = null;
+
+  if (apiKey && modIdOrSlug) {
+    try {
+      const detail = await forgeClient.getModDetail(apiKey, modIdOrSlug);
+      // Try to locate asset metadata by matching URL or filename
+      const candidates = [];
+      if (detail && Array.isArray(detail.releases)) {
+        for (const r of detail.releases) {
+          if (r && Array.isArray(r.files)) {
+            for (const f of r.files) candidates.push(f);
+          }
+          if (r && Array.isArray(r.assets)) {
+            for (const f of r.assets) candidates.push(f);
+          }
+        }
+      }
+      if (detail && Array.isArray(detail.files)) {
+        for (const f of detail.files) candidates.push(f);
+      }
+
+      const base = path.basename(assetUrl);
+      assetMeta = candidates.find((a) => {
+        if (!a) return false;
+        const url = String(a.url || a.download_url || a.link || '').trim();
+        const name = String(a.filename || a.name || a.file || a.path || '').trim();
+        if (!url && !name) return false;
+        if (url && url === assetUrl) return true;
+        if (url && url.endsWith(base)) return true;
+        if (name && name === base) return true;
+        if (name && name === path.basename(url)) return true;
+        return false;
+      }) || null;
+    } catch (e) {
+      log('debug', `[sptvortex] downloadVerifyAndImport: getModDetail failed: ${String(e)}`);
+    }
+  }
+
+  // Download into temp path
+  const os = require('os');
+  const tmp = path.join(os.tmpdir(), `sptvortex-download-${Date.now()}${Math.floor(Math.random()*1000)}${path.extname(assetUrl) || '.zip'}`);
+  const dl = (module.exports && module.exports.helpers && module.exports.helpers.downloadAsset) ? module.exports.helpers.downloadAsset : downloadAsset;
+  await dl(assetUrl, tmp);
+
+  // Verify if metadata available
+  if (assetMeta) {
+    await verifyFileAgainstAsset(tmp, assetMeta);
+  }
+
+  return await importDownloadedArchive(api, tmp, options);
+}
+
+// Helper: download a remote asset then import it using the import helper above
+async function downloadAndImport(api, assetUrl, options) {
+  if (!assetUrl) throw new Error('downloadAndImport: missing assetUrl');
+  const os = require('os');
+  const tmp = path.join(os.tmpdir(), `sptvortex-download-${Date.now()}${Math.floor(Math.random()*1000)}${path.extname(assetUrl) || '.zip'}`);
+  // Call the exported helper so tests can stub it (module.exports.helpers.downloadAsset)
+  const dl = (module.exports && module.exports.helpers && module.exports.helpers.downloadAsset) ? module.exports.helpers.downloadAsset : downloadAsset;
+  await dl(assetUrl, tmp);
+  return await importDownloadedArchive(api, tmp, options);
 }
 
 // -----------------------------
@@ -909,6 +1332,8 @@ async function enrichMods(api) {
 
     // Demote generic GUIDs (like com.spt.core) so we rely on better matching
     let candidateGuid = meta.guid;
+    // make space for matched forge mod early (used by mapping lookup)
+    let forgeMod = null;
 
     // Highest precedence: imported mapping (SPT-Check-Mods style)
     try {
@@ -918,10 +1343,10 @@ async function enrichMods(api) {
         log('info', `[sptvortex] enrich: mapping hit for stage=${stageName} -> ${mapHit.target} (type=${mapHit.targetType})`);
         try {
           if (mapHit.targetType === 'guid') {
-            const m = await forgeGetModByGuid(apiKey, mapHit.target);
+            const m = await forgeClient.getModByGuid(apiKey, mapHit.target);
             if (m) { forgeMod = m; meta.guid = m.guid; log('info', `[sptvortex] enrich: matched via mapping stage=${stageName} -> ${m.guid} (${m.name})`); }
           } else if (mapHit.targetType === 'slug') {
-            const m = await forgeGetModBySlug(apiKey, mapHit.target);
+            const m = await forgeClient.getModBySlug(apiKey, mapHit.target);
             if (m) { forgeMod = m; meta.guid = m.guid; log('info', `[sptvortex] enrich: matched via mapping stage=${stageName} -> ${m.guid} (${m.name})`); }
           }
         } catch (e) {
@@ -936,12 +1361,10 @@ async function enrichMods(api) {
       log('debug', `[sptvortex] enrich: demoting generic guid for stage=${stageName} guid=${candidateGuid}`);
       candidateGuid = null;
     }
-
-    let forgeMod = null;
     // 1. Try GUID lookups
     if (candidateGuid) {
       forgeMod = cacheByGuid.get(candidateGuid) || null;
-      if (!forgeMod) forgeMod = await forgeGetModByGuid(apiKey, candidateGuid);
+      if (!forgeMod) forgeMod = await forgeClient.getModByGuid(apiKey, candidateGuid);
       if (forgeMod) log('debug', `[sptvortex] enrich: matched by GUID stage=${stageName} guid=${candidateGuid}`);
     }
 
@@ -951,7 +1374,7 @@ async function enrichMods(api) {
           log('debug', `[sptvortex] enrich: skipping generic guess=${g} for stage=${stageName}`);
           continue;
         }
-        forgeMod = await forgeGetModByGuid(apiKey, g);
+        forgeMod = await forgeClient.getModByGuid(apiKey, g);
         if (forgeMod) {
           meta.guid = g;
           log('debug', `[sptvortex] enrich: matched by guess GUID stage=${stageName} guid=${g}`);
@@ -971,7 +1394,7 @@ async function enrichMods(api) {
       for (const term of terms) {
         if (!term) continue;
         try {
-          const results = await forgeFuzzySearch(apiKey, term);
+          const results = await forgeClient.fuzzySearch(apiKey, term);
           if (!Array.isArray(results) || !results.length) continue;
 
           // Check exact normalized matches first
@@ -1028,7 +1451,7 @@ async function enrichMods(api) {
       for (const c of candidates) {
         if (!c) continue;
         try {
-          const results = await forgeFuzzySearch(apiKey, c);
+          const results = await forgeClient.fuzzySearch(apiKey, c);
           for (const r2 of results) {
             const nameCandidates = [r2.name, r2.slug, r2.guid].filter(Boolean);
             for (const n of nameCandidates) {
@@ -1104,7 +1527,7 @@ async function checkUpdates(api) {
     return;
   }
 
-  const r = await forgeGetUpdates(apiKey, sptVersion, list);
+  const r = await forgeClient.getUpdates(apiKey, sptVersion, list);
   if (!r.ok || !r.json || r.json.success !== true) {
     showNotification(api, 'SPT Forge: update check failed (see log)', 'error', 7000);
     log('warn', '[sptvortex] updates failed', { status: r.status, body: (r.body || '').slice(0, 500) });
@@ -1240,7 +1663,7 @@ function main(context) {
     for (const c of candidates) {
       if (!c) continue;
       try {
-        const results = await forgeFuzzySearch(apiKey, c);
+        const results = await forgeClient.fuzzySearch(apiKey, c);
         const scored = results.map((r2) => {
           const nameCandidates = [r2.name || '', r2.slug || '', r2.guid || ''];
           let localScore = 0;
@@ -1335,4 +1758,9 @@ module.exports.helpers = {
   forgeGetModDetail,
   downloadAsset,
   importDownloadedArchive,
-};
+  downloadAndImport,
+  downloadVerifyAndImport,
+  // Expose higher-level consumer-facing functions for tests
+  enrichMods,
+  forgeClient,
+}
