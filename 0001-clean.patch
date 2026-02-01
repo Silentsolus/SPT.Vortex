@@ -1,0 +1,130 @@
+*** Begin Patch
+*** Add File: tests/ForgeApiService.Logging.Tests.cs
++using System.Net;
++using System.Net.Http;
++using System.Threading.Tasks;
++using Microsoft.Extensions.Logging;
++using Xunit;
++
++namespace CheckMods.Tests
++{
++    public class ForgeApiServiceLoggingTests
++    {
++        [Fact]
++        public async Task GetJsonResponseStringAsync_LogsResponse_DebugLevel()
++        {
++            // Arrange - simple test HttpClient returning JSON
++            var handler = new DelegatingHandlerStub(new HttpResponseMessage(HttpStatusCode.OK)
++            {
++                Content = new StringContent("{\"ok\":true}")
++            });
++
++            var httpClient = new HttpClient(handler);
++            var logger = new TestLogger<CheckMods.Services.ForgeApiService>();
++            var service = new CheckMods.Services.ForgeApiService(httpClient, null!, null!, null!, logger);
++
++            // Act
++            _ = await service.GetAllSptVersionsAsync();
++
++            // Assert - test logger captured the debug message
++            Assert.Contains(logger.Entries, e => e.LogLevel == LogLevel.Debug && e.Message.Contains("API Response"));
++        }
++    }
++
++    // Very small test logger to capture entries
++    internal class TestLogger<T> : ILogger<T>
++    {
++        public System.Collections.Generic.List<(LogLevel LogLevel, string Message)> Entries { get; } = new();
++
++        IDisposable ILogger.BeginScope<TState>(TState state) => null!;
++        bool ILogger.IsEnabled(LogLevel logLevel) => true;
++
++        void ILogger.Log<TState>(LogLevel logLevel, EventId eventId, TState state, System.Exception exception, System.Func<TState, System.Exception, string> formatter)
++        {
++            Entries.Add((logLevel, formatter(state, exception)));
++        }
++    }
++
++    // Minimal delegating handler stub
++    internal class DelegatingHandlerStub : DelegatingHandler
++    {
++        private readonly HttpResponseMessage _response;
++        public DelegatingHandlerStub(HttpResponseMessage response)
++        {
++            _response = response;
++        }
++
++        protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, System.Threading.CancellationToken cancellationToken)
++        {
++            return Task.FromResult(_response);
++        }
++    }
++}
++
+*** End Patch
+*** Begin Patch
+*** Update File: Services/ForgeApiService.cs
+@@
+     private static readonly JsonSerializerOptions _jsonOptions = new() { PropertyNameCaseInsensitive = true };
++
++    // Helper to truncate large response bodies when logging
++    private static string TruncateForLog(string s, int max = 32000)
++    {
++        if (s is null) return string.Empty;
++        return s.Length <= max ? s : s.Substring(0, max) + "... (truncated)";
++    }
++
++    // Safe wrapper to read the response body and log it (Debug, truncated).
++    private async Task<string> GetJsonResponseStringAsync(HttpResponseMessage response, string url, CancellationToken cancellationToken)
++    {
++        var jsonContent = await response.Content.ReadAsStringAsync(cancellationToken);
++        try
++        {
++            logger.LogDebug("API Response: {Url}: {Body}", url, TruncateForLog(jsonContent));
++        }
++        catch (Exception ex)
++        {
++            logger.LogDebug(ex, "Failed to log API response for {Url}", url);
++        }
++        return jsonContent;
++    }
+@@
+-            var jsonContent = await response.Content.ReadAsStringAsync(cancellationToken);
++            var jsonContent = await GetJsonResponseStringAsync(response, url, cancellationToken);
+             var authResponse = JsonSerializer.Deserialize<AuthAbilitiesResponse>(jsonContent, _jsonOptions);
+@@
+-            var jsonContent = await response.Content.ReadAsStringAsync(cancellationToken);
+-            var apiResponse = JsonSerializer.Deserialize<SptVersionApiResponse>(jsonContent, _jsonOptions);
++            var jsonContent = await GetJsonResponseStringAsync(response, url, cancellationToken);
++            var apiResponse = JsonSerializer.Deserialize<SptVersionApiResponse>(jsonContent, _jsonOptions);
+@@
+-            var jsonContent = await response.Content.ReadAsStringAsync(cancellationToken);
+-            var apiResponse = JsonSerializer.Deserialize<SptVersionApiResponse>(jsonContent, _jsonOptions);
++            var jsonContent = await GetJsonResponseStringAsync(response, url, cancellationToken);
++            var apiResponse = JsonSerializer.Deserialize<SptVersionApiResponse>(jsonContent, _jsonOptions);
+@@
+-            var jsonContent = await response.Content.ReadAsStringAsync(cancellationToken);
+-            var apiResponse = JsonSerializer.Deserialize<ModSearchApiResponse>(jsonContent, _jsonOptions);
++            var jsonContent = await GetJsonResponseStringAsync(response, url, cancellationToken);
++            var apiResponse = JsonSerializer.Deserialize<ModSearchApiResponse>(jsonContent, _jsonOptions);
+@@
+-            var jsonContent = await response.Content.ReadAsStringAsync(cancellationToken);
+-            var apiResponse = JsonSerializer.Deserialize<ModUpdatesApiResponse>(jsonContent, _json_options);
++            var jsonContent = await GetJsonResponseStringAsync(response, url, cancellationToken);
++            var apiResponse = JsonSerializer.Deserialize<ModUpdatesApiResponse>(jsonContent, _jsonOptions);
+@@
+-            var jsonContent = await response.Content.ReadAsStringAsync(cancellationToken);
+-            var apiResponse = JsonSerializer.Deserialize<ModDependenciesApiResponse>(jsonContent, _jsonOptions);
++            var jsonContent = await GetJsonResponseStringAsync(response, url, cancellationToken);
++            var apiResponse = JsonSerializer.Deserialize<ModDependenciesApiResponse>(jsonContent, _jsonOptions);
+@@
+-            var jsonContent = await response.Content.ReadAsStringAsync(cancellationToken);
+-            var jsonDoc = JsonDocument.Parse(jsonContent);
++            var jsonContent = await GetJsonResponseStringAsync(response, url, cancellationToken);
++            var jsonDoc = JsonDocument.Parse(jsonContent);
+@@
+-            var jsonContent = await response.Content.ReadAsStringAsync(cancellationToken);
+-            var apiResponse = JsonSerializer.Deserialize<ModSearchApiResponse>(jsonContent, _jsonOptions);
++            var jsonContent = await GetJsonResponseStringAsync(response, url, cancellationToken);
++            var apiResponse = JsonSerializer.Deserialize<ModSearchApiResponse>(jsonContent, _jsonOptions);
+*** End Patch

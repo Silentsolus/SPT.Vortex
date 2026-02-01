@@ -248,7 +248,8 @@ function nameScore(a, b) {
 const FUZZY_THRESHOLD = 0.5;
 
 // Minimum fuzzy percent score (0-100) to accept a candidate
-const MIN_FUZZY_SCORE = 60;
+// Align minimum fuzzy threshold with SPT-Check-Mods
+// Use MatchingConstants.MinimumFuzzyMatchScore directly for thresholds
 
 // Treat some GUIDs as non-authoritative (SPT core, Unity, very short names)
 function isGenericGuid(guid) {
@@ -406,6 +407,49 @@ function findBestMatch(mod, searchResults) {
 
   const confidence = Math.floor((bestScore * MatchingConstants.FuzzyNameConfidence) / 100.0);
   return { Result: best, Confidence: confidence, Method: 'FuzzyName' };
+}
+
+
+// Search helper: run prioritized terms and pick best match via ported logic
+async function searchWithTerms(modObj, metaObj, stageNameArg, apiKeyArg) {
+  const terms = buildSearchTerms(modObj, metaObj, stageNameArg);
+  log('debug', `[sptvortex] searchWithTerms: terms for stage=${stageNameArg} -> ${JSON.stringify(terms.slice(0,12))}`);
+
+  let best = null;
+  let bestScore = 0;
+
+  for (const term of terms) {
+    if (!term) continue;
+    try {
+      const results = await forgeClient.fuzzySearch(apiKeyArg, term);
+      if (!Array.isArray(results) || !results.length) continue;
+
+      const fb = findBestMatch(modObj, results);
+      if (fb && fb.Result) {
+        let conf = fb.Confidence || 0;
+        if (fb.Method === 'FuzzyName' && metaObj && metaObj.version) {
+          try {
+            const ver = String(metaObj.version).toLowerCase();
+            const verCompact = ver.replace(/\./g, '');
+            const candidateText = `${fb.Result.name || ''} ${fb.Result.slug || ''} ${fb.Result.guid || ''}`.toLowerCase();
+            if (candidateText.includes(ver) || candidateText.includes(verCompact)) {
+              conf = Math.min(100, conf + 25);
+            }
+          } catch (_) {}
+        }
+
+        if (conf > bestScore) { bestScore = conf; best = fb.Result; }
+
+        if (bestScore >= 95) break;
+      }
+
+      if (bestScore >= MatchingConstants.MinimumFuzzyMatchScorets.MinimumFuzzyMatchScore) break;
+    } catch (e) {
+      log('debug', `[sptvortex] searchWithTerms: search failed for term='${term}': ${String(e)}`);
+    }
+  }
+
+  return best ? { best, bestScore } : null;
 }
 
 
@@ -1538,71 +1582,17 @@ async function enrichMods(api) {
       }
     }
 
-    // 2. Build ordered search terms and try exact/slug matches first
+    // 2. Build ordered search terms and try exact/slug matches first (use ported SPT-Check-Mods logic)
     if (!forgeMod) {
-      const terms = buildSearchTerms(mod, meta, stageName);
-      log('debug', `[sptvortex] enrich: search terms for stage=${stageName} -> ${JSON.stringify(terms.slice(0,12))}`);
+      log('debug', `[sptvortex] enrich: attempting search-terms match for stage=${stageName}`);
 
-      let best = null;
-      let bestScore = 0;
-
-      for (const term of terms) {
-        if (!term) continue;
-        try {
-          const results = await forgeClient.fuzzySearch(apiKey, term);
-          if (!Array.isArray(results) || !results.length) continue;
-
-          // Check exact normalized matches first
-          for (const r2 of results) {
-            const rName = r2.name || '';
-            const rSlug = r2.slug || '';
-            const rGuidName = extractNameFromGuid(r2.guid || '');
-            if (normalizeName(rName, true) && normalizeName(rName, true) === normalizeName(term, true)) {
-              best = r2; bestScore = 100; break;
-            }
-            if (rSlug && normalizeName(rSlug, true) === normalizeName(term, true)) {
-              best = r2; bestScore = 98; break;
-            }
-            if (rGuidName && normalizeName(rGuidName, true) === normalizeName(term, true)) {
-              best = r2; bestScore = 95; break;
-            }
-          }
-
-          if (bestScore >= 95) break;
-
-          // Compute fuzzy percent scores
-          for (const r2 of results) {
-            const candidateNames = [r2.name || '', r2.slug || '', extractNameFromGuid(r2.guid || '')];
-            for (const cname of candidateNames) {
-              const score = fuzzyScorePercent(term, cname);
-              if (score > bestScore) { bestScore = score; best = r2; }
-            }
-          }
-
-          // If meta.version is present, prefer candidates that include the version (as exact or compact) in name/slug/guid
-          if (best && meta && meta.version) {
-            try {
-              const ver = String(meta.version).toLowerCase();
-              const verCompact = ver.replace(/\./g, '');
-              const candidateText = `${best.name || ''} ${best.slug || ''} ${best.guid || ''}`.toLowerCase();
-              if (candidateText.includes(ver) || candidateText.includes(verCompact)) {
-                bestScore = Math.min(100, bestScore + 25);
-              }
-            } catch (_) {}
-          }
-
-          if (bestScore >= MIN_FUZZY_SCORE) break;
-        } catch (e) {
-          log('debug', `[sptvortex] enrich: search failed for term='${term}': ${String(e)}`);
-        }
-      }
-
-      if (best && bestScore >= MIN_FUZZY_SCORE) {
-        forgeMod = best;
-        meta.guid = meta.guid || best.guid;
-        log('info', `[sptvortex] enrich: matched stage=${stageName} -> ${best.guid} (${best.name}) score=${bestScore}`);
-      } else if (best) {
-        log('debug', `[sptvortex] enrich: top candidate for stage=${stageName} was ${best.guid} (${best.name}) with score=${bestScore} < ${MIN_FUZZY_SCORE}`);
+      const searchRes = await searchWithTerms(mod, meta, stageName, apiKey);
+      if (searchRes && searchRes.best && searchRes.bestScore >= MatchingConstants.MinimumFuzzyMatchScore) {
+        forgeMod = searchRes.best;
+        meta.guid = meta.guid || forgeMod.guid;
+        log('info', `[sptvortex] enrich: matched stage=${stageName} -> ${forgeMod.guid} (${forgeMod.name}) score=${searchRes.bestScore}`);
+      } else if (searchRes && searchRes.best) {
+        log('debug', `[sptvortex] enrich: top candidate for stage=${stageName} was ${searchRes.best.guid} (${searchRes.best.name}) with score=${searchRes.bestScore} < ${MatchingConstants.MinimumFuzzyMatchScore}`);
       }
     }
 
@@ -1725,6 +1715,156 @@ async function checkUpdates(api) {
 
   api.showDialog('info', 'SPT Forge updates', { text: lines.join('\n') }, [{ label: 'Close' }]);
 }
+
+// -----------------------------
+// Download & Import Updates implementation
+// -----------------------------
+
+async function pickAssetFromModDetail(modDetail) {
+  if (!modDetail) return null;
+  // Support multiple shapes: releases -> assets, or files on version entries
+  const preferExt = ['.zip', '.7z', '.rar', '.tar.gz', '.tar'];
+
+  const candidates = [];
+
+  if (Array.isArray(modDetail.releases)) {
+    for (const rel of modDetail.releases) {
+      if (Array.isArray(rel.assets)) {
+        for (const a of rel.assets) {
+          if (a && a.url) candidates.push({ url: a.url, name: a.name || a.filename || '', size: a.size || 0 });
+        }
+      }
+      // fallback fields
+      if (Array.isArray(rel.files)) {
+        for (const f of rel.files) if (f && f.url) candidates.push({ url: f.url, name: f.name || f.filename || '', size: f.size || 0 });
+      }
+    }
+  }
+
+  // Also search top-level 'files' or 'assets'
+  if (Array.isArray(modDetail.assets)) {
+    for (const a of modDetail.assets) if (a && a.url) candidates.push({ url: a.url, name: a.name || a.filename || '', size: a.size || 0 });
+  }
+  if (Array.isArray(modDetail.files)) {
+    for (const f of modDetail.files) if (f && f.url) candidates.push({ url: f.url, name: f.name || f.filename || '', size: f.size || 0 });
+  }
+
+  // Pick candidate by extension preference, then by largest size
+  const scored = candidates.map(c => {
+    const name = (c.name || c.url || '').toLowerCase();
+    const extScore = preferExt.findIndex(e => name.endsWith(e));
+    return { c, extScore: extScore === -1 ? preferExt.length : extScore };
+  }).sort((a, b) => {
+    if (a.extScore !== b.extScore) return a.extScore - b.extScore;
+    return (b.c.size || 0) - (a.c.size || 0);
+  });
+
+  return scored.length ? scored[0].c : (candidates.length ? candidates[0] : null);
+}
+
+async function downloadAndImportUpdates(api, opts = {}) {
+  const { apiKey, sptVersion } = getForgeConfig(api);
+  if (!apiKey || apiKey === 'PASTE_FORGE_API_KEY_HERE') throw new Error('Missing Forge API key');
+  const replace = opts.replace || 'add';
+
+  const mods = Array.isArray(opts.modsList) ? opts.modsList : getModsForGame(api, GAME_ID);
+  const list = [];
+  for (const mod of mods) {
+    const guid = mod?.attributes?.forgeGuid || (typeof mod?.attributes?.source === 'string' ? String(mod.attributes.source).replace(/^sptforge:/, '') : null);
+    const version = mod?.attributes?.version || null;
+    if (guid && version) list.push({ guid, version, mod });
+  }
+  if (!list.length) throw new Error('No enriched mods found (run Enrich first)');
+
+  const r = await forgeClient.getUpdates(apiKey, sptVersion, list);
+  if (!r.ok || !r.json || r.json.success !== true) throw new Error('Forge updates query failed');
+
+  const updates = Array.isArray(r.json.data?.updates) ? r.json.data.updates : [];
+  if (!updates.length) {
+    showNotification(api, 'SPT Forge: no updates available', 'info');
+    return;
+  }
+
+  // For each update, fetch mod detail and select an asset then download & import
+  for (const u of updates) {
+    try {
+      const idOrSlug = u.mod?.id || u.guid || u.slug || u.id;
+      const detail = await forgeClient.getModDetail(apiKey, idOrSlug);
+      if (!detail) { log('warn', `[sptvortex] downloadUpdates: no detail for ${idOrSlug}`); continue; }
+
+      const asset = await pickAssetFromModDetail(detail);
+      if (!asset || !asset.url) { log('warn', `[sptvortex] downloadUpdates: no asset found for ${idOrSlug}`); continue; }
+
+      showNotification(api, `Downloading update for ${u.name || u.guid || idOrSlug}`, 'info', 3000);
+      // Call exported helper if tests stub it, otherwise local implementation
+      const dlFunc = (module.exports && module.exports.helpers && module.exports.helpers.downloadVerifyAndImport) ? module.exports.helpers.downloadVerifyAndImport : downloadVerifyAndImport;
+      await dlFunc(api, idOrSlug, asset.url, { replace });
+      showNotification(api, `Imported update for ${u.name || u.guid || idOrSlug}`, 'success', 3000);
+    } catch (e) {
+      log('warn', `[sptvortex] downloadUpdates: failed for ${u?.guid || u?.id || u?.mod?.id}: ${String(e)}`);
+      showNotification(api, `Update failed: ${String(e)}`, 'error', 3000);
+    }
+  }
+}
+
+// Interactive selection helper
+async function downloadAndImportUpdatesInteractive(api) {
+  const { apiKey, sptVersion } = getForgeConfig(api);
+  const mods = getModsForGame(api, GAME_ID);
+  const list = mods.map(m => ({ guid: m?.attributes?.forgeGuid, version: m?.attributes?.version, mod: m })).filter(x => x.guid && x.version);
+  if (!list.length) { showNotification(api, 'No enriched mods found (run Enrich first)', 'warning'); return; }
+
+  const r = await forgeClient.getUpdates(apiKey, sptVersion, list);
+  if (!r.ok || !r.json || r.json.success !== true) { showNotification(api, 'Forge updates query failed', 'error'); return; }
+
+  const updates = Array.isArray(r.json.data?.updates) ? r.json.data.updates : [];
+  if (!updates.length) { showNotification(api, 'No updates available', 'info'); return; }
+
+  const lines = updates.map((u, i) => `${i + 1}) ${u.name || u.guid} ${u.current_version || ''} -> ${u.latest_version || u.version || ''}`);
+  const text = `Select updates to download (enter comma-separated numbers), or leave empty to cancel:\n\n${lines.join('\n')}`;
+
+  const res = await api.showDialog('question', 'Select updates', { text, input: [{ id: 'sel', label: 'Selection (e.g., 1,3,5)', type: 'text' }] }, [{ label: 'Cancel' }, { label: 'Proceed' }]);
+  if (!res || res.action !== 'Proceed') return;
+  const sel = String(res.input && res.input.sel || '').trim();
+  if (!sel) { showNotification(api, 'No selection made', 'info'); return; }
+
+  const ids = sel.split(',').map(s => parseInt(s.trim(), 10)).filter(n => Number.isFinite(n) && n > 0 && n <= updates.length).map(n => n - 1);
+  if (!ids.length) { showNotification(api, 'No valid selection', 'warning'); return; }
+
+  for (const idxSel of ids) {
+    const u = updates[idxSel];
+    try {
+      const idOrSlug = u.mod?.id || u.guid || u.slug || u.id;
+      const detail = await forgeClient.getModDetail(apiKey, idOrSlug);
+      if (!detail) { log('warn', `[sptvortex] downloadUpdatesInteractive: no detail for ${idOrSlug}`); continue; }
+      const asset = await pickAssetFromModDetail(detail);
+      if (!asset || !asset.url) { log('warn', `[sptvortex] downloadUpdatesInteractive: no asset for ${idOrSlug}`); continue; }
+      const dlFunc = (module.exports && module.exports.helpers && module.exports.helpers.downloadVerifyAndImport) ? module.exports.helpers.downloadVerifyAndImport : downloadVerifyAndImport;
+      await dlFunc(api, idOrSlug, asset.url, { replace: 'add' });
+      showNotification(api, `Imported update for ${u.name || u.guid || idOrSlug}`, 'success', 3000);
+    } catch (e) {
+      showNotification(api, `Update import failed: ${String(e)}`, 'error', 3000);
+    }
+  }
+}
+
+// Download update for a single mod identified by GUID/slug/id
+async function downloadUpdateForMod(api, idOrGuidOrSlug, opts = {}) {
+  const { apiKey } = getForgeConfig(api);
+  if (!apiKey) throw new Error('Missing Forge API key');
+  const replace = opts.replace || 'add';
+
+  // Resolve detail
+  const detail = await forgeClient.getModDetail(apiKey, idOrGuidOrSlug);
+  if (!detail) throw new Error('No mod detail found');
+  const asset = await pickAssetFromModDetail(detail);
+  if (!asset || !asset.url) throw new Error('No downloadable asset found');
+
+  const dlFunc = (module.exports && module.exports.helpers && module.exports.helpers.downloadVerifyAndImport) ? module.exports.helpers.downloadVerifyAndImport : downloadVerifyAndImport;
+  return await dlFunc(api, idOrGuidOrSlug, asset.url, { replace });
+}
+
+
 
 // -----------------------------
 // Main
@@ -1915,14 +2055,58 @@ function main(context) {
     }
   });
 
-  // TODO: Download & import updates (skeleton action)
+  // Download & import updates
   context.registerAction('game-tools', 250, 'download', {}, 'Forge: Download & Import Updates', async () => {
     const res = await context.api.showDialog('question', 'Download & Import Updates', {
-      text: 'This will attempt to download available updates from SPT-Forge and import them into Vortex. Proceed?'
-    }, [{ label: 'Cancel' }, { label: 'Proceed' }]);
-    if (res?.action !== 'Proceed') return;
-    showNotification(context.api, 'Download & Import: not implemented yet', 'warning');
-    // TODO: iterate updates from forgeGetUpdates, call forgeGetModDetail, downloadAsset and importDownloadedArchive
+      text: 'This will attempt to download available updates from SPT-Forge and import them into Vortex. Choose an option below.'
+    }, [{ label: 'Cancel' }, { label: 'Download All (Add)' }, { label: 'Download All (Overwrite)' }, { label: 'Choose...' }]);
+
+    if (!res || res.action === 'Cancel') return;
+    if (res.action === 'Choose...') {
+      // Interactive selection flow (asks user to confirm selection indices)
+      try {
+        await downloadAndImportUpdatesInteractive(context.api);
+      } catch (e) {
+        showNotification(context.api, `Download & Import failed: ${String(e)}`, 'error');
+      }
+      return;
+    }
+
+    const replace = res.action === 'Download All (Overwrite)' ? 'overwrite' : 'add';
+
+    try {
+      await downloadAndImportUpdates(context.api, { replace });
+    } catch (e) {
+      showNotification(context.api, `Download & Import failed: ${String(e)}`, 'error');
+    }
+  });
+
+  // Per-mod action: download update for a single mod (asks for GUID if not provided)
+  context.registerAction('mod-icons', 220, 'download', {}, 'Forge: Download update for this mod', async (selected) => {
+    try {
+      // Vortex may pass a selection; otherwise prompt the user to enter GUID/slug
+      let guid = null;
+      if (selected && selected.id) {
+        // Try to resolve from selected mod id
+        const mods = getModsForGame(context.api, GAME_ID);
+        const m = mods.find(x => x.id === selected.id || x.id === selected.id.toString());
+        if (m) guid = m.attributes && (m.attributes.forgeGuid || (typeof m.attributes.source === 'string' ? String(m.attributes.source).replace(/^sptforge:/, '') : null));
+      }
+
+      if (!guid) {
+        const res = await context.api.showDialog('question', 'Download update for mod', {
+          text: 'Enter the mod GUID or slug to download an update for (e.g., com.author.modname):',
+          input: [{ id: 'g', label: 'GUID or slug', type: 'text' }]
+        }, [{ label: 'Cancel' }, { label: 'Proceed' }]);
+        if (!res || res.action !== 'Proceed') return;
+        guid = String(res.input && res.input.g || '').trim();
+        if (!guid) return;
+      }
+
+      await downloadUpdateForMod(context.api, guid, { replace: 'add' });
+    } catch (e) {
+      showNotification(context.api, `Download update failed: ${String(e)}`, 'error');
+    }
   });
 
   return true;
@@ -1936,9 +2120,11 @@ module.exports.helpers = {
   parseMappingContent,
   guessGuidsFromFolderName,
   extractFromDll,
+  extractNameFromGuid,
   fuzzyScorePercent,
   buildSearchTerms,
   findBestMatch,
+  searchWithTerms,
   MatchingConstants,
   extractForgeMetaFromStagedFolder,
   forgeGetModByGuid,
@@ -1949,6 +2135,9 @@ module.exports.helpers = {
   importDownloadedArchive,
   downloadAndImport,
   downloadVerifyAndImport,
+  downloadAndImportUpdates,
+  downloadAndImportUpdatesInteractive,
+  downloadUpdateForMod,
   // Expose higher-level consumer-facing functions for tests
   enrichMods,
   forgeClient,

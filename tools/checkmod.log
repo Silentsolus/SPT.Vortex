@@ -1,0 +1,1545 @@
+
+================================================================================
+  CheckMods Session Started: 2026-01-16 20:51:31
+================================================================================
+
+2026-01-16 20:51:31.082 [INF] Program: CheckMods application starting. Args: 
+2026-01-16 20:51:31.123 [INF] ApplicationService: Starting mod check workflow
+2026-01-16 20:51:31.163 [DBG] ApplicationService: Setting up API key
+2026-01-16 20:51:33.888 [DBG] ForgeApiService: Validating API key
+2026-01-16 20:51:33.888 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/auth/abilities
+2026-01-16 20:51:34.180 [DBG] ForgeApiService: API key validated successfully with read permission
+2026-01-16 20:51:34.182 [DBG] ForgeApiService: Setting API key for Forge API authentication
+2026-01-16 20:51:34.183 [DBG] ApplicationService: Validating SPT path
+2026-01-16 20:51:34.183 [INF] ApplicationService: Using SPT path: G:\SPT-AKI 4011
+2026-01-16 20:51:34.184 [DBG] ApplicationService: Validating SPT installation
+2026-01-16 20:51:34.185 [DBG] ServerModService: Validating SPT installation at: G:\SPT-AKI 4011
+2026-01-16 20:51:34.277 [DBG] ServerModService: Found local SPT version: 4.0.11
+2026-01-16 20:51:34.279 [DBG] ForgeApiService: Validating SPT version: 4.0.11
+2026-01-16 20:51:34.279 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/spt/versions?filter[spt_version]=4.0.11
+2026-01-16 20:51:34.426 [DBG] ForgeApiService: SPT version 4.0.11 validated successfully
+2026-01-16 20:51:34.430 [DBG] ServerModService: Checking for SPT updates. Current version: 4.0.11
+2026-01-16 20:51:34.431 [DBG] ForgeApiService: Fetching all SPT versions from Forge API
+2026-01-16 20:51:34.431 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/spt/versions?sort=-version&per_page=15
+2026-01-16 20:51:34.681 [DBG] ServerModService: Found 0 newer SPT versions
+2026-01-16 20:51:34.682 [INF] ApplicationService: SPT version validated: 4.0.11
+2026-01-16 20:51:34.682 [DBG] ApplicationService: Scanning and reconciling mods
+2026-01-16 20:51:34.685 [DBG] ModScannerService: Scanning server mods at: G:\SPT-AKI 4011
+2026-01-16 20:51:34.685 [DBG] ModScannerService: Found 9 mod directories
+2026-01-16 20:51:35.828 [INF] ModScannerService: Found 9 server mods
+2026-01-16 20:51:35.829 [DBG] ModScannerService: Scanning client mods at: G:\SPT-AKI 4011
+2026-01-16 20:51:36.213 [INF] ModScannerService: Found 9 client mods
+2026-01-16 20:51:36.215 [DBG] ForgeApiService: Getting mod by GUID: com.moddingstatshelper.spt
+2026-01-16 20:51:36.216 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=com.moddingstatshelper.spt&include=versions,source_code_links
+2026-01-16 20:51:36.388 [DBG] ModReconciliationService: Reconciling 9 server mods with 9 client mods
+2026-01-16 20:51:36.391 [DBG] ModReconciliationService: Reconciliation complete. Pairs: 3, Unmatched server: 6, Unmatched client: 6
+2026-01-16 20:51:36.391 [DBG] ForgeApiService: Getting mod by GUID: com.tyfon.uifixes
+2026-01-16 20:51:36.392 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=com.tyfon.uifixes&include=versions,source_code_links
+2026-01-16 20:51:36.649 [INF] ApplicationService: Found 15 mods after reconciliation
+2026-01-16 20:51:36.654 [DBG] ApplicationService: Matching mods with Forge API
+2026-01-16 20:51:36.662 [DBG] ModMatchingService: Matching mod: Gilded Key Storage (GUID: xyz.drakia.gildedkeystorage)
+2026-01-16 20:51:36.663 [DBG] ForgeApiService: Getting mod by GUID: xyz.drakia.gildedkeystorage
+2026-01-16 20:51:36.663 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=xyz.drakia.gildedkeystorage&include=versions,source_code_links
+2026-01-16 20:51:36.664 [DBG] ModMatchingService: Matching mod: UI Fixes (GUID: com.tyfon.uifixes)
+2026-01-16 20:51:36.664 [DBG] ForgeApiService: Getting mod by GUID: com.tyfon.uifixes
+2026-01-16 20:51:36.664 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=com.tyfon.uifixes&include=versions,source_code_links
+2026-01-16 20:51:36.665 [DBG] ModMatchingService: Matching mod: WTT-ServerCommonLib (GUID: com.wtt.commonlib)
+2026-01-16 20:51:36.665 [DBG] ForgeApiService: Getting mod by GUID: com.wtt.commonlib
+2026-01-16 20:51:36.665 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=com.wtt.commonlib&include=versions,source_code_links
+2026-01-16 20:51:36.665 [DBG] ModMatchingService: Matching mod: Bright Lasers (GUID: com.acidphantasm.brightlasers)
+2026-01-16 20:51:36.666 [DBG] ForgeApiService: Getting mod by GUID: com.acidphantasm.brightlasers
+2026-01-16 20:51:36.666 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=com.acidphantasm.brightlasers&include=versions,source_code_links
+2026-01-16 20:51:36.666 [DBG] ModMatchingService: Matching mod: Acid's Progressive Bot System (GUID: com.acidphantasm.progressivebotsystem)
+2026-01-16 20:51:36.666 [DBG] ForgeApiService: Getting mod by GUID: com.acidphantasm.progressivebotsystem
+2026-01-16 20:51:36.666 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=com.acidphantasm.progressivebotsystem&include=versions,source_code_links
+2026-01-16 20:51:36.666 [DBG] ModMatchingService: Matching mod: Croupier (GUID: com.turbodestroyer.croupier)
+2026-01-16 20:51:36.667 [DBG] ForgeApiService: Getting mod by GUID: com.turbodestroyer.croupier
+2026-01-16 20:51:36.667 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=com.turbodestroyer.croupier&include=versions,source_code_links
+2026-01-16 20:51:36.667 [DBG] ModMatchingService: Matching mod: StartCollectorEarly (GUID: com.mattdokn.startcollectorearly)
+2026-01-16 20:51:36.667 [DBG] ForgeApiService: Getting mod by GUID: com.mattdokn.startcollectorearly
+2026-01-16 20:51:36.667 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=com.mattdokn.startcollectorearly&include=versions,source_code_links
+2026-01-16 20:51:36.668 [DBG] ModMatchingService: Matching mod: Wolfiks Heavy Troopers (GUID: com.hood.wolfiksheavytroopers)
+2026-01-16 20:51:36.668 [DBG] ForgeApiService: Getting mod by GUID: com.hood.wolfiksheavytroopers
+2026-01-16 20:51:36.668 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=com.hood.wolfiksheavytroopers&include=versions,source_code_links
+2026-01-16 20:51:36.668 [DBG] ModMatchingService: Matching mod: Artem (GUID: com.crackbone.artem-wtt)
+2026-01-16 20:51:36.668 [DBG] ForgeApiService: Getting mod by GUID: com.crackbone.artem-wtt
+2026-01-16 20:51:36.669 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=com.crackbone.artem-wtt&include=versions,source_code_links
+2026-01-16 20:51:36.669 [DBG] ModMatchingService: Matching mod: DrakiaXYZ-BigBrain (GUID: xyz.drakia.bigbrain)
+2026-01-16 20:51:36.669 [DBG] ForgeApiService: Getting mod by GUID: xyz.drakia.bigbrain
+2026-01-16 20:51:36.669 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=xyz.drakia.bigbrain&include=versions,source_code_links
+2026-01-16 20:51:36.669 [DBG] ModMatchingService: Matching mod: Shadow Flicker Fix (GUID: com.pein.shadowflickerfix)
+2026-01-16 20:51:36.670 [DBG] ForgeApiService: Getting mod by GUID: com.pein.shadowflickerfix
+2026-01-16 20:51:36.670 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=com.pein.shadowflickerfix&include=versions,source_code_links
+2026-01-16 20:51:36.670 [DBG] ModMatchingService: Matching mod: Terkoiz.Skipper (GUID: com.terkoiz.skipper)
+2026-01-16 20:51:36.670 [DBG] ForgeApiService: Getting mod by GUID: com.terkoiz.skipper
+2026-01-16 20:51:36.670 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=com.terkoiz.skipper&include=versions,source_code_links
+2026-01-16 20:51:36.671 [DBG] ModMatchingService: Matching mod: Modding Stats Helper (GUID: com.moddingstatshelper.spt)
+2026-01-16 20:51:36.671 [DBG] ForgeApiService: Getting mod by GUID: com.moddingstatshelper.spt
+2026-01-16 20:51:36.671 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=com.moddingstatshelper.spt&include=versions,source_code_links
+2026-01-16 20:51:36.671 [DBG] ModMatchingService: Matching mod: DrakiaXYZ-Waypoints (GUID: xyz.drakia.waypoints)
+2026-01-16 20:51:36.672 [DBG] ForgeApiService: Getting mod by GUID: xyz.drakia.waypoints
+2026-01-16 20:51:36.672 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=xyz.drakia.waypoints&include=versions,source_code_links
+2026-01-16 20:51:36.672 [DBG] ModMatchingService: Matching mod: SAIN (GUID: me.sol.sain)
+2026-01-16 20:51:36.672 [DBG] ForgeApiService: Getting mod by GUID: me.sol.sain
+2026-01-16 20:51:36.672 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=me.sol.sain&include=versions,source_code_links
+2026-01-16 20:51:36.924 [DBG] ModMatchingService: Mod matched by GUID: Gilded Key Storage -> Gilded Key Storage
+2026-01-16 20:51:37.171 [DBG] ModMatchingService: Mod matched by GUID: UI Fixes -> UI Fixes
+2026-01-16 20:51:37.415 [DBG] ModMatchingService: Mod matched by GUID: WTT-ServerCommonLib -> WTT - CommonLib
+2026-01-16 20:51:37.659 [DBG] ModMatchingService: Mod matched by GUID: Bright Lasers -> BrightLasers
+2026-01-16 20:51:37.929 [DBG] ModMatchingService: Mod matched by GUID: Acid's Progressive Bot System -> APBS - Acid's Progressive Bot System
+2026-01-16 20:51:38.189 [DBG] ModMatchingService: Mod matched by GUID: Croupier -> Croupier - loadout generator + flea quicksell
+2026-01-16 20:51:38.425 [DBG] ModMatchingService: Mod matched by GUID: StartCollectorEarly -> Start Collector Early
+2026-01-16 20:51:38.681 [DBG] ModMatchingService: Mod matched by GUID: Wolfiks Heavy Troopers -> Wolfik's Heavy Trooper Masks - Reupload
+2026-01-16 20:51:38.980 [DBG] ModMatchingService: Mod matched by GUID: Artem -> WTT- Artem
+2026-01-16 20:51:39.225 [DBG] ModMatchingService: Mod matched by GUID: DrakiaXYZ-BigBrain -> BigBrain
+2026-01-16 20:51:39.480 [DBG] ModMatchingService: Mod matched by GUID: Shadow Flicker Fix -> Shadow Flicker Fix
+2026-01-16 20:51:39.705 [DBG] ModMatchingService: Mod matched by GUID: Terkoiz.Skipper -> Skipper
+2026-01-16 20:51:40.006 [DBG] ModMatchingService: Mod matched by GUID: Modding Stats Helper -> Modding Stats Helper - by wara
+2026-01-16 20:51:40.220 [DBG] ModMatchingService: Mod matched by GUID: DrakiaXYZ-Waypoints -> Waypoints - Expanded Navmesh
+2026-01-16 20:51:40.486 [DBG] ModMatchingService: Mod matched by GUID: SAIN -> SAIN - Solarint's AI Modifications - Full AI Combat System Replacement
+2026-01-16 20:51:40.490 [DBG] ApplicationService: Checking mod version compatibility
+2026-01-16 20:51:40.493 [DBG] ApplicationService: Enriching mods with version data
+2026-01-16 20:51:40.494 [DBG] ModEnrichmentService: Enriching mods with version data
+2026-01-16 20:51:40.495 [DBG] ModEnrichmentService: Enriching 15 unique mods
+2026-01-16 20:51:40.499 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/updates?mods=865:2.0.4,1342:5.2.0,2310:2.0.11,1358:2.0.0,1594:2.0.11,1971:2.0.4,1675:1.4.0,1569:1.1.0,1023:3.0.0,902:1.4.0,1621:1.5.2,1343:1.1.4,1300:1.0,827:1.8.1,791:4.3.1&spt_version=4.0.11
+2026-01-16 20:51:40.799 [DBG] ApplicationService: Checking mod dependencies
+2026-01-16 20:51:40.803 [DBG] ModDependencyService: Analyzing mod dependencies
+2026-01-16 20:51:40.803 [DBG] ModDependencyService: Analyzing dependencies for 15 matched mods
+2026-01-16 20:51:40.805 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=865:2.0.4
+2026-01-16 20:51:40.979 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=1342:5.2.0
+2026-01-16 20:51:41.229 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=2310:2.0.11
+2026-01-16 20:51:41.480 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=1358:2.0.0
+2026-01-16 20:51:41.729 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=1594:2.0.11
+2026-01-16 20:51:42.001 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=1971:2.0.4
+2026-01-16 20:51:42.247 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=1675:1.4.0
+2026-01-16 20:51:42.500 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=1569:1.1.0
+2026-01-16 20:51:42.747 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=1023:3.0.0
+2026-01-16 20:51:43.049 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=902:1.4.0
+2026-01-16 20:51:43.261 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=1621:1.5.2
+2026-01-16 20:51:43.528 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=1343:1.1.4
+2026-01-16 20:51:43.765 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=1300:1.0
+2026-01-16 20:51:44.030 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=827:1.8.1
+2026-01-16 20:51:44.285 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=791:4.3.1
+2026-01-16 20:51:44.563 [DBG] ModDependencyService: Dependency analysis complete. Conflicts: 0, Missing: 0
+2026-01-16 20:51:44.571 [DBG] ApplicationService: Displaying results
+2026-01-16 20:51:44.586 [INF] ApplicationService: Mod check workflow completed successfully
+2026-01-16 20:51:44.586 [INF] Program: CheckMods application completed successfully
+
+================================================================================
+  CheckMods Session Started: 2026-01-17 16:21:17
+================================================================================
+
+2026-01-17 16:21:17.161 [INF] Program: CheckMods application starting. Args: 
+2026-01-17 16:21:17.191 [INF] ApplicationService: Starting mod check workflow
+2026-01-17 16:21:17.230 [DBG] ApplicationService: Setting up API key
+2026-01-17 16:21:17.244 [DBG] ForgeApiService: Validating API key
+2026-01-17 16:21:17.244 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/auth/abilities
+2026-01-17 16:21:17.755 [DBG] ForgeApiService: API key validated successfully with read permission
+2026-01-17 16:21:17.757 [DBG] ForgeApiService: Setting API key for Forge API authentication
+2026-01-17 16:21:17.758 [DBG] ApplicationService: Validating SPT path
+2026-01-17 16:21:17.758 [INF] ApplicationService: Using SPT path: G:\SPT-AKI 4011
+2026-01-17 16:21:17.759 [DBG] ApplicationService: Validating SPT installation
+2026-01-17 16:21:17.760 [DBG] ServerModService: Validating SPT installation at: G:\SPT-AKI 4011
+2026-01-17 16:21:17.770 [DBG] ServerModService: Found local SPT version: 4.0.11
+2026-01-17 16:21:17.771 [DBG] ForgeApiService: Validating SPT version: 4.0.11
+2026-01-17 16:21:17.772 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/spt/versions?filter[spt_version]=4.0.11
+2026-01-17 16:21:17.938 [DBG] ForgeApiService: SPT version 4.0.11 validated successfully
+2026-01-17 16:21:17.941 [DBG] ServerModService: Checking for SPT updates. Current version: 4.0.11
+2026-01-17 16:21:17.942 [DBG] ForgeApiService: Fetching all SPT versions from Forge API
+2026-01-17 16:21:17.943 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/spt/versions?sort=-version&per_page=15
+2026-01-17 16:21:18.179 [DBG] ServerModService: Found 0 newer SPT versions
+2026-01-17 16:21:18.180 [INF] ApplicationService: SPT version validated: 4.0.11
+2026-01-17 16:21:18.181 [DBG] ApplicationService: Scanning and reconciling mods
+2026-01-17 16:21:18.183 [DBG] ModScannerService: Scanning server mods at: G:\SPT-AKI 4011
+2026-01-17 16:21:18.184 [DBG] ModScannerService: Found 9 mod directories
+2026-01-17 16:21:18.354 [INF] ModScannerService: Found 9 server mods
+2026-01-17 16:21:18.355 [DBG] ModScannerService: Scanning client mods at: G:\SPT-AKI 4011
+2026-01-17 16:21:18.456 [INF] ModScannerService: Found 10 client mods
+2026-01-17 16:21:18.459 [DBG] ForgeApiService: Getting mod by GUID: com.moddingstatshelper.spt
+2026-01-17 16:21:18.459 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=com.moddingstatshelper.spt&include=versions,source_code_links
+2026-01-17 16:21:18.645 [DBG] ModReconciliationService: Reconciling 9 server mods with 10 client mods
+2026-01-17 16:21:18.647 [DBG] ModReconciliationService: Reconciliation complete. Pairs: 3, Unmatched server: 6, Unmatched client: 7
+2026-01-17 16:21:18.648 [DBG] ForgeApiService: Getting mod by GUID: com.tyfon.uifixes
+2026-01-17 16:21:18.649 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=com.tyfon.uifixes&include=versions,source_code_links
+2026-01-17 16:21:18.906 [INF] ApplicationService: Found 16 mods after reconciliation
+2026-01-17 16:21:18.906 [DBG] ApplicationService: Matching mods with Forge API
+2026-01-17 16:21:18.915 [DBG] ModMatchingService: Matching mod: Gilded Key Storage (GUID: xyz.drakia.gildedkeystorage)
+2026-01-17 16:21:18.916 [DBG] ForgeApiService: Getting mod by GUID: xyz.drakia.gildedkeystorage
+2026-01-17 16:21:18.916 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=xyz.drakia.gildedkeystorage&include=versions,source_code_links
+2026-01-17 16:21:18.917 [DBG] ModMatchingService: Matching mod: UI Fixes (GUID: com.tyfon.uifixes)
+2026-01-17 16:21:18.917 [DBG] ForgeApiService: Getting mod by GUID: com.tyfon.uifixes
+2026-01-17 16:21:18.917 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=com.tyfon.uifixes&include=versions,source_code_links
+2026-01-17 16:21:18.918 [DBG] ModMatchingService: Matching mod: WTT-ServerCommonLib (GUID: com.wtt.commonlib)
+2026-01-17 16:21:18.918 [DBG] ForgeApiService: Getting mod by GUID: com.wtt.commonlib
+2026-01-17 16:21:18.918 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=com.wtt.commonlib&include=versions,source_code_links
+2026-01-17 16:21:18.919 [DBG] ModMatchingService: Matching mod: Bright Lasers (GUID: com.acidphantasm.brightlasers)
+2026-01-17 16:21:18.919 [DBG] ForgeApiService: Getting mod by GUID: com.acidphantasm.brightlasers
+2026-01-17 16:21:18.919 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=com.acidphantasm.brightlasers&include=versions,source_code_links
+2026-01-17 16:21:18.919 [DBG] ModMatchingService: Matching mod: Acid's Progressive Bot System (GUID: com.acidphantasm.progressivebotsystem)
+2026-01-17 16:21:18.919 [DBG] ForgeApiService: Getting mod by GUID: com.acidphantasm.progressivebotsystem
+2026-01-17 16:21:18.920 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=com.acidphantasm.progressivebotsystem&include=versions,source_code_links
+2026-01-17 16:21:18.920 [DBG] ModMatchingService: Matching mod: Croupier (GUID: com.turbodestroyer.croupier)
+2026-01-17 16:21:18.920 [DBG] ForgeApiService: Getting mod by GUID: com.turbodestroyer.croupier
+2026-01-17 16:21:18.920 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=com.turbodestroyer.croupier&include=versions,source_code_links
+2026-01-17 16:21:18.921 [DBG] ModMatchingService: Matching mod: StartCollectorEarly (GUID: com.mattdokn.startcollectorearly)
+2026-01-17 16:21:18.921 [DBG] ForgeApiService: Getting mod by GUID: com.mattdokn.startcollectorearly
+2026-01-17 16:21:18.921 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=com.mattdokn.startcollectorearly&include=versions,source_code_links
+2026-01-17 16:21:18.921 [DBG] ModMatchingService: Matching mod: Wolfiks Heavy Troopers (GUID: com.hood.wolfiksheavytroopers)
+2026-01-17 16:21:18.921 [DBG] ForgeApiService: Getting mod by GUID: com.hood.wolfiksheavytroopers
+2026-01-17 16:21:18.922 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=com.hood.wolfiksheavytroopers&include=versions,source_code_links
+2026-01-17 16:21:18.922 [DBG] ModMatchingService: Matching mod: Artem (GUID: com.crackbone.artem-wtt)
+2026-01-17 16:21:18.922 [DBG] ForgeApiService: Getting mod by GUID: com.crackbone.artem-wtt
+2026-01-17 16:21:18.922 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=com.crackbone.artem-wtt&include=versions,source_code_links
+2026-01-17 16:21:18.922 [DBG] ModMatchingService: Matching mod: DrakiaXYZ-BigBrain (GUID: xyz.drakia.bigbrain)
+2026-01-17 16:21:18.923 [DBG] ForgeApiService: Getting mod by GUID: xyz.drakia.bigbrain
+2026-01-17 16:21:18.923 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=xyz.drakia.bigbrain&include=versions,source_code_links
+2026-01-17 16:21:18.923 [DBG] ModMatchingService: Matching mod: Shadow Flicker Fix (GUID: com.pein.shadowflickerfix)
+2026-01-17 16:21:18.923 [DBG] ForgeApiService: Getting mod by GUID: com.pein.shadowflickerfix
+2026-01-17 16:21:18.923 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=com.pein.shadowflickerfix&include=versions,source_code_links
+2026-01-17 16:21:18.924 [DBG] ModMatchingService: Matching mod: Terkoiz.Skipper (GUID: com.terkoiz.skipper)
+2026-01-17 16:21:18.924 [DBG] ForgeApiService: Getting mod by GUID: com.terkoiz.skipper
+2026-01-17 16:21:18.924 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=com.terkoiz.skipper&include=versions,source_code_links
+2026-01-17 16:21:18.924 [DBG] ModMatchingService: Matching mod: Modding Stats Helper (GUID: com.moddingstatshelper.spt)
+2026-01-17 16:21:18.924 [DBG] ForgeApiService: Getting mod by GUID: com.moddingstatshelper.spt
+2026-01-17 16:21:18.925 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=com.moddingstatshelper.spt&include=versions,source_code_links
+2026-01-17 16:21:18.925 [DBG] ModMatchingService: Matching mod: DrakiaXYZ-Waypoints (GUID: xyz.drakia.waypoints)
+2026-01-17 16:21:18.925 [DBG] ForgeApiService: Getting mod by GUID: xyz.drakia.waypoints
+2026-01-17 16:21:18.925 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=xyz.drakia.waypoints&include=versions,source_code_links
+2026-01-17 16:21:18.925 [DBG] ModMatchingService: Matching mod: SAIN (GUID: me.sol.sain)
+2026-01-17 16:21:18.926 [DBG] ForgeApiService: Getting mod by GUID: me.sol.sain
+2026-01-17 16:21:18.926 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=me.sol.sain&include=versions,source_code_links
+2026-01-17 16:21:18.926 [DBG] ModMatchingService: Matching mod: Level Endurance and Strength (GUID: xyz.nekogaming.orion.tarkov.levelenduranceandstrength)
+2026-01-17 16:21:18.926 [DBG] ForgeApiService: Getting mod by GUID: xyz.nekogaming.orion.tarkov.levelenduranceandstrength
+2026-01-17 16:21:18.927 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=xyz.nekogaming.orion.tarkov.levelenduranceandstrength&include=versions,source_code_links
+2026-01-17 16:21:19.130 [DBG] ModMatchingService: Mod matched by GUID: Gilded Key Storage -> Gilded Key Storage
+2026-01-17 16:21:19.379 [DBG] ModMatchingService: Mod matched by GUID: UI Fixes -> UI Fixes
+2026-01-17 16:21:19.652 [DBG] ModMatchingService: Mod matched by GUID: WTT-ServerCommonLib -> WTT - CommonLib
+2026-01-17 16:21:19.867 [DBG] ModMatchingService: Mod matched by GUID: Bright Lasers -> BrightLasers
+2026-01-17 16:21:20.117 [DBG] ModMatchingService: Mod matched by GUID: Acid's Progressive Bot System -> APBS - Acid's Progressive Bot System
+2026-01-17 16:21:20.403 [DBG] ModMatchingService: Mod matched by GUID: Croupier -> Croupier - loadout generator + flea quicksell
+2026-01-17 16:21:20.617 [DBG] ModMatchingService: Mod matched by GUID: StartCollectorEarly -> Start Collector Early
+2026-01-17 16:21:20.874 [DBG] ModMatchingService: Mod matched by GUID: Wolfiks Heavy Troopers -> Wolfik's Heavy Trooper Masks - Reupload
+2026-01-17 16:21:21.139 [DBG] ModMatchingService: Mod matched by GUID: Artem -> WTT- Artem
+2026-01-17 16:21:21.365 [DBG] ModMatchingService: Mod matched by GUID: DrakiaXYZ-BigBrain -> BigBrain
+2026-01-17 16:21:21.609 [DBG] ModMatchingService: Mod matched by GUID: Shadow Flicker Fix -> Shadow Flicker Fix
+2026-01-17 16:21:21.901 [DBG] ModMatchingService: Mod matched by GUID: Terkoiz.Skipper -> Skipper
+2026-01-17 16:21:22.105 [DBG] ModMatchingService: Mod matched by GUID: Modding Stats Helper -> Modding Stats Helper - by wara
+2026-01-17 16:21:22.380 [DBG] ModMatchingService: Mod matched by GUID: DrakiaXYZ-Waypoints -> Waypoints - Expanded Navmesh
+2026-01-17 16:21:22.645 [DBG] ModMatchingService: Mod matched by GUID: SAIN -> SAIN - Solarint's AI Modifications - Full AI Combat System Replacement
+2026-01-17 16:21:22.883 [DBG] ModMatchingService: Mod matched by GUID: Level Endurance and Strength -> Level Endurance and Strength
+2026-01-17 16:21:22.886 [DBG] ApplicationService: Checking mod version compatibility
+2026-01-17 16:21:22.890 [DBG] ApplicationService: Enriching mods with version data
+2026-01-17 16:21:22.891 [DBG] ModEnrichmentService: Enriching mods with version data
+2026-01-17 16:21:22.892 [DBG] ModEnrichmentService: Enriching 16 unique mods
+2026-01-17 16:21:22.896 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/updates?mods=865:2.0.4,1342:5.2.0,2310:2.0.11,1358:2.0.0,1594:2.0.11,1971:2.0.4,1675:1.4.0,1569:1.1.0,1023:3.0.0,902:1.4.0,1621:1.5.2,1343:1.1.4,1300:1.0,827:1.8.1,791:4.3.1,2438:1.0.0&spt_version=4.0.11
+2026-01-17 16:21:23.180 [DBG] ApplicationService: Checking mod dependencies
+2026-01-17 16:21:23.184 [DBG] ModDependencyService: Analyzing mod dependencies
+2026-01-17 16:21:23.184 [DBG] ModDependencyService: Analyzing dependencies for 16 matched mods
+2026-01-17 16:21:23.186 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=865:2.0.4
+2026-01-17 16:21:23.336 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=1342:5.2.0
+2026-01-17 16:21:23.577 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=2310:2.0.11
+2026-01-17 16:21:23.844 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=1358:2.0.0
+2026-01-17 16:21:24.090 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=1594:2.0.11
+2026-01-17 16:21:24.332 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=1971:2.0.4
+2026-01-17 16:21:24.582 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=1675:1.4.0
+2026-01-17 16:21:24.858 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=1569:1.1.0
+2026-01-17 16:21:25.089 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=1023:3.0.0
+2026-01-17 16:21:25.336 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=902:1.4.0
+2026-01-17 16:21:25.583 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=1621:1.5.2
+2026-01-17 16:21:25.832 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=1343:1.1.4
+2026-01-17 16:21:26.087 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=1300:1.0
+2026-01-17 16:21:26.324 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=827:1.8.1
+2026-01-17 16:21:26.590 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=791:4.3.1
+2026-01-17 16:21:26.868 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=2438:1.0.0
+2026-01-17 16:21:27.090 [DBG] ModDependencyService: Dependency analysis complete. Conflicts: 0, Missing: 0
+2026-01-17 16:21:27.099 [DBG] ApplicationService: Displaying results
+2026-01-17 16:21:27.114 [INF] ApplicationService: Mod check workflow completed successfully
+2026-01-17 16:21:27.115 [INF] Program: CheckMods application completed successfully
+
+================================================================================
+  CheckMods Session Started: 2026-01-19 17:55:48
+================================================================================
+
+2026-01-19 17:55:48.141 [INF] Program: CheckMods application starting. Args: 
+2026-01-19 17:55:48.172 [INF] ApplicationService: Starting mod check workflow
+2026-01-19 17:55:48.208 [DBG] ApplicationService: Setting up API key
+2026-01-19 17:55:48.222 [DBG] ForgeApiService: Validating API key
+2026-01-19 17:55:48.223 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/auth/abilities
+2026-01-19 17:55:48.510 [DBG] ForgeApiService: API key validated successfully with read permission
+2026-01-19 17:55:48.511 [DBG] ForgeApiService: Setting API key for Forge API authentication
+2026-01-19 17:55:48.512 [DBG] ApplicationService: Validating SPT path
+2026-01-19 17:55:48.512 [INF] ApplicationService: Using SPT path: G:\SPT-AKI 4011
+2026-01-19 17:55:48.513 [DBG] ApplicationService: Validating SPT installation
+2026-01-19 17:55:48.513 [DBG] ServerModService: Validating SPT installation at: G:\SPT-AKI 4011
+2026-01-19 17:55:48.524 [DBG] ServerModService: Found local SPT version: 4.0.11
+2026-01-19 17:55:48.525 [DBG] ForgeApiService: Validating SPT version: 4.0.11
+2026-01-19 17:55:48.526 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/spt/versions?filter[spt_version]=4.0.11
+2026-01-19 17:55:48.674 [DBG] ForgeApiService: SPT version 4.0.11 validated successfully
+2026-01-19 17:55:48.677 [DBG] ServerModService: Checking for SPT updates. Current version: 4.0.11
+2026-01-19 17:55:48.678 [DBG] ForgeApiService: Fetching all SPT versions from Forge API
+2026-01-19 17:55:48.678 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/spt/versions?sort=-version&per_page=15
+2026-01-19 17:55:48.927 [DBG] ServerModService: Found 0 newer SPT versions
+2026-01-19 17:55:48.928 [INF] ApplicationService: SPT version validated: 4.0.11
+2026-01-19 17:55:48.928 [DBG] ApplicationService: Scanning and reconciling mods
+2026-01-19 17:55:48.930 [DBG] ModScannerService: Scanning server mods at: G:\SPT-AKI 4011
+2026-01-19 17:55:48.931 [DBG] ModScannerService: Found 10 mod directories
+2026-01-19 17:55:49.107 [INF] ModScannerService: Found 10 server mods
+2026-01-19 17:55:49.109 [DBG] ModScannerService: Scanning client mods at: G:\SPT-AKI 4011
+2026-01-19 17:55:49.195 [INF] ModScannerService: Found 11 client mods
+2026-01-19 17:55:49.197 [DBG] ForgeApiService: Getting mod by GUID: com.moddingstatshelper.spt
+2026-01-19 17:55:49.198 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=com.moddingstatshelper.spt&include=versions,source_code_links
+2026-01-19 17:55:49.379 [DBG] ModReconciliationService: Reconciling 10 server mods with 11 client mods
+2026-01-19 17:55:49.382 [DBG] ModReconciliationService: Reconciliation complete. Pairs: 3, Unmatched server: 7, Unmatched client: 8
+2026-01-19 17:55:49.382 [DBG] ForgeApiService: Getting mod by GUID: com.tyfon.uifixes
+2026-01-19 17:55:49.383 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=com.tyfon.uifixes&include=versions,source_code_links
+2026-01-19 17:55:49.664 [INF] ApplicationService: Found 18 mods after reconciliation
+2026-01-19 17:55:49.664 [DBG] ApplicationService: Matching mods with Forge API
+2026-01-19 17:55:49.673 [DBG] ModMatchingService: Matching mod: Gilded Key Storage (GUID: xyz.drakia.gildedkeystorage)
+2026-01-19 17:55:49.673 [DBG] ForgeApiService: Getting mod by GUID: xyz.drakia.gildedkeystorage
+2026-01-19 17:55:49.673 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=xyz.drakia.gildedkeystorage&include=versions,source_code_links
+2026-01-19 17:55:49.674 [DBG] ModMatchingService: Matching mod: UI Fixes (GUID: com.tyfon.uifixes)
+2026-01-19 17:55:49.675 [DBG] ForgeApiService: Getting mod by GUID: com.tyfon.uifixes
+2026-01-19 17:55:49.675 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=com.tyfon.uifixes&include=versions,source_code_links
+2026-01-19 17:55:49.676 [DBG] ModMatchingService: Matching mod: WTT-ServerCommonLib (GUID: com.wtt.commonlib)
+2026-01-19 17:55:49.676 [DBG] ForgeApiService: Getting mod by GUID: com.wtt.commonlib
+2026-01-19 17:55:49.676 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=com.wtt.commonlib&include=versions,source_code_links
+2026-01-19 17:55:49.676 [DBG] ModMatchingService: Matching mod: Bright Lasers (GUID: com.acidphantasm.brightlasers)
+2026-01-19 17:55:49.676 [DBG] ForgeApiService: Getting mod by GUID: com.acidphantasm.brightlasers
+2026-01-19 17:55:49.677 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=com.acidphantasm.brightlasers&include=versions,source_code_links
+2026-01-19 17:55:49.677 [DBG] ModMatchingService: Matching mod: Acid's Progressive Bot System (GUID: com.acidphantasm.progressivebotsystem)
+2026-01-19 17:55:49.677 [DBG] ForgeApiService: Getting mod by GUID: com.acidphantasm.progressivebotsystem
+2026-01-19 17:55:49.677 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=com.acidphantasm.progressivebotsystem&include=versions,source_code_links
+2026-01-19 17:55:49.677 [DBG] ModMatchingService: Matching mod: Croupier (GUID: com.turbodestroyer.croupier)
+2026-01-19 17:55:49.678 [DBG] ForgeApiService: Getting mod by GUID: com.turbodestroyer.croupier
+2026-01-19 17:55:49.678 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=com.turbodestroyer.croupier&include=versions,source_code_links
+2026-01-19 17:55:49.678 [DBG] ModMatchingService: Matching mod: StartCollectorEarly (GUID: com.mattdokn.startcollectorearly)
+2026-01-19 17:55:49.678 [DBG] ForgeApiService: Getting mod by GUID: com.mattdokn.startcollectorearly
+2026-01-19 17:55:49.678 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=com.mattdokn.startcollectorearly&include=versions,source_code_links
+2026-01-19 17:55:49.679 [DBG] ModMatchingService: Matching mod: Wolfiks Heavy Troopers (GUID: com.hood.wolfiksheavytroopers)
+2026-01-19 17:55:49.679 [DBG] ForgeApiService: Getting mod by GUID: com.hood.wolfiksheavytroopers
+2026-01-19 17:55:49.679 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=com.hood.wolfiksheavytroopers&include=versions,source_code_links
+2026-01-19 17:55:49.679 [DBG] ModMatchingService: Matching mod: Artem (GUID: com.crackbone.artem-wtt)
+2026-01-19 17:55:49.680 [DBG] ForgeApiService: Getting mod by GUID: com.crackbone.artem-wtt
+2026-01-19 17:55:49.680 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=com.crackbone.artem-wtt&include=versions,source_code_links
+2026-01-19 17:55:49.680 [DBG] ModMatchingService: Matching mod: SVM (GUID: fika.ghostfenixx.svm)
+2026-01-19 17:55:49.680 [DBG] ForgeApiService: Getting mod by GUID: fika.ghostfenixx.svm
+2026-01-19 17:55:49.680 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=fika.ghostfenixx.svm&include=versions,source_code_links
+2026-01-19 17:55:49.681 [DBG] ModMatchingService: Matching mod: DrakiaXYZ-BigBrain (GUID: xyz.drakia.bigbrain)
+2026-01-19 17:55:49.681 [DBG] ForgeApiService: Getting mod by GUID: xyz.drakia.bigbrain
+2026-01-19 17:55:49.681 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=xyz.drakia.bigbrain&include=versions,source_code_links
+2026-01-19 17:55:49.681 [DBG] ModMatchingService: Matching mod: EOTechFix-matsix (GUID: com.matsix.eotechfix)
+2026-01-19 17:55:49.681 [DBG] ForgeApiService: Getting mod by GUID: com.matsix.eotechfix
+2026-01-19 17:55:49.682 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=com.matsix.eotechfix&include=versions,source_code_links
+2026-01-19 17:55:49.682 [DBG] ModMatchingService: Matching mod: Shadow Flicker Fix (GUID: com.pein.shadowflickerfix)
+2026-01-19 17:55:49.682 [DBG] ForgeApiService: Getting mod by GUID: com.pein.shadowflickerfix
+2026-01-19 17:55:49.682 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=com.pein.shadowflickerfix&include=versions,source_code_links
+2026-01-19 17:55:49.682 [DBG] ModMatchingService: Matching mod: Terkoiz.Skipper (GUID: com.terkoiz.skipper)
+2026-01-19 17:55:49.683 [DBG] ForgeApiService: Getting mod by GUID: com.terkoiz.skipper
+2026-01-19 17:55:49.683 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=com.terkoiz.skipper&include=versions,source_code_links
+2026-01-19 17:55:49.683 [DBG] ModMatchingService: Matching mod: Modding Stats Helper (GUID: com.moddingstatshelper.spt)
+2026-01-19 17:55:49.683 [DBG] ForgeApiService: Getting mod by GUID: com.moddingstatshelper.spt
+2026-01-19 17:55:49.683 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=com.moddingstatshelper.spt&include=versions,source_code_links
+2026-01-19 17:55:49.684 [DBG] ModMatchingService: Matching mod: DrakiaXYZ-Waypoints (GUID: xyz.drakia.waypoints)
+2026-01-19 17:55:49.684 [DBG] ForgeApiService: Getting mod by GUID: xyz.drakia.waypoints
+2026-01-19 17:55:49.684 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=xyz.drakia.waypoints&include=versions,source_code_links
+2026-01-19 17:55:49.684 [DBG] ModMatchingService: Matching mod: SAIN (GUID: me.sol.sain)
+2026-01-19 17:55:49.684 [DBG] ForgeApiService: Getting mod by GUID: me.sol.sain
+2026-01-19 17:55:49.685 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=me.sol.sain&include=versions,source_code_links
+2026-01-19 17:55:49.685 [DBG] ModMatchingService: Matching mod: Level Endurance and Strength (GUID: xyz.nekogaming.orion.tarkov.levelenduranceandstrength)
+2026-01-19 17:55:49.685 [DBG] ForgeApiService: Getting mod by GUID: xyz.nekogaming.orion.tarkov.levelenduranceandstrength
+2026-01-19 17:55:49.685 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=xyz.nekogaming.orion.tarkov.levelenduranceandstrength&include=versions,source_code_links
+2026-01-19 17:55:49.906 [DBG] ModMatchingService: Mod matched by GUID: Gilded Key Storage -> Gilded Key Storage
+2026-01-19 17:55:50.183 [DBG] ModMatchingService: Mod matched by GUID: UI Fixes -> UI Fixes
+2026-01-19 17:55:50.408 [DBG] ModMatchingService: Mod matched by GUID: WTT-ServerCommonLib -> WTT - CommonLib
+2026-01-19 17:55:50.661 [DBG] ModMatchingService: Mod matched by GUID: Bright Lasers -> BrightLasers
+2026-01-19 17:55:50.935 [DBG] ModMatchingService: Mod matched by GUID: Acid's Progressive Bot System -> APBS - Acid's Progressive Bot System
+2026-01-19 17:55:51.205 [DBG] ModMatchingService: Mod matched by GUID: Croupier -> Croupier - loadout generator + flea quicksell
+2026-01-19 17:55:51.440 [DBG] ModMatchingService: Mod matched by GUID: StartCollectorEarly -> Start Collector Early
+2026-01-19 17:55:51.676 [DBG] ModMatchingService: Mod matched by GUID: Wolfiks Heavy Troopers -> Wolfik's Heavy Trooper Masks - Reupload
+2026-01-19 17:55:51.944 [DBG] ModMatchingService: Mod matched by GUID: Artem -> WTT- Artem
+2026-01-19 17:55:52.240 [DBG] ModMatchingService: Mod matched by GUID: SVM -> Server Value Modifier [SVM]
+2026-01-19 17:55:52.432 [DBG] ModMatchingService: Mod matched by GUID: DrakiaXYZ-BigBrain -> BigBrain
+2026-01-19 17:55:52.712 [DBG] ModMatchingService: Mod matched by GUID: EOTechFix-matsix -> EOTech Fix
+2026-01-19 17:55:52.976 [DBG] ModMatchingService: Mod matched by GUID: Shadow Flicker Fix -> Shadow Flicker Fix
+2026-01-19 17:55:53.277 [DBG] ModMatchingService: Mod matched by GUID: Terkoiz.Skipper -> Skipper
+2026-01-19 17:55:53.512 [DBG] ModMatchingService: Mod matched by GUID: Modding Stats Helper -> Modding Stats Helper - by wara
+2026-01-19 17:55:53.726 [DBG] ModMatchingService: Mod matched by GUID: DrakiaXYZ-Waypoints -> Waypoints - Expanded Navmesh
+2026-01-19 17:55:54.025 [DBG] ModMatchingService: Mod matched by GUID: SAIN -> SAIN - Solarint's AI Modifications - Full AI Combat System Replacement
+2026-01-19 17:55:54.248 [DBG] ModMatchingService: Mod matched by GUID: Level Endurance and Strength -> Level Endurance and Strength
+2026-01-19 17:55:54.251 [DBG] ApplicationService: Checking mod version compatibility
+2026-01-19 17:55:54.254 [DBG] ApplicationService: Enriching mods with version data
+2026-01-19 17:55:54.255 [DBG] ModEnrichmentService: Enriching mods with version data
+2026-01-19 17:55:54.257 [DBG] ModEnrichmentService: Enriching 18 unique mods
+2026-01-19 17:55:54.261 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/updates?mods=865:2.0.4,1342:5.2.0,2310:2.0.11,1358:2.0.0,1594:2.0.11,1971:2.0.4,1675:1.4.0,1569:1.1.0,1023:3.0.0,236:2.0.2,902:1.4.0,2502:1.0.2,1621:1.5.2,1343:1.1.4,1300:1.0,827:1.8.1,791:4.3.1,2438:1.0.0&spt_version=4.0.11
+2026-01-19 17:55:54.582 [DBG] ApplicationService: Checking mod dependencies
+2026-01-19 17:55:54.586 [DBG] ModDependencyService: Analyzing mod dependencies
+2026-01-19 17:55:54.587 [DBG] ModDependencyService: Analyzing dependencies for 18 matched mods
+2026-01-19 17:55:54.589 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=865:2.0.4
+2026-01-19 17:55:54.748 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=1342:5.2.0
+2026-01-19 17:55:54.991 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=2310:2.0.11
+2026-01-19 17:55:55.242 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=1358:2.0.0
+2026-01-19 17:55:55.492 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=1594:2.0.11
+2026-01-19 17:55:55.753 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=1971:2.0.4
+2026-01-19 17:55:56.019 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=1675:1.4.0
+2026-01-19 17:55:56.263 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=1569:1.1.0
+2026-01-19 17:55:56.524 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=1023:3.0.0
+2026-01-19 17:55:56.777 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=236:2.0.2
+2026-01-19 17:55:57.025 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=902:1.4.0
+2026-01-19 17:55:57.286 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=2502:1.0.2
+2026-01-19 17:55:57.548 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=1621:1.5.2
+2026-01-19 17:55:57.797 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=1343:1.1.4
+2026-01-19 17:55:58.066 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=1300:1.0
+2026-01-19 17:55:58.304 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=827:1.8.1
+2026-01-19 17:55:58.565 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=791:4.3.1
+2026-01-19 17:55:58.845 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=2438:1.0.0
+2026-01-19 17:55:59.093 [DBG] ModDependencyService: Dependency analysis complete. Conflicts: 0, Missing: 0
+2026-01-19 17:55:59.101 [DBG] ApplicationService: Displaying results
+2026-01-19 17:55:59.118 [INF] ApplicationService: Mod check workflow completed successfully
+2026-01-19 17:55:59.119 [INF] Program: CheckMods application completed successfully
+
+================================================================================
+  CheckMods Session Started: 2026-01-20 19:36:07
+================================================================================
+
+2026-01-20 19:36:07.263 [INF] Program: CheckMods application starting. Args: 
+2026-01-20 19:36:07.294 [INF] ApplicationService: Starting mod check workflow
+2026-01-20 19:36:07.329 [DBG] ApplicationService: Setting up API key
+2026-01-20 19:36:07.343 [DBG] ForgeApiService: Validating API key
+2026-01-20 19:36:07.344 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/auth/abilities
+2026-01-20 19:36:07.915 [DBG] ForgeApiService: API key validated successfully with read permission
+2026-01-20 19:36:07.917 [DBG] ForgeApiService: Setting API key for Forge API authentication
+2026-01-20 19:36:07.917 [DBG] ApplicationService: Validating SPT path
+2026-01-20 19:36:07.918 [INF] ApplicationService: Using SPT path: G:\SPT-AKI 4011
+2026-01-20 19:36:07.918 [DBG] ApplicationService: Validating SPT installation
+2026-01-20 19:36:07.919 [DBG] ServerModService: Validating SPT installation at: G:\SPT-AKI 4011
+2026-01-20 19:36:08.036 [DBG] ServerModService: Found local SPT version: 4.0.11
+2026-01-20 19:36:08.037 [DBG] ForgeApiService: Validating SPT version: 4.0.11
+2026-01-20 19:36:08.038 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/spt/versions?filter[spt_version]=4.0.11
+2026-01-20 19:36:08.354 [DBG] ForgeApiService: SPT version 4.0.11 validated successfully
+2026-01-20 19:36:08.358 [DBG] ServerModService: Checking for SPT updates. Current version: 4.0.11
+2026-01-20 19:36:08.359 [DBG] ForgeApiService: Fetching all SPT versions from Forge API
+2026-01-20 19:36:08.359 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/spt/versions?sort=-version&per_page=15
+2026-01-20 19:36:08.600 [DBG] ServerModService: Found 0 newer SPT versions
+2026-01-20 19:36:08.601 [INF] ApplicationService: SPT version validated: 4.0.11
+2026-01-20 19:36:08.601 [DBG] ApplicationService: Scanning and reconciling mods
+2026-01-20 19:36:08.603 [DBG] ModScannerService: Scanning server mods at: G:\SPT-AKI 4011
+2026-01-20 19:36:08.612 [DBG] ModScannerService: Found 11 mod directories
+2026-01-20 19:36:10.118 [INF] ModScannerService: Found 11 server mods
+2026-01-20 19:36:10.120 [DBG] ModScannerService: Scanning client mods at: G:\SPT-AKI 4011
+2026-01-20 19:36:11.428 [INF] ModScannerService: Found 12 client mods
+2026-01-20 19:36:11.431 [DBG] ForgeApiService: Getting mod by GUID: com.moddingstatshelper.spt
+2026-01-20 19:36:11.431 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=com.moddingstatshelper.spt&include=versions,source_code_links
+2026-01-20 19:36:11.723 [DBG] ModReconciliationService: Reconciling 11 server mods with 12 client mods
+2026-01-20 19:36:11.725 [DBG] ModReconciliationService: Reconciliation complete. Pairs: 4, Unmatched server: 7, Unmatched client: 8
+2026-01-20 19:36:11.725 [DBG] ForgeApiService: Getting mod by GUID: com.tyfon.uifixes
+2026-01-20 19:36:11.726 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=com.tyfon.uifixes&include=versions,source_code_links
+2026-01-20 19:36:12.716 [INF] ApplicationService: Found 19 mods after reconciliation
+2026-01-20 19:36:12.716 [DBG] ApplicationService: Matching mods with Forge API
+2026-01-20 19:36:12.725 [DBG] ModMatchingService: Matching mod: Gilded Key Storage (GUID: xyz.drakia.gildedkeystorage)
+2026-01-20 19:36:12.726 [DBG] ForgeApiService: Getting mod by GUID: xyz.drakia.gildedkeystorage
+2026-01-20 19:36:12.726 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=xyz.drakia.gildedkeystorage&include=versions,source_code_links
+2026-01-20 19:36:12.727 [DBG] ModMatchingService: Matching mod: UI Fixes (GUID: com.tyfon.uifixes)
+2026-01-20 19:36:12.727 [DBG] ForgeApiService: Getting mod by GUID: com.tyfon.uifixes
+2026-01-20 19:36:12.727 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=com.tyfon.uifixes&include=versions,source_code_links
+2026-01-20 19:36:12.728 [DBG] ModMatchingService: Matching mod: Acid's Bot Placement System (GUID: com.acidphantasm.botplacementsystem)
+2026-01-20 19:36:12.728 [DBG] ForgeApiService: Getting mod by GUID: com.acidphantasm.botplacementsystem
+2026-01-20 19:36:12.728 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=com.acidphantasm.botplacementsystem&include=versions,source_code_links
+2026-01-20 19:36:12.729 [DBG] ModMatchingService: Matching mod: WTT-ServerCommonLib (GUID: com.wtt.commonlib)
+2026-01-20 19:36:12.729 [DBG] ForgeApiService: Getting mod by GUID: com.wtt.commonlib
+2026-01-20 19:36:12.730 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=com.wtt.commonlib&include=versions,source_code_links
+2026-01-20 19:36:12.730 [DBG] ModMatchingService: Matching mod: Bright Lasers (GUID: com.acidphantasm.brightlasers)
+2026-01-20 19:36:12.730 [DBG] ForgeApiService: Getting mod by GUID: com.acidphantasm.brightlasers
+2026-01-20 19:36:12.730 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=com.acidphantasm.brightlasers&include=versions,source_code_links
+2026-01-20 19:36:12.730 [DBG] ModMatchingService: Matching mod: Acid's Progressive Bot System (GUID: com.acidphantasm.progressivebotsystem)
+2026-01-20 19:36:12.731 [DBG] ForgeApiService: Getting mod by GUID: com.acidphantasm.progressivebotsystem
+2026-01-20 19:36:12.731 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=com.acidphantasm.progressivebotsystem&include=versions,source_code_links
+2026-01-20 19:36:12.731 [DBG] ModMatchingService: Matching mod: Croupier (GUID: com.turbodestroyer.croupier)
+2026-01-20 19:36:12.731 [DBG] ForgeApiService: Getting mod by GUID: com.turbodestroyer.croupier
+2026-01-20 19:36:12.731 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=com.turbodestroyer.croupier&include=versions,source_code_links
+2026-01-20 19:36:12.732 [DBG] ModMatchingService: Matching mod: StartCollectorEarly (GUID: com.mattdokn.startcollectorearly)
+2026-01-20 19:36:12.732 [DBG] ForgeApiService: Getting mod by GUID: com.mattdokn.startcollectorearly
+2026-01-20 19:36:12.732 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=com.mattdokn.startcollectorearly&include=versions,source_code_links
+2026-01-20 19:36:12.732 [DBG] ModMatchingService: Matching mod: Wolfiks Heavy Troopers (GUID: com.hood.wolfiksheavytroopers)
+2026-01-20 19:36:12.732 [DBG] ForgeApiService: Getting mod by GUID: com.hood.wolfiksheavytroopers
+2026-01-20 19:36:12.733 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=com.hood.wolfiksheavytroopers&include=versions,source_code_links
+2026-01-20 19:36:12.733 [DBG] ModMatchingService: Matching mod: Artem (GUID: com.crackbone.artem-wtt)
+2026-01-20 19:36:12.733 [DBG] ForgeApiService: Getting mod by GUID: com.crackbone.artem-wtt
+2026-01-20 19:36:12.733 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=com.crackbone.artem-wtt&include=versions,source_code_links
+2026-01-20 19:36:12.733 [DBG] ModMatchingService: Matching mod: SVM (GUID: fika.ghostfenixx.svm)
+2026-01-20 19:36:12.734 [DBG] ForgeApiService: Getting mod by GUID: fika.ghostfenixx.svm
+2026-01-20 19:36:12.734 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=fika.ghostfenixx.svm&include=versions,source_code_links
+2026-01-20 19:36:12.734 [DBG] ModMatchingService: Matching mod: DrakiaXYZ-BigBrain (GUID: xyz.drakia.bigbrain)
+2026-01-20 19:36:12.734 [DBG] ForgeApiService: Getting mod by GUID: xyz.drakia.bigbrain
+2026-01-20 19:36:12.734 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=xyz.drakia.bigbrain&include=versions,source_code_links
+2026-01-20 19:36:12.735 [DBG] ModMatchingService: Matching mod: EOTechFix-matsix (GUID: com.matsix.eotechfix)
+2026-01-20 19:36:12.735 [DBG] ForgeApiService: Getting mod by GUID: com.matsix.eotechfix
+2026-01-20 19:36:12.735 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=com.matsix.eotechfix&include=versions,source_code_links
+2026-01-20 19:36:12.735 [DBG] ModMatchingService: Matching mod: Shadow Flicker Fix (GUID: com.pein.shadowflickerfix)
+2026-01-20 19:36:12.735 [DBG] ForgeApiService: Getting mod by GUID: com.pein.shadowflickerfix
+2026-01-20 19:36:12.736 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=com.pein.shadowflickerfix&include=versions,source_code_links
+2026-01-20 19:36:12.736 [DBG] ModMatchingService: Matching mod: Terkoiz.Skipper (GUID: com.terkoiz.skipper)
+2026-01-20 19:36:12.736 [DBG] ForgeApiService: Getting mod by GUID: com.terkoiz.skipper
+2026-01-20 19:36:12.736 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=com.terkoiz.skipper&include=versions,source_code_links
+2026-01-20 19:36:12.736 [DBG] ModMatchingService: Matching mod: Modding Stats Helper (GUID: com.moddingstatshelper.spt)
+2026-01-20 19:36:12.737 [DBG] ForgeApiService: Getting mod by GUID: com.moddingstatshelper.spt
+2026-01-20 19:36:12.737 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=com.moddingstatshelper.spt&include=versions,source_code_links
+2026-01-20 19:36:12.737 [DBG] ModMatchingService: Matching mod: DrakiaXYZ-Waypoints (GUID: xyz.drakia.waypoints)
+2026-01-20 19:36:12.737 [DBG] ForgeApiService: Getting mod by GUID: xyz.drakia.waypoints
+2026-01-20 19:36:12.737 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=xyz.drakia.waypoints&include=versions,source_code_links
+2026-01-20 19:36:12.738 [DBG] ModMatchingService: Matching mod: SAIN (GUID: me.sol.sain)
+2026-01-20 19:36:12.738 [DBG] ForgeApiService: Getting mod by GUID: me.sol.sain
+2026-01-20 19:36:12.738 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=me.sol.sain&include=versions,source_code_links
+2026-01-20 19:36:12.738 [DBG] ModMatchingService: Matching mod: Level Endurance and Strength (GUID: xyz.nekogaming.orion.tarkov.levelenduranceandstrength)
+2026-01-20 19:36:12.738 [DBG] ForgeApiService: Getting mod by GUID: xyz.nekogaming.orion.tarkov.levelenduranceandstrength
+2026-01-20 19:36:12.738 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=xyz.nekogaming.orion.tarkov.levelenduranceandstrength&include=versions,source_code_links
+2026-01-20 19:36:13.903 [DBG] ModMatchingService: Mod matched by GUID: WTT-ServerCommonLib -> WTT - CommonLib
+2026-01-20 19:36:13.908 [DBG] ModMatchingService: Mod matched by GUID: Bright Lasers -> BrightLasers
+2026-01-20 19:36:14.168 [DBG] ModMatchingService: Mod matched by GUID: Acid's Progressive Bot System -> APBS - Acid's Progressive Bot System
+2026-01-20 19:36:14.434 [DBG] ModMatchingService: Mod matched by GUID: Croupier -> Croupier - loadout generator + flea quicksell
+2026-01-20 19:36:14.644 [DBG] ModMatchingService: Mod matched by GUID: StartCollectorEarly -> Start Collector Early
+2026-01-20 19:36:14.885 [DBG] ModMatchingService: Mod matched by GUID: Wolfiks Heavy Troopers -> Wolfik's Heavy Trooper Masks - Reupload
+2026-01-20 19:36:15.022 [DBG] ModMatchingService: Mod matched by GUID: Gilded Key Storage -> Gilded Key Storage
+2026-01-20 19:36:15.157 [DBG] ModMatchingService: Mod matched by GUID: Artem -> WTT- Artem
+2026-01-20 19:36:15.217 [DBG] ModMatchingService: Mod matched by GUID: Acid's Bot Placement System -> ABPS - Acid's Bot Placement System
+2026-01-20 19:36:15.554 [DBG] ModMatchingService: Mod matched by GUID: SVM -> Server Value Modifier [SVM]
+2026-01-20 19:36:15.680 [DBG] ModMatchingService: Mod matched by GUID: DrakiaXYZ-BigBrain -> BigBrain
+2026-01-20 19:36:15.885 [DBG] ModMatchingService: Mod matched by GUID: EOTechFix-matsix -> EOTech Fix
+2026-01-20 19:36:16.257 [DBG] ModMatchingService: Mod matched by GUID: UI Fixes -> UI Fixes
+2026-01-20 19:36:16.578 [DBG] ModMatchingService: Mod matched by GUID: Shadow Flicker Fix -> Shadow Flicker Fix
+2026-01-20 19:36:16.645 [DBG] ModMatchingService: Mod matched by GUID: Terkoiz.Skipper -> Skipper
+2026-01-20 19:36:16.764 [DBG] ModMatchingService: Mod matched by GUID: Modding Stats Helper -> Modding Stats Helper - by wara
+2026-01-20 19:36:17.024 [DBG] ModMatchingService: Mod matched by GUID: DrakiaXYZ-Waypoints -> Waypoints - Expanded Navmesh
+2026-01-20 19:36:17.170 [DBG] ModMatchingService: Mod matched by GUID: SAIN -> SAIN - Solarint's AI Modifications - Full AI Combat System Replacement
+2026-01-20 19:36:17.551 [DBG] ModMatchingService: Mod matched by GUID: Level Endurance and Strength -> Level Endurance and Strength
+2026-01-20 19:36:17.555 [DBG] ApplicationService: Checking mod version compatibility
+2026-01-20 19:36:17.558 [DBG] ApplicationService: Enriching mods with version data
+2026-01-20 19:36:17.559 [DBG] ModEnrichmentService: Enriching mods with version data
+2026-01-20 19:36:17.560 [DBG] ModEnrichmentService: Enriching 19 unique mods
+2026-01-20 19:36:17.565 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/updates?mods=865:2.0.4,1342:5.3.0,2097:2.0.11,2310:2.0.11,1358:2.0.0,1594:2.0.11,1971:2.0.4,1675:1.4.0,1569:1.1.0,1023:3.0.0,236:2.0.2,902:1.4.0,2502:1.0.2,1621:1.5.2,1343:1.1.4,1300:1.0,827:1.8.1,791:4.3.1,2438:1.0.0&spt_version=4.0.11
+2026-01-20 19:36:17.864 [DBG] ApplicationService: Checking mod dependencies
+2026-01-20 19:36:17.867 [DBG] ModDependencyService: Analyzing mod dependencies
+2026-01-20 19:36:17.868 [DBG] ModDependencyService: Analyzing dependencies for 19 matched mods
+2026-01-20 19:36:17.869 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=865:2.0.4
+2026-01-20 19:36:19.789 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=1342:5.3.0
+2026-01-20 19:36:19.939 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=2097:2.0.11
+2026-01-20 19:36:20.365 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=2310:2.0.11
+2026-01-20 19:36:20.500 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=1358:2.0.0
+2026-01-20 19:36:20.965 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=1594:2.0.11
+2026-01-20 19:36:21.116 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=1971:2.0.4
+2026-01-20 19:36:21.601 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=1675:1.4.0
+2026-01-20 19:36:21.748 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=1569:1.1.0
+2026-01-20 19:36:22.130 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=1023:3.0.0
+2026-01-20 19:36:22.291 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=236:2.0.2
+2026-01-20 19:36:22.620 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=902:1.4.0
+2026-01-20 19:36:22.757 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=2502:1.0.2
+2026-01-20 19:36:23.793 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=1621:1.5.2
+2026-01-20 19:36:23.955 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=1343:1.1.4
+2026-01-20 19:36:24.328 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=1300:1.0
+2026-01-20 19:36:24.470 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=827:1.8.1
+2026-01-20 19:36:24.842 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=791:4.3.1
+2026-01-20 19:36:25.009 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=2438:1.0.0
+2026-01-20 19:36:25.349 [DBG] ModDependencyService: Dependency analysis complete. Conflicts: 0, Missing: 0
+2026-01-20 19:36:25.359 [DBG] ApplicationService: Displaying results
+2026-01-20 19:36:25.376 [INF] ApplicationService: Mod check workflow completed successfully
+2026-01-20 19:36:25.377 [INF] Program: CheckMods application completed successfully
+
+================================================================================
+  CheckMods Session Started: 2026-01-22 16:10:46
+================================================================================
+
+2026-01-22 16:10:46.988 [INF] Program: CheckMods application starting. Args: 
+2026-01-22 16:10:47.017 [INF] ApplicationService: Starting mod check workflow
+2026-01-22 16:10:47.053 [DBG] ApplicationService: Setting up API key
+2026-01-22 16:10:47.068 [DBG] ForgeApiService: Validating API key
+2026-01-22 16:10:47.068 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/auth/abilities
+2026-01-22 16:10:47.601 [DBG] ForgeApiService: API key validated successfully with read permission
+2026-01-22 16:10:47.602 [DBG] ForgeApiService: Setting API key for Forge API authentication
+2026-01-22 16:10:47.603 [DBG] ApplicationService: Validating SPT path
+2026-01-22 16:10:47.604 [INF] ApplicationService: Using SPT path: G:\SPT-AKI 4011
+2026-01-22 16:10:47.604 [DBG] ApplicationService: Validating SPT installation
+2026-01-22 16:10:47.605 [DBG] ServerModService: Validating SPT installation at: G:\SPT-AKI 4011
+2026-01-22 16:10:47.695 [DBG] ServerModService: Found local SPT version: 4.0.11
+2026-01-22 16:10:47.696 [DBG] ForgeApiService: Validating SPT version: 4.0.11
+2026-01-22 16:10:47.696 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/spt/versions?filter[spt_version]=4.0.11
+2026-01-22 16:10:47.841 [DBG] ForgeApiService: SPT version 4.0.11 validated successfully
+2026-01-22 16:10:47.845 [DBG] ServerModService: Checking for SPT updates. Current version: 4.0.11
+2026-01-22 16:10:47.846 [DBG] ForgeApiService: Fetching all SPT versions from Forge API
+2026-01-22 16:10:47.846 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/spt/versions?sort=-version&per_page=15
+2026-01-22 16:10:48.112 [DBG] ServerModService: Found 0 newer SPT versions
+2026-01-22 16:10:48.113 [INF] ApplicationService: SPT version validated: 4.0.11
+2026-01-22 16:10:48.113 [DBG] ApplicationService: Scanning and reconciling mods
+2026-01-22 16:10:48.115 [DBG] ModScannerService: Scanning server mods at: G:\SPT-AKI 4011
+2026-01-22 16:10:48.116 [DBG] ModScannerService: Found 11 mod directories
+2026-01-22 16:10:49.597 [INF] ModScannerService: Found 11 server mods
+2026-01-22 16:10:49.598 [DBG] ModScannerService: Scanning client mods at: G:\SPT-AKI 4011
+2026-01-22 16:10:50.801 [INF] ModScannerService: Found 12 client mods
+2026-01-22 16:10:50.804 [DBG] ForgeApiService: Getting mod by GUID: com.moddingstatshelper.spt
+2026-01-22 16:10:50.804 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=com.moddingstatshelper.spt&include=versions,source_code_links
+2026-01-22 16:10:50.982 [DBG] ModReconciliationService: Reconciling 11 server mods with 12 client mods
+2026-01-22 16:10:50.984 [DBG] ModReconciliationService: Reconciliation complete. Pairs: 4, Unmatched server: 7, Unmatched client: 8
+2026-01-22 16:10:50.985 [DBG] ForgeApiService: Getting mod by GUID: com.tyfon.uifixes
+2026-01-22 16:10:50.985 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=com.tyfon.uifixes&include=versions,source_code_links
+2026-01-22 16:10:51.239 [INF] ApplicationService: Found 19 mods after reconciliation
+2026-01-22 16:10:51.239 [DBG] ApplicationService: Matching mods with Forge API
+2026-01-22 16:10:51.249 [DBG] ModMatchingService: Matching mod: Gilded Key Storage (GUID: xyz.drakia.gildedkeystorage)
+2026-01-22 16:10:51.249 [DBG] ForgeApiService: Getting mod by GUID: xyz.drakia.gildedkeystorage
+2026-01-22 16:10:51.249 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=xyz.drakia.gildedkeystorage&include=versions,source_code_links
+2026-01-22 16:10:51.250 [DBG] ModMatchingService: Matching mod: UI Fixes (GUID: com.tyfon.uifixes)
+2026-01-22 16:10:51.251 [DBG] ForgeApiService: Getting mod by GUID: com.tyfon.uifixes
+2026-01-22 16:10:51.251 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=com.tyfon.uifixes&include=versions,source_code_links
+2026-01-22 16:10:51.251 [DBG] ModMatchingService: Matching mod: Acid's Bot Placement System (GUID: com.acidphantasm.botplacementsystem)
+2026-01-22 16:10:51.252 [DBG] ForgeApiService: Getting mod by GUID: com.acidphantasm.botplacementsystem
+2026-01-22 16:10:51.252 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=com.acidphantasm.botplacementsystem&include=versions,source_code_links
+2026-01-22 16:10:51.252 [DBG] ModMatchingService: Matching mod: WTT-ServerCommonLib (GUID: com.wtt.commonlib)
+2026-01-22 16:10:51.252 [DBG] ForgeApiService: Getting mod by GUID: com.wtt.commonlib
+2026-01-22 16:10:51.253 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=com.wtt.commonlib&include=versions,source_code_links
+2026-01-22 16:10:51.253 [DBG] ModMatchingService: Matching mod: Bright Lasers (GUID: com.acidphantasm.brightlasers)
+2026-01-22 16:10:51.253 [DBG] ForgeApiService: Getting mod by GUID: com.acidphantasm.brightlasers
+2026-01-22 16:10:51.253 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=com.acidphantasm.brightlasers&include=versions,source_code_links
+2026-01-22 16:10:51.253 [DBG] ModMatchingService: Matching mod: Acid's Progressive Bot System (GUID: com.acidphantasm.progressivebotsystem)
+2026-01-22 16:10:51.254 [DBG] ForgeApiService: Getting mod by GUID: com.acidphantasm.progressivebotsystem
+2026-01-22 16:10:51.254 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=com.acidphantasm.progressivebotsystem&include=versions,source_code_links
+2026-01-22 16:10:51.254 [DBG] ModMatchingService: Matching mod: Croupier (GUID: com.turbodestroyer.croupier)
+2026-01-22 16:10:51.254 [DBG] ForgeApiService: Getting mod by GUID: com.turbodestroyer.croupier
+2026-01-22 16:10:51.254 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=com.turbodestroyer.croupier&include=versions,source_code_links
+2026-01-22 16:10:51.255 [DBG] ModMatchingService: Matching mod: StartCollectorEarly (GUID: com.mattdokn.startcollectorearly)
+2026-01-22 16:10:51.255 [DBG] ForgeApiService: Getting mod by GUID: com.mattdokn.startcollectorearly
+2026-01-22 16:10:51.255 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=com.mattdokn.startcollectorearly&include=versions,source_code_links
+2026-01-22 16:10:51.255 [DBG] ModMatchingService: Matching mod: Wolfiks Heavy Troopers (GUID: com.hood.wolfiksheavytroopers)
+2026-01-22 16:10:51.255 [DBG] ForgeApiService: Getting mod by GUID: com.hood.wolfiksheavytroopers
+2026-01-22 16:10:51.256 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=com.hood.wolfiksheavytroopers&include=versions,source_code_links
+2026-01-22 16:10:51.256 [DBG] ModMatchingService: Matching mod: Artem (GUID: com.crackbone.artem-wtt)
+2026-01-22 16:10:51.256 [DBG] ForgeApiService: Getting mod by GUID: com.crackbone.artem-wtt
+2026-01-22 16:10:51.256 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=com.crackbone.artem-wtt&include=versions,source_code_links
+2026-01-22 16:10:51.256 [DBG] ModMatchingService: Matching mod: SVM (GUID: fika.ghostfenixx.svm)
+2026-01-22 16:10:51.257 [DBG] ForgeApiService: Getting mod by GUID: fika.ghostfenixx.svm
+2026-01-22 16:10:51.257 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=fika.ghostfenixx.svm&include=versions,source_code_links
+2026-01-22 16:10:51.257 [DBG] ModMatchingService: Matching mod: DrakiaXYZ-BigBrain (GUID: xyz.drakia.bigbrain)
+2026-01-22 16:10:51.257 [DBG] ForgeApiService: Getting mod by GUID: xyz.drakia.bigbrain
+2026-01-22 16:10:51.257 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=xyz.drakia.bigbrain&include=versions,source_code_links
+2026-01-22 16:10:51.258 [DBG] ModMatchingService: Matching mod: EOTechFix-matsix (GUID: com.matsix.eotechfix)
+2026-01-22 16:10:51.258 [DBG] ForgeApiService: Getting mod by GUID: com.matsix.eotechfix
+2026-01-22 16:10:51.258 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=com.matsix.eotechfix&include=versions,source_code_links
+2026-01-22 16:10:51.258 [DBG] ModMatchingService: Matching mod: Shadow Flicker Fix (GUID: com.pein.shadowflickerfix)
+2026-01-22 16:10:51.258 [DBG] ForgeApiService: Getting mod by GUID: com.pein.shadowflickerfix
+2026-01-22 16:10:51.259 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=com.pein.shadowflickerfix&include=versions,source_code_links
+2026-01-22 16:10:51.259 [DBG] ModMatchingService: Matching mod: Terkoiz.Skipper (GUID: com.terkoiz.skipper)
+2026-01-22 16:10:51.259 [DBG] ForgeApiService: Getting mod by GUID: com.terkoiz.skipper
+2026-01-22 16:10:51.259 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=com.terkoiz.skipper&include=versions,source_code_links
+2026-01-22 16:10:51.259 [DBG] ModMatchingService: Matching mod: Modding Stats Helper (GUID: com.moddingstatshelper.spt)
+2026-01-22 16:10:51.260 [DBG] ForgeApiService: Getting mod by GUID: com.moddingstatshelper.spt
+2026-01-22 16:10:51.260 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=com.moddingstatshelper.spt&include=versions,source_code_links
+2026-01-22 16:10:51.260 [DBG] ModMatchingService: Matching mod: DrakiaXYZ-Waypoints (GUID: xyz.drakia.waypoints)
+2026-01-22 16:10:51.260 [DBG] ForgeApiService: Getting mod by GUID: xyz.drakia.waypoints
+2026-01-22 16:10:51.260 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=xyz.drakia.waypoints&include=versions,source_code_links
+2026-01-22 16:10:51.261 [DBG] ModMatchingService: Matching mod: SAIN (GUID: me.sol.sain)
+2026-01-22 16:10:51.261 [DBG] ForgeApiService: Getting mod by GUID: me.sol.sain
+2026-01-22 16:10:51.261 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=me.sol.sain&include=versions,source_code_links
+2026-01-22 16:10:51.261 [DBG] ModMatchingService: Matching mod: Level Endurance and Strength (GUID: xyz.nekogaming.orion.tarkov.levelenduranceandstrength)
+2026-01-22 16:10:51.261 [DBG] ForgeApiService: Getting mod by GUID: xyz.nekogaming.orion.tarkov.levelenduranceandstrength
+2026-01-22 16:10:51.262 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=xyz.nekogaming.orion.tarkov.levelenduranceandstrength&include=versions,source_code_links
+2026-01-22 16:10:51.473 [DBG] ModMatchingService: Mod matched by GUID: Gilded Key Storage -> Gilded Key Storage
+2026-01-22 16:10:51.725 [DBG] ModMatchingService: Mod matched by GUID: UI Fixes -> UI Fixes
+2026-01-22 16:10:51.970 [DBG] ModMatchingService: Mod matched by GUID: Acid's Bot Placement System -> ABPS - Acid's Bot Placement System
+2026-01-22 16:10:52.224 [DBG] ModMatchingService: Mod matched by GUID: WTT-ServerCommonLib -> WTT - CommonLib
+2026-01-22 16:10:52.465 [DBG] ModMatchingService: Mod matched by GUID: Bright Lasers -> BrightLasers
+2026-01-22 16:10:52.725 [DBG] ModMatchingService: Mod matched by GUID: Acid's Progressive Bot System -> APBS - Acid's Progressive Bot System
+2026-01-22 16:10:52.986 [DBG] ModMatchingService: Mod matched by GUID: Croupier -> Croupier - loadout generator + flea quicksell
+2026-01-22 16:10:53.221 [DBG] ModMatchingService: Mod matched by GUID: StartCollectorEarly -> Start Collector Early
+2026-01-22 16:10:53.485 [DBG] ModMatchingService: Mod matched by GUID: Wolfiks Heavy Troopers -> Wolfik's Heavy Trooper Masks - Reupload
+2026-01-22 16:10:53.738 [DBG] ModMatchingService: Mod matched by GUID: Artem -> WTT- Artem
+2026-01-22 16:10:53.993 [DBG] ModMatchingService: Mod matched by GUID: SVM -> Server Value Modifier [SVM]
+2026-01-22 16:10:54.234 [DBG] ModMatchingService: Mod matched by GUID: DrakiaXYZ-BigBrain -> BigBrain
+2026-01-22 16:10:54.477 [DBG] ModMatchingService: Mod matched by GUID: EOTechFix-matsix -> EOTech Fix
+2026-01-22 16:10:54.726 [DBG] ModMatchingService: Mod matched by GUID: Shadow Flicker Fix -> Shadow Flicker Fix
+2026-01-22 16:10:55.010 [DBG] ModMatchingService: Mod matched by GUID: Terkoiz.Skipper -> Skipper
+2026-01-22 16:10:55.223 [DBG] ModMatchingService: Mod matched by GUID: Modding Stats Helper -> Modding Stats Helper - by wara
+2026-01-22 16:10:55.484 [DBG] ModMatchingService: Mod matched by GUID: DrakiaXYZ-Waypoints -> Waypoints - Expanded Navmesh
+2026-01-22 16:10:55.753 [DBG] ModMatchingService: Mod matched by GUID: SAIN -> SAIN - Solarint's AI Modifications - Full AI Combat System Replacement
+2026-01-22 16:10:55.971 [DBG] ModMatchingService: Mod matched by GUID: Level Endurance and Strength -> Level Endurance and Strength
+2026-01-22 16:10:55.974 [DBG] ApplicationService: Checking mod version compatibility
+2026-01-22 16:10:55.977 [DBG] ApplicationService: Enriching mods with version data
+2026-01-22 16:10:55.979 [DBG] ModEnrichmentService: Enriching mods with version data
+2026-01-22 16:10:55.980 [DBG] ModEnrichmentService: Enriching 19 unique mods
+2026-01-22 16:10:55.984 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/updates?mods=865:2.0.4,1342:5.3.0,2097:2.0.11,2310:2.0.11,1358:2.0.0,1594:2.0.11,1971:2.0.4,1675:1.4.0,1569:1.1.0,1023:3.0.0,236:2.0.2,902:1.4.0,2502:1.0.2,1621:1.5.2,1343:1.1.4,1300:1.0,827:1.8.1,791:4.3.1,2438:1.0.0&spt_version=4.0.11
+2026-01-22 16:10:56.323 [DBG] ApplicationService: Checking mod dependencies
+2026-01-22 16:10:56.327 [DBG] ModDependencyService: Analyzing mod dependencies
+2026-01-22 16:10:56.327 [DBG] ModDependencyService: Analyzing dependencies for 19 matched mods
+2026-01-22 16:10:56.329 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=865:2.0.4
+2026-01-22 16:10:56.472 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=1342:5.3.0
+2026-01-22 16:10:56.700 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=2097:2.0.11
+2026-01-22 16:10:56.957 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=2310:2.0.11
+2026-01-22 16:10:57.208 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=1358:2.0.0
+2026-01-22 16:10:57.456 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=1594:2.0.11
+2026-01-22 16:10:57.686 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=1971:2.0.4
+2026-01-22 16:10:57.936 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=1675:1.4.0
+2026-01-22 16:10:58.192 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=1569:1.1.0
+2026-01-22 16:10:58.438 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=1023:3.0.0
+2026-01-22 16:10:58.695 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=236:2.0.2
+2026-01-22 16:10:58.959 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=902:1.4.0
+2026-01-22 16:10:59.191 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=2502:1.0.2
+2026-01-22 16:10:59.431 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=1621:1.5.2
+2026-01-22 16:10:59.681 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=1343:1.1.4
+2026-01-22 16:10:59.931 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=1300:1.0
+2026-01-22 16:11:00.186 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=827:1.8.1
+2026-01-22 16:11:00.435 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=791:4.3.1
+2026-01-22 16:11:00.674 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=2438:1.0.0
+2026-01-22 16:11:00.916 [DBG] ModDependencyService: Dependency analysis complete. Conflicts: 0, Missing: 0
+2026-01-22 16:11:00.925 [DBG] ApplicationService: Displaying results
+2026-01-22 16:11:00.944 [INF] ApplicationService: Mod check workflow completed successfully
+2026-01-22 16:11:00.945 [INF] Program: CheckMods application completed successfully
+
+================================================================================
+  CheckMods Session Started: 2026-01-22 16:20:00
+================================================================================
+
+2026-01-22 16:20:00.036 [INF] Program: CheckMods application starting. Args: 
+2026-01-22 16:20:00.062 [INF] ApplicationService: Starting mod check workflow
+2026-01-22 16:20:00.096 [DBG] ApplicationService: Setting up API key
+2026-01-22 16:20:00.106 [DBG] ForgeApiService: Validating API key
+2026-01-22 16:20:00.107 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/auth/abilities
+2026-01-22 16:20:00.787 [DBG] ForgeApiService: API key validated successfully with read permission
+2026-01-22 16:20:00.788 [DBG] ForgeApiService: Setting API key for Forge API authentication
+2026-01-22 16:20:00.789 [DBG] ApplicationService: Validating SPT path
+2026-01-22 16:20:00.789 [INF] ApplicationService: Using SPT path: G:\SPT-AKI 4011
+2026-01-22 16:20:00.790 [DBG] ApplicationService: Validating SPT installation
+2026-01-22 16:20:00.791 [DBG] ServerModService: Validating SPT installation at: G:\SPT-AKI 4011
+2026-01-22 16:20:00.792 [DBG] ServerModService: Found local SPT version: 4.0.11
+2026-01-22 16:20:00.793 [DBG] ForgeApiService: Validating SPT version: 4.0.11
+2026-01-22 16:20:00.793 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/spt/versions?filter[spt_version]=4.0.11
+2026-01-22 16:20:01.025 [DBG] ForgeApiService: SPT version 4.0.11 validated successfully
+2026-01-22 16:20:01.029 [DBG] ServerModService: Checking for SPT updates. Current version: 4.0.11
+2026-01-22 16:20:01.029 [DBG] ForgeApiService: Fetching all SPT versions from Forge API
+2026-01-22 16:20:01.030 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/spt/versions?sort=-version&per_page=15
+2026-01-22 16:20:01.287 [DBG] ServerModService: Found 0 newer SPT versions
+2026-01-22 16:20:01.288 [INF] ApplicationService: SPT version validated: 4.0.11
+2026-01-22 16:20:01.288 [DBG] ApplicationService: Scanning and reconciling mods
+2026-01-22 16:20:01.290 [DBG] ModScannerService: Scanning server mods at: G:\SPT-AKI 4011
+2026-01-22 16:20:01.290 [DBG] ModScannerService: Found 11 mod directories
+2026-01-22 16:20:01.398 [INF] ModScannerService: Found 11 server mods
+2026-01-22 16:20:01.399 [DBG] ModScannerService: Scanning client mods at: G:\SPT-AKI 4011
+2026-01-22 16:20:01.467 [INF] ModScannerService: Found 12 client mods
+2026-01-22 16:20:01.469 [DBG] ForgeApiService: Getting mod by GUID: com.moddingstatshelper.spt
+2026-01-22 16:20:01.470 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=com.moddingstatshelper.spt&include=versions,source_code_links
+2026-01-22 16:20:01.705 [DBG] ModReconciliationService: Reconciling 11 server mods with 12 client mods
+2026-01-22 16:20:01.707 [DBG] ModReconciliationService: Reconciliation complete. Pairs: 4, Unmatched server: 7, Unmatched client: 8
+2026-01-22 16:20:01.708 [DBG] ForgeApiService: Getting mod by GUID: com.tyfon.uifixes
+2026-01-22 16:20:01.708 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=com.tyfon.uifixes&include=versions,source_code_links
+2026-01-22 16:20:02.028 [INF] ApplicationService: Found 19 mods after reconciliation
+2026-01-22 16:20:02.032 [DBG] ApplicationService: Matching mods with Forge API
+2026-01-22 16:20:02.041 [DBG] ModMatchingService: Matching mod: Gilded Key Storage (GUID: xyz.drakia.gildedkeystorage)
+2026-01-22 16:20:02.041 [DBG] ForgeApiService: Getting mod by GUID: xyz.drakia.gildedkeystorage
+2026-01-22 16:20:02.042 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=xyz.drakia.gildedkeystorage&include=versions,source_code_links
+2026-01-22 16:20:02.043 [DBG] ModMatchingService: Matching mod: UI Fixes (GUID: com.tyfon.uifixes)
+2026-01-22 16:20:02.043 [DBG] ForgeApiService: Getting mod by GUID: com.tyfon.uifixes
+2026-01-22 16:20:02.043 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=com.tyfon.uifixes&include=versions,source_code_links
+2026-01-22 16:20:02.043 [DBG] ModMatchingService: Matching mod: Acid's Bot Placement System (GUID: com.acidphantasm.botplacementsystem)
+2026-01-22 16:20:02.043 [DBG] ForgeApiService: Getting mod by GUID: com.acidphantasm.botplacementsystem
+2026-01-22 16:20:02.044 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=com.acidphantasm.botplacementsystem&include=versions,source_code_links
+2026-01-22 16:20:02.044 [DBG] ModMatchingService: Matching mod: WTT-ServerCommonLib (GUID: com.wtt.commonlib)
+2026-01-22 16:20:02.044 [DBG] ForgeApiService: Getting mod by GUID: com.wtt.commonlib
+2026-01-22 16:20:02.044 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=com.wtt.commonlib&include=versions,source_code_links
+2026-01-22 16:20:02.045 [DBG] ModMatchingService: Matching mod: Bright Lasers (GUID: com.acidphantasm.brightlasers)
+2026-01-22 16:20:02.045 [DBG] ForgeApiService: Getting mod by GUID: com.acidphantasm.brightlasers
+2026-01-22 16:20:02.045 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=com.acidphantasm.brightlasers&include=versions,source_code_links
+2026-01-22 16:20:02.045 [DBG] ModMatchingService: Matching mod: Acid's Progressive Bot System (GUID: com.acidphantasm.progressivebotsystem)
+2026-01-22 16:20:02.045 [DBG] ForgeApiService: Getting mod by GUID: com.acidphantasm.progressivebotsystem
+2026-01-22 16:20:02.046 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=com.acidphantasm.progressivebotsystem&include=versions,source_code_links
+2026-01-22 16:20:02.046 [DBG] ModMatchingService: Matching mod: Croupier (GUID: com.turbodestroyer.croupier)
+2026-01-22 16:20:02.046 [DBG] ForgeApiService: Getting mod by GUID: com.turbodestroyer.croupier
+2026-01-22 16:20:02.046 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=com.turbodestroyer.croupier&include=versions,source_code_links
+2026-01-22 16:20:02.046 [DBG] ModMatchingService: Matching mod: StartCollectorEarly (GUID: com.mattdokn.startcollectorearly)
+2026-01-22 16:20:02.047 [DBG] ForgeApiService: Getting mod by GUID: com.mattdokn.startcollectorearly
+2026-01-22 16:20:02.047 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=com.mattdokn.startcollectorearly&include=versions,source_code_links
+2026-01-22 16:20:02.047 [DBG] ModMatchingService: Matching mod: Wolfiks Heavy Troopers (GUID: com.hood.wolfiksheavytroopers)
+2026-01-22 16:20:02.048 [DBG] ForgeApiService: Getting mod by GUID: com.hood.wolfiksheavytroopers
+2026-01-22 16:20:02.048 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=com.hood.wolfiksheavytroopers&include=versions,source_code_links
+2026-01-22 16:20:02.048 [DBG] ModMatchingService: Matching mod: Artem (GUID: com.crackbone.artem-wtt)
+2026-01-22 16:20:02.048 [DBG] ForgeApiService: Getting mod by GUID: com.crackbone.artem-wtt
+2026-01-22 16:20:02.048 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=com.crackbone.artem-wtt&include=versions,source_code_links
+2026-01-22 16:20:02.049 [DBG] ModMatchingService: Matching mod: SVM (GUID: fika.ghostfenixx.svm)
+2026-01-22 16:20:02.049 [DBG] ForgeApiService: Getting mod by GUID: fika.ghostfenixx.svm
+2026-01-22 16:20:02.049 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=fika.ghostfenixx.svm&include=versions,source_code_links
+2026-01-22 16:20:02.049 [DBG] ModMatchingService: Matching mod: DrakiaXYZ-BigBrain (GUID: xyz.drakia.bigbrain)
+2026-01-22 16:20:02.049 [DBG] ForgeApiService: Getting mod by GUID: xyz.drakia.bigbrain
+2026-01-22 16:20:02.050 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=xyz.drakia.bigbrain&include=versions,source_code_links
+2026-01-22 16:20:02.050 [DBG] ModMatchingService: Matching mod: EOTechFix-matsix (GUID: com.matsix.eotechfix)
+2026-01-22 16:20:02.050 [DBG] ForgeApiService: Getting mod by GUID: com.matsix.eotechfix
+2026-01-22 16:20:02.050 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=com.matsix.eotechfix&include=versions,source_code_links
+2026-01-22 16:20:02.050 [DBG] ModMatchingService: Matching mod: Shadow Flicker Fix (GUID: com.pein.shadowflickerfix)
+2026-01-22 16:20:02.051 [DBG] ForgeApiService: Getting mod by GUID: com.pein.shadowflickerfix
+2026-01-22 16:20:02.051 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=com.pein.shadowflickerfix&include=versions,source_code_links
+2026-01-22 16:20:02.051 [DBG] ModMatchingService: Matching mod: Terkoiz.Skipper (GUID: com.terkoiz.skipper)
+2026-01-22 16:20:02.051 [DBG] ForgeApiService: Getting mod by GUID: com.terkoiz.skipper
+2026-01-22 16:20:02.051 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=com.terkoiz.skipper&include=versions,source_code_links
+2026-01-22 16:20:02.052 [DBG] ModMatchingService: Matching mod: Modding Stats Helper (GUID: com.moddingstatshelper.spt)
+2026-01-22 16:20:02.052 [DBG] ForgeApiService: Getting mod by GUID: com.moddingstatshelper.spt
+2026-01-22 16:20:02.052 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=com.moddingstatshelper.spt&include=versions,source_code_links
+2026-01-22 16:20:02.052 [DBG] ModMatchingService: Matching mod: DrakiaXYZ-Waypoints (GUID: xyz.drakia.waypoints)
+2026-01-22 16:20:02.052 [DBG] ForgeApiService: Getting mod by GUID: xyz.drakia.waypoints
+2026-01-22 16:20:02.053 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=xyz.drakia.waypoints&include=versions,source_code_links
+2026-01-22 16:20:02.053 [DBG] ModMatchingService: Matching mod: SAIN (GUID: me.sol.sain)
+2026-01-22 16:20:02.053 [DBG] ForgeApiService: Getting mod by GUID: me.sol.sain
+2026-01-22 16:20:02.053 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=me.sol.sain&include=versions,source_code_links
+2026-01-22 16:20:02.053 [DBG] ModMatchingService: Matching mod: Level Endurance and Strength (GUID: xyz.nekogaming.orion.tarkov.levelenduranceandstrength)
+2026-01-22 16:20:02.054 [DBG] ForgeApiService: Getting mod by GUID: xyz.nekogaming.orion.tarkov.levelenduranceandstrength
+2026-01-22 16:20:02.054 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=xyz.nekogaming.orion.tarkov.levelenduranceandstrength&include=versions,source_code_links
+2026-01-22 16:20:02.738 [DBG] ModMatchingService: Mod matched by GUID: UI Fixes -> UI Fixes
+2026-01-22 16:20:02.853 [DBG] ModMatchingService: Mod matched by GUID: Acid's Bot Placement System -> ABPS - Acid's Bot Placement System
+2026-01-22 16:20:02.853 [DBG] ModMatchingService: Mod matched by GUID: Gilded Key Storage -> Gilded Key Storage
+2026-01-22 16:20:02.989 [DBG] ModMatchingService: Mod matched by GUID: WTT-ServerCommonLib -> WTT - CommonLib
+2026-01-22 16:20:03.244 [DBG] ModMatchingService: Mod matched by GUID: Bright Lasers -> BrightLasers
+2026-01-22 16:20:03.509 [DBG] ModMatchingService: Mod matched by GUID: Acid's Progressive Bot System -> APBS - Acid's Progressive Bot System
+2026-01-22 16:20:03.779 [DBG] ModMatchingService: Mod matched by GUID: Croupier -> Croupier - loadout generator + flea quicksell
+2026-01-22 16:20:04.019 [DBG] ModMatchingService: Mod matched by GUID: StartCollectorEarly -> Start Collector Early
+2026-01-22 16:20:04.258 [DBG] ModMatchingService: Mod matched by GUID: Wolfiks Heavy Troopers -> Wolfik's Heavy Trooper Masks - Reupload
+2026-01-22 16:20:04.524 [DBG] ModMatchingService: Mod matched by GUID: Artem -> WTT- Artem
+2026-01-22 16:20:04.785 [DBG] ModMatchingService: Mod matched by GUID: SVM -> Server Value Modifier [SVM]
+2026-01-22 16:20:05.029 [DBG] ModMatchingService: Mod matched by GUID: DrakiaXYZ-BigBrain -> BigBrain
+2026-01-22 16:20:05.274 [DBG] ModMatchingService: Mod matched by GUID: EOTechFix-matsix -> EOTech Fix
+2026-01-22 16:20:05.524 [DBG] ModMatchingService: Mod matched by GUID: Shadow Flicker Fix -> Shadow Flicker Fix
+2026-01-22 16:20:05.783 [DBG] ModMatchingService: Mod matched by GUID: Terkoiz.Skipper -> Skipper
+2026-01-22 16:20:06.061 [DBG] ModMatchingService: Mod matched by GUID: Modding Stats Helper -> Modding Stats Helper - by wara
+2026-01-22 16:20:06.287 [DBG] ModMatchingService: Mod matched by GUID: DrakiaXYZ-Waypoints -> Waypoints - Expanded Navmesh
+2026-01-22 16:20:06.554 [DBG] ModMatchingService: Mod matched by GUID: SAIN -> SAIN - Solarint's AI Modifications - Full AI Combat System Replacement
+2026-01-22 16:20:06.795 [DBG] ModMatchingService: Mod matched by GUID: Level Endurance and Strength -> Level Endurance and Strength
+2026-01-22 16:20:06.798 [DBG] ApplicationService: Checking mod version compatibility
+2026-01-22 16:20:06.801 [DBG] ApplicationService: Enriching mods with version data
+2026-01-22 16:20:06.803 [DBG] ModEnrichmentService: Enriching mods with version data
+2026-01-22 16:20:06.804 [DBG] ModEnrichmentService: Enriching 19 unique mods
+2026-01-22 16:20:06.808 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/updates?mods=865:2.0.4,1342:5.3.0,2097:2.0.11,2310:2.0.11,1358:2.0.0,1594:2.0.11,1971:2.0.4,1675:1.4.0,1569:1.1.0,1023:3.0.0,236:2.0.2,902:1.4.0,2502:1.0.2,1621:1.5.2,1343:1.1.4,1300:1.0,827:1.8.1,791:4.3.1,2438:1.0.0&spt_version=4.0.11
+2026-01-22 16:20:07.136 [DBG] ApplicationService: Checking mod dependencies
+2026-01-22 16:20:07.139 [DBG] ModDependencyService: Analyzing mod dependencies
+2026-01-22 16:20:07.139 [DBG] ModDependencyService: Analyzing dependencies for 19 matched mods
+2026-01-22 16:20:07.141 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=865:2.0.4
+2026-01-22 16:20:07.286 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=1342:5.3.0
+2026-01-22 16:20:07.537 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=2097:2.0.11
+2026-01-22 16:20:07.797 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=2310:2.0.11
+2026-01-22 16:20:08.056 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=1358:2.0.0
+2026-01-22 16:20:08.308 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=1594:2.0.11
+2026-01-22 16:20:08.561 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=1971:2.0.4
+2026-01-22 16:20:08.826 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=1675:1.4.0
+2026-01-22 16:20:09.098 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=1569:1.1.0
+2026-01-22 16:20:09.335 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=1023:3.0.0
+2026-01-22 16:20:09.597 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=236:2.0.2
+2026-01-22 16:20:09.849 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=902:1.4.0
+2026-01-22 16:20:10.140 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=2502:1.0.2
+2026-01-22 16:20:10.371 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=1621:1.5.2
+2026-01-22 16:20:10.629 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=1343:1.1.4
+2026-01-22 16:20:10.889 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=1300:1.0
+2026-01-22 16:20:11.147 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=827:1.8.1
+2026-01-22 16:20:11.389 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=791:4.3.1
+2026-01-22 16:20:11.652 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=2438:1.0.0
+2026-01-22 16:20:11.900 [DBG] ModDependencyService: Dependency analysis complete. Conflicts: 0, Missing: 0
+2026-01-22 16:20:11.910 [DBG] ApplicationService: Displaying results
+2026-01-22 16:20:11.928 [INF] ApplicationService: Mod check workflow completed successfully
+2026-01-22 16:20:11.929 [INF] Program: CheckMods application completed successfully
+
+================================================================================
+  CheckMods Session Started: 2026-01-23 20:01:52
+================================================================================
+
+2026-01-23 20:01:52.270 [INF] Program: CheckMods application starting. Args: 
+2026-01-23 20:01:52.296 [INF] ApplicationService: Starting mod check workflow
+2026-01-23 20:01:52.333 [DBG] ApplicationService: Setting up API key
+2026-01-23 20:01:52.348 [DBG] ForgeApiService: Validating API key
+2026-01-23 20:01:52.348 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/auth/abilities
+2026-01-23 20:01:52.839 [DBG] ForgeApiService: API key validated successfully with read permission
+2026-01-23 20:01:52.841 [DBG] ForgeApiService: Setting API key for Forge API authentication
+2026-01-23 20:01:52.841 [DBG] ApplicationService: Validating SPT path
+2026-01-23 20:01:52.842 [INF] ApplicationService: Using SPT path: G:\SPT-AKI 4011
+2026-01-23 20:01:52.842 [DBG] ApplicationService: Validating SPT installation
+2026-01-23 20:01:52.843 [DBG] ServerModService: Validating SPT installation at: G:\SPT-AKI 4011
+2026-01-23 20:01:52.854 [DBG] ServerModService: Found local SPT version: 4.0.11
+2026-01-23 20:01:52.855 [DBG] ForgeApiService: Validating SPT version: 4.0.11
+2026-01-23 20:01:52.855 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/spt/versions?filter[spt_version]=4.0.11
+2026-01-23 20:01:53.016 [DBG] ForgeApiService: SPT version 4.0.11 validated successfully
+2026-01-23 20:01:53.020 [DBG] ServerModService: Checking for SPT updates. Current version: 4.0.11
+2026-01-23 20:01:53.020 [DBG] ForgeApiService: Fetching all SPT versions from Forge API
+2026-01-23 20:01:53.021 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/spt/versions?sort=-version&per_page=15
+2026-01-23 20:01:53.251 [DBG] ServerModService: Found 0 newer SPT versions
+2026-01-23 20:01:53.253 [INF] ApplicationService: SPT version validated: 4.0.11
+2026-01-23 20:01:53.253 [DBG] ApplicationService: Scanning and reconciling mods
+2026-01-23 20:01:53.255 [DBG] ModScannerService: Scanning server mods at: G:\SPT-AKI 4011
+2026-01-23 20:01:53.255 [DBG] ModScannerService: Found 12 mod directories
+2026-01-23 20:01:53.459 [INF] ModScannerService: Found 12 server mods
+2026-01-23 20:01:53.460 [DBG] ModScannerService: Scanning client mods at: G:\SPT-AKI 4011
+2026-01-23 20:01:53.554 [INF] ModScannerService: Found 14 client mods
+2026-01-23 20:01:53.556 [DBG] ForgeApiService: Getting mod by GUID: com.moddingstatshelper.spt
+2026-01-23 20:01:53.556 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=com.moddingstatshelper.spt&include=versions,source_code_links
+2026-01-23 20:01:53.760 [DBG] ModReconciliationService: Reconciling 12 server mods with 14 client mods
+2026-01-23 20:01:53.767 [DBG] ModReconciliationService: Reconciliation complete. Pairs: 5, Unmatched server: 7, Unmatched client: 9
+2026-01-23 20:01:53.768 [DBG] ForgeApiService: Getting mod by GUID: com.tyfon.uifixes
+2026-01-23 20:01:53.768 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=com.tyfon.uifixes&include=versions,source_code_links
+2026-01-23 20:01:54.057 [INF] ApplicationService: Found 21 mods after reconciliation
+2026-01-23 20:01:54.058 [DBG] ApplicationService: Matching mods with Forge API
+2026-01-23 20:01:54.066 [DBG] ModMatchingService: Matching mod: Gilded Key Storage (GUID: xyz.drakia.gildedkeystorage)
+2026-01-23 20:01:54.066 [DBG] ForgeApiService: Getting mod by GUID: xyz.drakia.gildedkeystorage
+2026-01-23 20:01:54.067 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=xyz.drakia.gildedkeystorage&include=versions,source_code_links
+2026-01-23 20:01:54.068 [DBG] ModMatchingService: Matching mod: Tyfon.UIFixes (GUID: Tyfon.UIFixes)
+2026-01-23 20:01:54.068 [DBG] ForgeApiService: Getting mod by GUID: Tyfon.UIFixes
+2026-01-23 20:01:54.068 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=Tyfon.UIFixes&include=versions,source_code_links
+2026-01-23 20:01:54.069 [DBG] ModMatchingService: Matching mod: Acid's Bot Placement System (GUID: com.acidphantasm.botplacementsystem)
+2026-01-23 20:01:54.069 [DBG] ForgeApiService: Getting mod by GUID: com.acidphantasm.botplacementsystem
+2026-01-23 20:01:54.069 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=com.acidphantasm.botplacementsystem&include=versions,source_code_links
+2026-01-23 20:01:54.069 [DBG] ModMatchingService: Matching mod: Dynamic Maps (GUID: com.mpstark.dynamicmaps)
+2026-01-23 20:01:54.070 [DBG] ForgeApiService: Getting mod by GUID: com.mpstark.dynamicmaps
+2026-01-23 20:01:54.070 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=com.mpstark.dynamicmaps&include=versions,source_code_links
+2026-01-23 20:01:54.070 [DBG] ModMatchingService: Matching mod: WTT-ServerCommonLib (GUID: com.wtt.commonlib)
+2026-01-23 20:01:54.070 [DBG] ForgeApiService: Getting mod by GUID: com.wtt.commonlib
+2026-01-23 20:01:54.070 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=com.wtt.commonlib&include=versions,source_code_links
+2026-01-23 20:01:54.071 [DBG] ModMatchingService: Matching mod: Bright Lasers (GUID: com.acidphantasm.brightlasers)
+2026-01-23 20:01:54.071 [DBG] ForgeApiService: Getting mod by GUID: com.acidphantasm.brightlasers
+2026-01-23 20:01:54.071 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=com.acidphantasm.brightlasers&include=versions,source_code_links
+2026-01-23 20:01:54.071 [DBG] ModMatchingService: Matching mod: Acid's Progressive Bot System (GUID: com.acidphantasm.progressivebotsystem)
+2026-01-23 20:01:54.071 [DBG] ForgeApiService: Getting mod by GUID: com.acidphantasm.progressivebotsystem
+2026-01-23 20:01:54.072 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=com.acidphantasm.progressivebotsystem&include=versions,source_code_links
+2026-01-23 20:01:54.072 [DBG] ModMatchingService: Matching mod: Croupier (GUID: com.turbodestroyer.croupier)
+2026-01-23 20:01:54.072 [DBG] ForgeApiService: Getting mod by GUID: com.turbodestroyer.croupier
+2026-01-23 20:01:54.072 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=com.turbodestroyer.croupier&include=versions,source_code_links
+2026-01-23 20:01:54.072 [DBG] ModMatchingService: Matching mod: StartCollectorEarly (GUID: com.mattdokn.startcollectorearly)
+2026-01-23 20:01:54.073 [DBG] ForgeApiService: Getting mod by GUID: com.mattdokn.startcollectorearly
+2026-01-23 20:01:54.073 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=com.mattdokn.startcollectorearly&include=versions,source_code_links
+2026-01-23 20:01:54.073 [DBG] ModMatchingService: Matching mod: Wolfiks Heavy Troopers (GUID: com.hood.wolfiksheavytroopers)
+2026-01-23 20:01:54.073 [DBG] ForgeApiService: Getting mod by GUID: com.hood.wolfiksheavytroopers
+2026-01-23 20:01:54.073 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=com.hood.wolfiksheavytroopers&include=versions,source_code_links
+2026-01-23 20:01:54.074 [DBG] ModMatchingService: Matching mod: Artem (GUID: com.crackbone.artem-wtt)
+2026-01-23 20:01:54.074 [DBG] ForgeApiService: Getting mod by GUID: com.crackbone.artem-wtt
+2026-01-23 20:01:54.074 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=com.crackbone.artem-wtt&include=versions,source_code_links
+2026-01-23 20:01:54.074 [DBG] ModMatchingService: Matching mod: SVM (GUID: fika.ghostfenixx.svm)
+2026-01-23 20:01:54.074 [DBG] ForgeApiService: Getting mod by GUID: fika.ghostfenixx.svm
+2026-01-23 20:01:54.075 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=fika.ghostfenixx.svm&include=versions,source_code_links
+2026-01-23 20:01:54.075 [DBG] ModMatchingService: Matching mod: DrakiaXYZ-BigBrain (GUID: xyz.drakia.bigbrain)
+2026-01-23 20:01:54.075 [DBG] ForgeApiService: Getting mod by GUID: xyz.drakia.bigbrain
+2026-01-23 20:01:54.075 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=xyz.drakia.bigbrain&include=versions,source_code_links
+2026-01-23 20:01:54.075 [DBG] ModMatchingService: Matching mod: EOTechFix-matsix (GUID: com.matsix.eotechfix)
+2026-01-23 20:01:54.076 [DBG] ForgeApiService: Getting mod by GUID: com.matsix.eotechfix
+2026-01-23 20:01:54.076 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=com.matsix.eotechfix&include=versions,source_code_links
+2026-01-23 20:01:54.076 [DBG] ModMatchingService: Matching mod: Shadow Flicker Fix (GUID: com.pein.shadowflickerfix)
+2026-01-23 20:01:54.076 [DBG] ForgeApiService: Getting mod by GUID: com.pein.shadowflickerfix
+2026-01-23 20:01:54.076 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=com.pein.shadowflickerfix&include=versions,source_code_links
+2026-01-23 20:01:54.077 [DBG] ModMatchingService: Matching mod: TaskAutomation (GUID: com.KnotScripts.TaskAutomation)
+2026-01-23 20:01:54.077 [DBG] ForgeApiService: Getting mod by GUID: com.KnotScripts.TaskAutomation
+2026-01-23 20:01:54.077 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=com.KnotScripts.TaskAutomation&include=versions,source_code_links
+2026-01-23 20:01:54.077 [DBG] ModMatchingService: Matching mod: Terkoiz.Skipper (GUID: com.terkoiz.skipper)
+2026-01-23 20:01:54.077 [DBG] ForgeApiService: Getting mod by GUID: com.terkoiz.skipper
+2026-01-23 20:01:54.078 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=com.terkoiz.skipper&include=versions,source_code_links
+2026-01-23 20:01:54.078 [DBG] ModMatchingService: Matching mod: Modding Stats Helper (GUID: com.moddingstatshelper.spt)
+2026-01-23 20:01:54.078 [DBG] ForgeApiService: Getting mod by GUID: com.moddingstatshelper.spt
+2026-01-23 20:01:54.078 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=com.moddingstatshelper.spt&include=versions,source_code_links
+2026-01-23 20:01:54.078 [DBG] ModMatchingService: Matching mod: DrakiaXYZ-Waypoints (GUID: xyz.drakia.waypoints)
+2026-01-23 20:01:54.079 [DBG] ForgeApiService: Getting mod by GUID: xyz.drakia.waypoints
+2026-01-23 20:01:54.079 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=xyz.drakia.waypoints&include=versions,source_code_links
+2026-01-23 20:01:54.079 [DBG] ModMatchingService: Matching mod: SAIN (GUID: me.sol.sain)
+2026-01-23 20:01:54.079 [DBG] ForgeApiService: Getting mod by GUID: me.sol.sain
+2026-01-23 20:01:54.079 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=me.sol.sain&include=versions,source_code_links
+2026-01-23 20:01:54.080 [DBG] ModMatchingService: Matching mod: Level Endurance and Strength (GUID: xyz.nekogaming.orion.tarkov.levelenduranceandstrength)
+2026-01-23 20:01:54.080 [DBG] ForgeApiService: Getting mod by GUID: xyz.nekogaming.orion.tarkov.levelenduranceandstrength
+2026-01-23 20:01:54.080 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=xyz.nekogaming.orion.tarkov.levelenduranceandstrength&include=versions,source_code_links
+2026-01-23 20:01:54.270 [DBG] ModMatchingService: Mod matched by GUID: Gilded Key Storage -> Gilded Key Storage
+2026-01-23 20:01:54.465 [DBG] ForgeApiService: Searching for client mod: Tyfon.UIFixes
+2026-01-23 20:01:54.467 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?query=Tyfon.%20UIFixes&filter[spt_version]=4.0.11&include=versions,source_code_links
+2026-01-23 20:01:54.780 [DBG] ModMatchingService: Mod matched by GUID: Acid's Bot Placement System -> ABPS - Acid's Bot Placement System
+2026-01-23 20:01:55.019 [DBG] ModMatchingService: Mod matched by GUID: Dynamic Maps -> Dynamic Maps
+2026-01-23 20:01:55.278 [DBG] ModMatchingService: Mod matched by GUID: WTT-ServerCommonLib -> WTT - CommonLib
+2026-01-23 20:01:55.535 [DBG] ModMatchingService: Mod matched by GUID: Bright Lasers -> BrightLasers
+2026-01-23 20:01:55.778 [DBG] ModMatchingService: Mod matched by GUID: Acid's Progressive Bot System -> APBS - Acid's Progressive Bot System
+2026-01-23 20:01:56.037 [DBG] ModMatchingService: Mod matched by GUID: Croupier -> Croupier - loadout generator + flea quicksell
+2026-01-23 20:01:56.280 [DBG] ModMatchingService: Mod matched by GUID: StartCollectorEarly -> Start Collector Early
+2026-01-23 20:01:56.534 [DBG] ModMatchingService: Mod matched by GUID: Wolfiks Heavy Troopers -> Wolfik's Heavy Trooper Masks - Reupload
+2026-01-23 20:01:56.802 [DBG] ModMatchingService: Mod matched by GUID: Artem -> WTT- Artem
+2026-01-23 20:01:57.075 [DBG] ModMatchingService: Mod matched by GUID: SVM -> Server Value Modifier [SVM]
+2026-01-23 20:01:57.299 [DBG] ModMatchingService: Mod matched by GUID: DrakiaXYZ-BigBrain -> BigBrain
+2026-01-23 20:01:57.509 [DBG] ModMatchingService: Mod matched by GUID: EOTechFix-matsix -> EOTech Fix
+2026-01-23 20:01:57.764 [DBG] ModMatchingService: Mod matched by GUID: Shadow Flicker Fix -> Shadow Flicker Fix
+2026-01-23 20:01:58.023 [DBG] ForgeApiService: Searching for client mod: TaskAutomation
+2026-01-23 20:01:58.023 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?query=Task%20Automation&filter[spt_version]=4.0.11&include=versions,source_code_links
+2026-01-23 20:01:58.313 [DBG] ModMatchingService: Mod matched by GUID: Terkoiz.Skipper -> Skipper
+2026-01-23 20:01:58.530 [DBG] ModMatchingService: Mod matched by GUID: Modding Stats Helper -> Modding Stats Helper - by wara
+2026-01-23 20:01:58.792 [DBG] ModMatchingService: Mod matched by GUID: DrakiaXYZ-Waypoints -> Waypoints - Expanded Navmesh
+2026-01-23 20:01:59.088 [DBG] ModMatchingService: Mod matched by GUID: SAIN -> SAIN - Solarint's AI Modifications - Full AI Combat System Replacement
+2026-01-23 20:01:59.277 [DBG] ModMatchingService: Mod matched by GUID: Level Endurance and Strength -> Level Endurance and Strength
+2026-01-23 20:02:00.340 [DBG] ApplicationService: Checking mod version compatibility
+2026-01-23 20:02:00.343 [DBG] ApplicationService: Enriching mods with version data
+2026-01-23 20:02:00.345 [DBG] ModEnrichmentService: Enriching mods with version data
+2026-01-23 20:02:00.346 [DBG] ModEnrichmentService: Enriching 21 unique mods
+2026-01-23 20:02:00.350 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/updates?mods=865:2.0.4,1342:5.3.1,2097:2.0.11,1431:1.0.5,2310:2.0.11,1358:2.0.0,1594:2.0.11,1971:2.0.4,1675:1.4.0,1569:1.1.0,1023:3.0.0,236:2.0.2,902:1.4.0,2502:1.0.2,1621:1.5.2,2238:1.2.3,1343:1.1.4,1300:1.0,827:1.8.1,791:4.3.1,2438:1.0.0&spt_version=4.0.11
+2026-01-23 20:02:00.603 [DBG] ApplicationService: Checking mod dependencies
+2026-01-23 20:02:00.607 [DBG] ModDependencyService: Analyzing mod dependencies
+2026-01-23 20:02:00.607 [DBG] ModDependencyService: Analyzing dependencies for 21 matched mods
+2026-01-23 20:02:00.609 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=865:2.0.4
+2026-01-23 20:02:00.749 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=1342:5.3.1
+2026-01-23 20:02:01.017 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=2097:2.0.11
+2026-01-23 20:02:01.255 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=1431:1.0.5
+2026-01-23 20:02:01.509 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=2310:2.0.11
+2026-01-23 20:02:01.771 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=1358:2.0.0
+2026-01-23 20:02:02.040 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=1594:2.0.11
+2026-01-23 20:02:02.275 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=1971:2.0.4
+2026-01-23 20:02:02.523 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=1675:1.4.0
+2026-01-23 20:02:02.780 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=1569:1.1.0
+2026-01-23 20:02:03.036 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=1023:3.0.0
+2026-01-23 20:02:03.291 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=236:2.0.2
+2026-01-23 20:02:03.520 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=902:1.4.0
+2026-01-23 20:02:03.797 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=2502:1.0.2
+2026-01-23 20:02:04.088 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=1621:1.5.2
+2026-01-23 20:02:04.288 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=2238:1.2.3
+2026-01-23 20:02:04.541 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=1343:1.1.4
+2026-01-23 20:02:04.791 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=1300:1.0
+2026-01-23 20:02:05.065 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=827:1.8.1
+2026-01-23 20:02:05.298 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=791:4.3.1
+2026-01-23 20:02:05.554 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=2438:1.0.0
+2026-01-23 20:02:05.814 [DBG] ModDependencyService: Dependency analysis complete. Conflicts: 0, Missing: 0
+2026-01-23 20:02:05.823 [DBG] ApplicationService: Displaying results
+2026-01-23 20:02:05.841 [INF] ApplicationService: Mod check workflow completed successfully
+2026-01-23 20:02:05.842 [INF] Program: CheckMods application completed successfully
+
+================================================================================
+  CheckMods Session Started: 2026-01-29 21:45:23
+================================================================================
+
+2026-01-29 21:45:23.134 [INF] Program: CheckMods application starting. Args: 
+2026-01-29 21:45:23.187 [INF] ApplicationService: Starting mod check workflow
+2026-01-29 21:45:23.230 [DBG] ApplicationService: Setting up API key
+2026-01-29 21:45:23.253 [DBG] ForgeApiService: Validating API key
+2026-01-29 21:45:23.253 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/auth/abilities
+2026-01-29 21:45:23.646 [DBG] ForgeApiService: API key validated successfully with read permission
+2026-01-29 21:45:23.647 [DBG] ForgeApiService: Setting API key for Forge API authentication
+2026-01-29 21:45:23.648 [DBG] ApplicationService: Validating SPT path
+2026-01-29 21:45:23.648 [INF] ApplicationService: Using SPT path: G:\SPT-AKI 4011
+2026-01-29 21:45:23.649 [DBG] ApplicationService: Validating SPT installation
+2026-01-29 21:45:23.650 [DBG] ServerModService: Validating SPT installation at: G:\SPT-AKI 4011
+2026-01-29 21:45:23.751 [DBG] ServerModService: Found local SPT version: 4.0.11
+2026-01-29 21:45:23.752 [DBG] ForgeApiService: Validating SPT version: 4.0.11
+2026-01-29 21:45:23.753 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/spt/versions?filter[spt_version]=4.0.11
+2026-01-29 21:45:23.919 [DBG] ForgeApiService: SPT version 4.0.11 validated successfully
+2026-01-29 21:45:23.923 [DBG] ServerModService: Checking for SPT updates. Current version: 4.0.11
+2026-01-29 21:45:23.924 [DBG] ForgeApiService: Fetching all SPT versions from Forge API
+2026-01-29 21:45:23.924 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/spt/versions?sort=-version&per_page=15
+2026-01-29 21:45:24.159 [DBG] ServerModService: Found 0 newer SPT versions
+2026-01-29 21:45:24.160 [INF] ApplicationService: SPT version validated: 4.0.11
+2026-01-29 21:45:24.160 [DBG] ApplicationService: Scanning and reconciling mods
+2026-01-29 21:45:24.162 [DBG] ModScannerService: Scanning server mods at: G:\SPT-AKI 4011
+2026-01-29 21:45:24.163 [DBG] ModScannerService: Found 16 mod directories
+2026-01-29 21:45:25.941 [INF] ModScannerService: Found 15 server mods
+2026-01-29 21:45:25.942 [DBG] ModScannerService: Scanning client mods at: G:\SPT-AKI 4011
+2026-01-29 21:45:27.128 [INF] ModScannerService: Found 14 client mods
+2026-01-29 21:45:27.131 [DBG] ForgeApiService: Getting mod by GUID: com.moddingstatshelper.spt
+2026-01-29 21:45:27.131 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=com.moddingstatshelper.spt&include=versions,source_code_links
+2026-01-29 21:45:27.361 [DBG] ModReconciliationService: Reconciling 15 server mods with 14 client mods
+2026-01-29 21:45:27.363 [DBG] ModReconciliationService: Reconciliation complete. Pairs: 5, Unmatched server: 10, Unmatched client: 9
+2026-01-29 21:45:27.364 [DBG] ForgeApiService: Getting mod by GUID: com.tyfon.uifixes
+2026-01-29 21:45:27.364 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=com.tyfon.uifixes&include=versions,source_code_links
+2026-01-29 21:45:27.606 [INF] ApplicationService: Found 24 mods after reconciliation
+2026-01-29 21:45:27.606 [DBG] ApplicationService: Matching mods with Forge API
+2026-01-29 21:45:27.615 [DBG] ModMatchingService: Matching mod: Gilded Key Storage (GUID: xyz.drakia.gildedkeystorage)
+2026-01-29 21:45:27.615 [DBG] ForgeApiService: Getting mod by GUID: xyz.drakia.gildedkeystorage
+2026-01-29 21:45:27.616 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=xyz.drakia.gildedkeystorage&include=versions,source_code_links
+2026-01-29 21:45:27.617 [DBG] ModMatchingService: Matching mod: Tyfon.UIFixes (GUID: Tyfon.UIFixes)
+2026-01-29 21:45:27.617 [DBG] ForgeApiService: Getting mod by GUID: Tyfon.UIFixes
+2026-01-29 21:45:27.617 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=Tyfon.UIFixes&include=versions,source_code_links
+2026-01-29 21:45:27.618 [DBG] ModMatchingService: Matching mod: Acid's Bot Placement System (GUID: com.acidphantasm.botplacementsystem)
+2026-01-29 21:45:27.618 [DBG] ForgeApiService: Getting mod by GUID: com.acidphantasm.botplacementsystem
+2026-01-29 21:45:27.618 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=com.acidphantasm.botplacementsystem&include=versions,source_code_links
+2026-01-29 21:45:27.618 [DBG] ModMatchingService: Matching mod: Dynamic Maps (GUID: com.mpstark.dynamicmaps)
+2026-01-29 21:45:27.619 [DBG] ForgeApiService: Getting mod by GUID: com.mpstark.dynamicmaps
+2026-01-29 21:45:27.619 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=com.mpstark.dynamicmaps&include=versions,source_code_links
+2026-01-29 21:45:27.619 [DBG] ModMatchingService: Matching mod: WTT-ServerCommonLib (GUID: com.wtt.commonlib)
+2026-01-29 21:45:27.619 [DBG] ForgeApiService: Getting mod by GUID: com.wtt.commonlib
+2026-01-29 21:45:27.620 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=com.wtt.commonlib&include=versions,source_code_links
+2026-01-29 21:45:27.620 [DBG] ModMatchingService: Matching mod: Bright Lasers (GUID: com.acidphantasm.brightlasers)
+2026-01-29 21:45:27.620 [DBG] ForgeApiService: Getting mod by GUID: com.acidphantasm.brightlasers
+2026-01-29 21:45:27.620 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=com.acidphantasm.brightlasers&include=versions,source_code_links
+2026-01-29 21:45:27.620 [DBG] ModMatchingService: Matching mod: Progression Tracker (GUID: com.acidphantasm.progressiontracker)
+2026-01-29 21:45:27.621 [DBG] ForgeApiService: Getting mod by GUID: com.acidphantasm.progressiontracker
+2026-01-29 21:45:27.621 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=com.acidphantasm.progressiontracker&include=versions,source_code_links
+2026-01-29 21:45:27.621 [DBG] ModMatchingService: Matching mod: Acid's Progressive Bot System (GUID: com.acidphantasm.progressivebotsystem)
+2026-01-29 21:45:27.621 [DBG] ForgeApiService: Getting mod by GUID: com.acidphantasm.progressivebotsystem
+2026-01-29 21:45:27.621 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=com.acidphantasm.progressivebotsystem&include=versions,source_code_links
+2026-01-29 21:45:27.622 [DBG] ModMatchingService: Matching mod: Bot Callsigns (GUID: com.harmonyzt.botcallsigns)
+2026-01-29 21:45:27.622 [DBG] ForgeApiService: Getting mod by GUID: com.harmonyzt.botcallsigns
+2026-01-29 21:45:27.622 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=com.harmonyzt.botcallsigns&include=versions,source_code_links
+2026-01-29 21:45:27.622 [DBG] ModMatchingService: Matching mod: Croupier (GUID: com.turbodestroyer.croupier)
+2026-01-29 21:45:27.622 [DBG] ForgeApiService: Getting mod by GUID: com.turbodestroyer.croupier
+2026-01-29 21:45:27.623 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=com.turbodestroyer.croupier&include=versions,source_code_links
+2026-01-29 21:45:27.623 [DBG] ModMatchingService: Matching mod: StartCollectorEarly (GUID: com.mattdokn.startcollectorearly)
+2026-01-29 21:45:27.623 [DBG] ForgeApiService: Getting mod by GUID: com.mattdokn.startcollectorearly
+2026-01-29 21:45:27.623 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=com.mattdokn.startcollectorearly&include=versions,source_code_links
+2026-01-29 21:45:27.623 [DBG] ModMatchingService: Matching mod: Twitch Players (GUID: com.harmonyzt.twitchplayers)
+2026-01-29 21:45:27.624 [DBG] ForgeApiService: Getting mod by GUID: com.harmonyzt.twitchplayers
+2026-01-29 21:45:27.624 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=com.harmonyzt.twitchplayers&include=versions,source_code_links
+2026-01-29 21:45:27.624 [DBG] ModMatchingService: Matching mod: Wolfiks Heavy Troopers (GUID: com.hood.wolfiksheavytroopers)
+2026-01-29 21:45:27.624 [DBG] ForgeApiService: Getting mod by GUID: com.hood.wolfiksheavytroopers
+2026-01-29 21:45:27.624 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=com.hood.wolfiksheavytroopers&include=versions,source_code_links
+2026-01-29 21:45:27.625 [DBG] ModMatchingService: Matching mod: Artem (GUID: com.crackbone.artem-wtt)
+2026-01-29 21:45:27.625 [DBG] ForgeApiService: Getting mod by GUID: com.crackbone.artem-wtt
+2026-01-29 21:45:27.625 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=com.crackbone.artem-wtt&include=versions,source_code_links
+2026-01-29 21:45:27.625 [DBG] ModMatchingService: Matching mod: SVM (GUID: fika.ghostfenixx.svm)
+2026-01-29 21:45:27.625 [DBG] ForgeApiService: Getting mod by GUID: fika.ghostfenixx.svm
+2026-01-29 21:45:27.626 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=fika.ghostfenixx.svm&include=versions,source_code_links
+2026-01-29 21:45:27.626 [DBG] ModMatchingService: Matching mod: DrakiaXYZ-BigBrain (GUID: xyz.drakia.bigbrain)
+2026-01-29 21:45:27.626 [DBG] ForgeApiService: Getting mod by GUID: xyz.drakia.bigbrain
+2026-01-29 21:45:27.626 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=xyz.drakia.bigbrain&include=versions,source_code_links
+2026-01-29 21:45:27.626 [DBG] ModMatchingService: Matching mod: EOTechFix-matsix (GUID: com.matsix.eotechfix)
+2026-01-29 21:45:27.627 [DBG] ForgeApiService: Getting mod by GUID: com.matsix.eotechfix
+2026-01-29 21:45:27.627 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=com.matsix.eotechfix&include=versions,source_code_links
+2026-01-29 21:45:27.627 [DBG] ModMatchingService: Matching mod: Shadow Flicker Fix (GUID: com.pein.shadowflickerfix)
+2026-01-29 21:45:27.627 [DBG] ForgeApiService: Getting mod by GUID: com.pein.shadowflickerfix
+2026-01-29 21:45:27.627 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=com.pein.shadowflickerfix&include=versions,source_code_links
+2026-01-29 21:45:27.628 [DBG] ModMatchingService: Matching mod: TaskAutomation (GUID: com.KnotScripts.TaskAutomation)
+2026-01-29 21:45:27.628 [DBG] ForgeApiService: Getting mod by GUID: com.KnotScripts.TaskAutomation
+2026-01-29 21:45:27.628 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=com.KnotScripts.TaskAutomation&include=versions,source_code_links
+2026-01-29 21:45:27.628 [DBG] ModMatchingService: Matching mod: Terkoiz.Skipper (GUID: com.terkoiz.skipper)
+2026-01-29 21:45:27.628 [DBG] ForgeApiService: Getting mod by GUID: com.terkoiz.skipper
+2026-01-29 21:45:27.628 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=com.terkoiz.skipper&include=versions,source_code_links
+2026-01-29 21:45:27.629 [DBG] ModMatchingService: Matching mod: Modding Stats Helper (GUID: com.moddingstatshelper.spt)
+2026-01-29 21:45:27.629 [DBG] ForgeApiService: Getting mod by GUID: com.moddingstatshelper.spt
+2026-01-29 21:45:27.629 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=com.moddingstatshelper.spt&include=versions,source_code_links
+2026-01-29 21:45:27.629 [DBG] ModMatchingService: Matching mod: DrakiaXYZ-Waypoints (GUID: xyz.drakia.waypoints)
+2026-01-29 21:45:27.629 [DBG] ForgeApiService: Getting mod by GUID: xyz.drakia.waypoints
+2026-01-29 21:45:27.630 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=xyz.drakia.waypoints&include=versions,source_code_links
+2026-01-29 21:45:27.630 [DBG] ModMatchingService: Matching mod: SAIN (GUID: me.sol.sain)
+2026-01-29 21:45:27.630 [DBG] ForgeApiService: Getting mod by GUID: me.sol.sain
+2026-01-29 21:45:27.630 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=me.sol.sain&include=versions,source_code_links
+2026-01-29 21:45:27.630 [DBG] ModMatchingService: Matching mod: Level Endurance and Strength (GUID: xyz.nekogaming.orion.tarkov.levelenduranceandstrength)
+2026-01-29 21:45:27.631 [DBG] ForgeApiService: Getting mod by GUID: xyz.nekogaming.orion.tarkov.levelenduranceandstrength
+2026-01-29 21:45:27.631 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=xyz.nekogaming.orion.tarkov.levelenduranceandstrength&include=versions,source_code_links
+2026-01-29 21:45:27.852 [DBG] ModMatchingService: Mod matched by GUID: Gilded Key Storage -> Gilded Key Storage
+2026-01-29 21:45:28.072 [DBG] ForgeApiService: Searching for client mod: Tyfon.UIFixes
+2026-01-29 21:45:28.074 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?query=Tyfon.%20UIFixes&filter[spt_version]=4.0.11&include=versions,source_code_links
+2026-01-29 21:45:28.378 [DBG] ModMatchingService: Mod matched by GUID: Acid's Bot Placement System -> ABPS - Acid's Bot Placement System
+2026-01-29 21:45:28.618 [DBG] ModMatchingService: Mod matched by GUID: Dynamic Maps -> Dynamic Maps
+2026-01-29 21:45:28.884 [DBG] ModMatchingService: Mod matched by GUID: WTT-ServerCommonLib -> WTT - CommonLib
+2026-01-29 21:45:29.121 [DBG] ModMatchingService: Mod matched by GUID: Bright Lasers -> BrightLasers
+2026-01-29 21:45:29.413 [DBG] ModMatchingService: Mod matched by GUID: Progression Tracker -> Progression Tracker
+2026-01-29 21:45:29.669 [DBG] ModMatchingService: Mod matched by GUID: Acid's Progressive Bot System -> APBS - Acid's Progressive Bot System
+2026-01-29 21:45:29.878 [DBG] ModMatchingService: Mod matched by GUID: Bot Callsigns -> Bot Callsigns - Reloaded
+2026-01-29 21:45:30.145 [DBG] ModMatchingService: Mod matched by GUID: Croupier -> Croupier - loadout generator + flea quicksell
+2026-01-29 21:45:30.411 [DBG] ModMatchingService: Mod matched by GUID: StartCollectorEarly -> Start Collector Early
+2026-01-29 21:45:30.660 [DBG] ForgeApiService: Searching for server mod: Twitch Players
+2026-01-29 21:45:30.660 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?query=Twitch%20%20Players&filter[spt_version]=4.0.11&include=versions,source_code_links
+2026-01-29 21:45:30.926 [DBG] ModMatchingService: Mod matched by GUID: Wolfiks Heavy Troopers -> Wolfik's Heavy Trooper Masks - Reupload
+2026-01-29 21:45:31.215 [DBG] ModMatchingService: Mod matched by GUID: Artem -> WTT- Artem
+2026-01-29 21:45:31.472 [DBG] ModMatchingService: Mod matched by GUID: SVM -> Server Value Modifier [SVM]
+2026-01-29 21:45:31.717 [DBG] ModMatchingService: Mod matched by GUID: DrakiaXYZ-BigBrain -> BigBrain
+2026-01-29 21:45:31.969 [DBG] ModMatchingService: Mod matched by GUID: EOTechFix-matsix -> EOTech Fix
+2026-01-29 21:45:32.222 [DBG] ModMatchingService: Mod matched by GUID: Shadow Flicker Fix -> Shadow Flicker Fix
+2026-01-29 21:45:32.475 [DBG] ForgeApiService: Searching for client mod: TaskAutomation
+2026-01-29 21:45:32.475 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?query=Task%20Automation&filter[spt_version]=4.0.11&include=versions,source_code_links
+2026-01-29 21:45:32.755 [DBG] ModMatchingService: Mod matched by GUID: Terkoiz.Skipper -> Skipper
+2026-01-29 21:45:32.989 [DBG] ModMatchingService: Mod matched by GUID: Modding Stats Helper -> Modding Stats Helper - by wara
+2026-01-29 21:45:33.260 [DBG] ModMatchingService: Mod matched by GUID: DrakiaXYZ-Waypoints -> Waypoints - Expanded Navmesh
+2026-01-29 21:45:33.555 [DBG] ModMatchingService: Mod matched by GUID: SAIN -> SAIN - Solarint's AI Modifications - Full AI Combat System Replacement
+2026-01-29 21:45:33.755 [DBG] ModMatchingService: Mod matched by GUID: Level Endurance and Strength -> Level Endurance and Strength
+2026-01-29 21:45:35.146 [DBG] ApplicationService: Checking mod version compatibility
+2026-01-29 21:45:35.149 [DBG] ApplicationService: Enriching mods with version data
+2026-01-29 21:45:35.150 [DBG] ModEnrichmentService: Enriching mods with version data
+2026-01-29 21:45:35.151 [DBG] ModEnrichmentService: Enriching 24 unique mods
+2026-01-29 21:45:35.156 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/updates?mods=865:2.0.4,1342:5.3.1,2097:2.0.11,1431:1.0.5,2310:2.0.11,1358:2.0.0,2482:1.0.3,1594:2.0.11,1873:2.0.3,1971:2.0.4,1675:1.4.0,1895:3.0.8,1569:1.1.0,1023:3.0.0,236:2.0.2,902:1.4.0,2502:1.0.2,1621:1.5.2,2238:1.2.3,1343:1.1.4,1300:1.0,827:1.8.1,791:4.3.1,2438:1.0.0&spt_version=4.0.11
+2026-01-29 21:45:35.455 [DBG] ApplicationService: Checking mod dependencies
+2026-01-29 21:45:35.459 [DBG] ModDependencyService: Analyzing mod dependencies
+2026-01-29 21:45:35.459 [DBG] ModDependencyService: Analyzing dependencies for 24 matched mods
+2026-01-29 21:45:35.461 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=865:2.0.4
+2026-01-29 21:45:35.623 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=1342:5.3.1
+2026-01-29 21:45:35.856 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=2097:2.0.11
+2026-01-29 21:45:36.120 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=1431:1.0.5
+2026-01-29 21:45:36.368 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=2310:2.0.11
+2026-01-29 21:45:36.651 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=1358:2.0.0
+2026-01-29 21:45:36.891 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=2482:1.0.3
+2026-01-29 21:45:37.146 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=1594:2.0.11
+2026-01-29 21:45:37.399 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=1873:2.0.3
+2026-01-29 21:45:37.645 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=1971:2.0.4
+2026-01-29 21:45:37.888 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=1675:1.4.0
+2026-01-29 21:45:38.146 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=1895:3.0.8
+2026-01-29 21:45:38.423 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=1569:1.1.0
+2026-01-29 21:45:38.691 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=1023:3.0.0
+2026-01-29 21:45:38.936 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=236:2.0.2
+2026-01-29 21:45:39.167 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=902:1.4.0
+2026-01-29 21:45:39.432 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=2502:1.0.2
+2026-01-29 21:45:39.691 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=1621:1.5.2
+2026-01-29 21:45:39.937 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=2238:1.2.3
+2026-01-29 21:45:40.174 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=1343:1.1.4
+2026-01-29 21:45:40.448 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=1300:1.0
+2026-01-29 21:45:40.696 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=827:1.8.1
+2026-01-29 21:45:40.971 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=791:4.3.1
+2026-01-29 21:45:41.215 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=2438:1.0.0
+2026-01-29 21:45:41.502 [DBG] ModDependencyService: Dependency analysis complete. Conflicts: 0, Missing: 0
+2026-01-29 21:45:41.512 [DBG] ApplicationService: Displaying results
+2026-01-29 21:45:41.534 [INF] ApplicationService: Mod check workflow completed successfully
+2026-01-29 21:45:41.535 [INF] Program: CheckMods application completed successfully
+
+================================================================================
+  CheckMods Session Started: 2026-01-30 22:17:21
+================================================================================
+
+2026-01-30 22:17:21.334 [INF] Program: CheckMods application starting. Args: 
+2026-01-30 22:17:21.362 [INF] ApplicationService: Starting mod check workflow
+2026-01-30 22:17:21.398 [DBG] ApplicationService: Setting up API key
+2026-01-30 22:17:21.413 [DBG] ForgeApiService: Validating API key
+2026-01-30 22:17:21.413 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/auth/abilities
+2026-01-30 22:17:21.706 [DBG] ForgeApiService: API key validated successfully with read permission
+2026-01-30 22:17:21.707 [DBG] ForgeApiService: Setting API key for Forge API authentication
+2026-01-30 22:17:21.708 [DBG] ApplicationService: Validating SPT path
+2026-01-30 22:17:21.709 [INF] ApplicationService: Using SPT path: G:\SPT-AKI 4011
+2026-01-30 22:17:21.709 [DBG] ApplicationService: Validating SPT installation
+2026-01-30 22:17:21.710 [DBG] ServerModService: Validating SPT installation at: G:\SPT-AKI 4011
+2026-01-30 22:17:21.799 [DBG] ServerModService: Found local SPT version: 4.0.11
+2026-01-30 22:17:21.801 [DBG] ForgeApiService: Validating SPT version: 4.0.11
+2026-01-30 22:17:21.801 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/spt/versions?filter[spt_version]=4.0.11
+2026-01-30 22:17:21.967 [DBG] ForgeApiService: SPT version 4.0.11 validated successfully
+2026-01-30 22:17:21.973 [DBG] ServerModService: Checking for SPT updates. Current version: 4.0.11
+2026-01-30 22:17:21.973 [DBG] ForgeApiService: Fetching all SPT versions from Forge API
+2026-01-30 22:17:21.974 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/spt/versions?sort=-version&per_page=15
+2026-01-30 22:17:22.208 [DBG] ServerModService: Found 0 newer SPT versions
+2026-01-30 22:17:22.209 [INF] ApplicationService: SPT version validated: 4.0.11
+2026-01-30 22:17:22.210 [DBG] ApplicationService: Scanning and reconciling mods
+2026-01-30 22:17:22.213 [DBG] ModScannerService: Scanning server mods at: G:\SPT-AKI 4011
+2026-01-30 22:17:22.215 [DBG] ModScannerService: Found 16 mod directories
+2026-01-30 22:17:24.016 [INF] ModScannerService: Found 15 server mods
+
+================================================================================
+  CheckMods Session Started: 2026-01-30 22:21:52
+================================================================================
+
+2026-01-30 22:21:52.716 [INF] Program: CheckMods application starting. Args: 
+2026-01-30 22:21:52.742 [INF] ApplicationService: Starting mod check workflow
+2026-01-30 22:21:52.778 [DBG] ApplicationService: Setting up API key
+2026-01-30 22:21:52.788 [DBG] ForgeApiService: Validating API key
+2026-01-30 22:21:52.788 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/auth/abilities
+2026-01-30 22:21:53.040 [DBG] ForgeApiService: API key validated successfully with read permission
+2026-01-30 22:21:53.041 [DBG] ForgeApiService: Setting API key for Forge API authentication
+2026-01-30 22:21:53.041 [DBG] ApplicationService: Validating SPT path
+2026-01-30 22:21:53.042 [INF] ApplicationService: Using SPT path: G:\SPT-AKI 4011
+2026-01-30 22:21:53.042 [DBG] ApplicationService: Validating SPT installation
+2026-01-30 22:21:53.043 [DBG] ServerModService: Validating SPT installation at: G:\SPT-AKI 4011
+2026-01-30 22:21:53.045 [DBG] ServerModService: Found local SPT version: 4.0.11
+2026-01-30 22:21:53.046 [DBG] ForgeApiService: Validating SPT version: 4.0.11
+2026-01-30 22:21:53.046 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/spt/versions?filter[spt_version]=4.0.11
+2026-01-30 22:21:53.208 [DBG] ForgeApiService: SPT version 4.0.11 validated successfully
+2026-01-30 22:21:53.212 [DBG] ServerModService: Checking for SPT updates. Current version: 4.0.11
+2026-01-30 22:21:53.213 [DBG] ForgeApiService: Fetching all SPT versions from Forge API
+2026-01-30 22:21:53.213 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/spt/versions?sort=-version&per_page=15
+2026-01-30 22:21:53.445 [DBG] ServerModService: Found 0 newer SPT versions
+2026-01-30 22:21:53.446 [INF] ApplicationService: SPT version validated: 4.0.11
+2026-01-30 22:21:53.446 [DBG] ApplicationService: Scanning and reconciling mods
+2026-01-30 22:21:53.448 [DBG] ModScannerService: Scanning server mods at: G:\SPT-AKI 4011
+2026-01-30 22:21:53.449 [DBG] ModScannerService: Found 16 mod directories
+2026-01-30 22:21:53.582 [INF] ModScannerService: Found 15 server mods
+2026-01-30 22:21:53.583 [DBG] ModScannerService: Scanning client mods at: G:\SPT-AKI 4011
+2026-01-30 22:21:54.692 [INF] ModScannerService: Found 14 client mods
+2026-01-30 22:21:54.695 [DBG] ForgeApiService: Getting mod by GUID: com.moddingstatshelper.spt
+2026-01-30 22:21:54.696 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=com.moddingstatshelper.spt&include=versions,source_code_links
+2026-01-30 22:21:54.947 [DBG] ModReconciliationService: Reconciling 15 server mods with 14 client mods
+2026-01-30 22:21:54.954 [DBG] ModReconciliationService: Reconciliation complete. Pairs: 5, Unmatched server: 10, Unmatched client: 9
+2026-01-30 22:21:54.955 [DBG] ForgeApiService: Getting mod by GUID: com.tyfon.uifixes
+2026-01-30 22:21:54.955 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=com.tyfon.uifixes&include=versions,source_code_links
+2026-01-30 22:21:55.133 [INF] ApplicationService: Found 24 mods after reconciliation
+2026-01-30 22:21:55.133 [DBG] ApplicationService: Matching mods with Forge API
+2026-01-30 22:21:55.144 [DBG] ModMatchingService: Matching mod: Gilded Key Storage (GUID: xyz.drakia.gildedkeystorage)
+2026-01-30 22:21:55.144 [DBG] ForgeApiService: Getting mod by GUID: xyz.drakia.gildedkeystorage
+2026-01-30 22:21:55.145 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=xyz.drakia.gildedkeystorage&include=versions,source_code_links
+2026-01-30 22:21:55.145 [DBG] ModMatchingService: Matching mod: Tyfon.UIFixes (GUID: Tyfon.UIFixes)
+2026-01-30 22:21:55.146 [DBG] ForgeApiService: Getting mod by GUID: Tyfon.UIFixes
+2026-01-30 22:21:55.146 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=Tyfon.UIFixes&include=versions,source_code_links
+2026-01-30 22:21:55.147 [DBG] ModMatchingService: Matching mod: Acid's Bot Placement System (GUID: com.acidphantasm.botplacementsystem)
+2026-01-30 22:21:55.147 [DBG] ForgeApiService: Getting mod by GUID: com.acidphantasm.botplacementsystem
+2026-01-30 22:21:55.147 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=com.acidphantasm.botplacementsystem&include=versions,source_code_links
+2026-01-30 22:21:55.148 [DBG] ModMatchingService: Matching mod: Dynamic Maps (GUID: com.mpstark.dynamicmaps)
+2026-01-30 22:21:55.148 [DBG] ForgeApiService: Getting mod by GUID: com.mpstark.dynamicmaps
+2026-01-30 22:21:55.148 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=com.mpstark.dynamicmaps&include=versions,source_code_links
+2026-01-30 22:21:55.148 [DBG] ModMatchingService: Matching mod: WTT-ServerCommonLib (GUID: com.wtt.commonlib)
+2026-01-30 22:21:55.148 [DBG] ForgeApiService: Getting mod by GUID: com.wtt.commonlib
+2026-01-30 22:21:55.149 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=com.wtt.commonlib&include=versions,source_code_links
+2026-01-30 22:21:55.149 [DBG] ModMatchingService: Matching mod: Bright Lasers (GUID: com.acidphantasm.brightlasers)
+2026-01-30 22:21:55.149 [DBG] ForgeApiService: Getting mod by GUID: com.acidphantasm.brightlasers
+2026-01-30 22:21:55.149 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=com.acidphantasm.brightlasers&include=versions,source_code_links
+2026-01-30 22:21:55.149 [DBG] ModMatchingService: Matching mod: Progression Tracker (GUID: com.acidphantasm.progressiontracker)
+2026-01-30 22:21:55.150 [DBG] ForgeApiService: Getting mod by GUID: com.acidphantasm.progressiontracker
+2026-01-30 22:21:55.150 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=com.acidphantasm.progressiontracker&include=versions,source_code_links
+2026-01-30 22:21:55.150 [DBG] ModMatchingService: Matching mod: Acid's Progressive Bot System (GUID: com.acidphantasm.progressivebotsystem)
+2026-01-30 22:21:55.150 [DBG] ForgeApiService: Getting mod by GUID: com.acidphantasm.progressivebotsystem
+2026-01-30 22:21:55.150 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=com.acidphantasm.progressivebotsystem&include=versions,source_code_links
+2026-01-30 22:21:55.151 [DBG] ModMatchingService: Matching mod: Bot Callsigns (GUID: com.harmonyzt.botcallsigns)
+2026-01-30 22:21:55.151 [DBG] ForgeApiService: Getting mod by GUID: com.harmonyzt.botcallsigns
+2026-01-30 22:21:55.151 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=com.harmonyzt.botcallsigns&include=versions,source_code_links
+2026-01-30 22:21:55.151 [DBG] ModMatchingService: Matching mod: Croupier (GUID: com.turbodestroyer.croupier)
+2026-01-30 22:21:55.151 [DBG] ForgeApiService: Getting mod by GUID: com.turbodestroyer.croupier
+2026-01-30 22:21:55.152 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=com.turbodestroyer.croupier&include=versions,source_code_links
+2026-01-30 22:21:55.152 [DBG] ModMatchingService: Matching mod: StartCollectorEarly (GUID: com.mattdokn.startcollectorearly)
+2026-01-30 22:21:55.152 [DBG] ForgeApiService: Getting mod by GUID: com.mattdokn.startcollectorearly
+2026-01-30 22:21:55.152 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=com.mattdokn.startcollectorearly&include=versions,source_code_links
+2026-01-30 22:21:55.152 [DBG] ModMatchingService: Matching mod: Twitch Players (GUID: com.harmonyzt.twitchplayers)
+2026-01-30 22:21:55.153 [DBG] ForgeApiService: Getting mod by GUID: com.harmonyzt.twitchplayers
+2026-01-30 22:21:55.153 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=com.harmonyzt.twitchplayers&include=versions,source_code_links
+2026-01-30 22:21:55.153 [DBG] ModMatchingService: Matching mod: Wolfiks Heavy Troopers (GUID: com.hood.wolfiksheavytroopers)
+2026-01-30 22:21:55.153 [DBG] ForgeApiService: Getting mod by GUID: com.hood.wolfiksheavytroopers
+2026-01-30 22:21:55.153 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=com.hood.wolfiksheavytroopers&include=versions,source_code_links
+2026-01-30 22:21:55.154 [DBG] ModMatchingService: Matching mod: Artem (GUID: com.crackbone.artem-wtt)
+2026-01-30 22:21:55.154 [DBG] ForgeApiService: Getting mod by GUID: com.crackbone.artem-wtt
+2026-01-30 22:21:55.154 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=com.crackbone.artem-wtt&include=versions,source_code_links
+2026-01-30 22:21:55.154 [DBG] ModMatchingService: Matching mod: SVM (GUID: fika.ghostfenixx.svm)
+2026-01-30 22:21:55.154 [DBG] ForgeApiService: Getting mod by GUID: fika.ghostfenixx.svm
+2026-01-30 22:21:55.155 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=fika.ghostfenixx.svm&include=versions,source_code_links
+2026-01-30 22:21:55.155 [DBG] ModMatchingService: Matching mod: DrakiaXYZ-BigBrain (GUID: xyz.drakia.bigbrain)
+2026-01-30 22:21:55.155 [DBG] ForgeApiService: Getting mod by GUID: xyz.drakia.bigbrain
+2026-01-30 22:21:55.155 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=xyz.drakia.bigbrain&include=versions,source_code_links
+2026-01-30 22:21:55.155 [DBG] ModMatchingService: Matching mod: EOTechFix-matsix (GUID: com.matsix.eotechfix)
+2026-01-30 22:21:55.156 [DBG] ForgeApiService: Getting mod by GUID: com.matsix.eotechfix
+2026-01-30 22:21:55.156 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=com.matsix.eotechfix&include=versions,source_code_links
+2026-01-30 22:21:55.156 [DBG] ModMatchingService: Matching mod: Shadow Flicker Fix (GUID: com.pein.shadowflickerfix)
+2026-01-30 22:21:55.156 [DBG] ForgeApiService: Getting mod by GUID: com.pein.shadowflickerfix
+2026-01-30 22:21:55.156 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=com.pein.shadowflickerfix&include=versions,source_code_links
+2026-01-30 22:21:55.157 [DBG] ModMatchingService: Matching mod: TaskAutomation (GUID: com.KnotScripts.TaskAutomation)
+2026-01-30 22:21:55.157 [DBG] ForgeApiService: Getting mod by GUID: com.KnotScripts.TaskAutomation
+2026-01-30 22:21:55.157 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=com.KnotScripts.TaskAutomation&include=versions,source_code_links
+2026-01-30 22:21:55.157 [DBG] ModMatchingService: Matching mod: Terkoiz.Skipper (GUID: com.terkoiz.skipper)
+2026-01-30 22:21:55.157 [DBG] ForgeApiService: Getting mod by GUID: com.terkoiz.skipper
+2026-01-30 22:21:55.158 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=com.terkoiz.skipper&include=versions,source_code_links
+2026-01-30 22:21:55.158 [DBG] ModMatchingService: Matching mod: Modding Stats Helper (GUID: com.moddingstatshelper.spt)
+2026-01-30 22:21:55.158 [DBG] ForgeApiService: Getting mod by GUID: com.moddingstatshelper.spt
+2026-01-30 22:21:55.158 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=com.moddingstatshelper.spt&include=versions,source_code_links
+2026-01-30 22:21:55.158 [DBG] ModMatchingService: Matching mod: DrakiaXYZ-Waypoints (GUID: xyz.drakia.waypoints)
+2026-01-30 22:21:55.159 [DBG] ForgeApiService: Getting mod by GUID: xyz.drakia.waypoints
+2026-01-30 22:21:55.159 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=xyz.drakia.waypoints&include=versions,source_code_links
+2026-01-30 22:21:55.159 [DBG] ModMatchingService: Matching mod: SAIN (GUID: me.sol.sain)
+2026-01-30 22:21:55.159 [DBG] ForgeApiService: Getting mod by GUID: me.sol.sain
+2026-01-30 22:21:55.159 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=me.sol.sain&include=versions,source_code_links
+2026-01-30 22:21:55.160 [DBG] ModMatchingService: Matching mod: Level Endurance and Strength (GUID: xyz.nekogaming.orion.tarkov.levelenduranceandstrength)
+2026-01-30 22:21:55.160 [DBG] ForgeApiService: Getting mod by GUID: xyz.nekogaming.orion.tarkov.levelenduranceandstrength
+2026-01-30 22:21:55.160 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=xyz.nekogaming.orion.tarkov.levelenduranceandstrength&include=versions,source_code_links
+2026-01-30 22:21:55.402 [DBG] ModMatchingService: Mod matched by GUID: Gilded Key Storage -> Gilded Key Storage
+2026-01-30 22:21:55.645 [DBG] ForgeApiService: Searching for client mod: Tyfon.UIFixes
+2026-01-30 22:21:55.648 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?query=Tyfon.%20UIFixes&filter[spt_version]=4.0.11&include=versions,source_code_links
+2026-01-30 22:21:55.885 [DBG] ModMatchingService: Mod matched by GUID: Acid's Bot Placement System -> ABPS - Acid's Bot Placement System
+2026-01-30 22:21:56.142 [DBG] ModMatchingService: Mod matched by GUID: Dynamic Maps -> Dynamic Maps
+2026-01-30 22:21:56.389 [DBG] ModMatchingService: Mod matched by GUID: WTT-ServerCommonLib -> WTT - CommonLib
+2026-01-30 22:21:56.686 [DBG] ModMatchingService: Mod matched by GUID: Bright Lasers -> BrightLasers
+2026-01-30 22:21:56.919 [DBG] ModMatchingService: Mod matched by GUID: Progression Tracker -> Progression Tracker
+2026-01-30 22:21:57.181 [DBG] ModMatchingService: Mod matched by GUID: Acid's Progressive Bot System -> APBS - Acid's Progressive Bot System
+2026-01-30 22:21:57.396 [DBG] ModMatchingService: Mod matched by GUID: Bot Callsigns -> Bot Callsigns - Reloaded
+2026-01-30 22:21:57.697 [DBG] ModMatchingService: Mod matched by GUID: Croupier -> Croupier - loadout generator + flea quicksell
+2026-01-30 22:21:57.931 [DBG] ModMatchingService: Mod matched by GUID: StartCollectorEarly -> Start Collector Early
+2026-01-30 22:21:58.129 [DBG] ForgeApiService: Searching for server mod: Twitch Players
+2026-01-30 22:21:58.129 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?query=Twitch%20%20Players&filter[spt_version]=4.0.11&include=versions,source_code_links
+2026-01-30 22:21:58.423 [DBG] ModMatchingService: Mod matched by GUID: Wolfiks Heavy Troopers -> Wolfik's Heavy Trooper Masks - Reupload
+2026-01-30 22:21:58.716 [DBG] ModMatchingService: Mod matched by GUID: Artem -> WTT- Artem
+2026-01-30 22:21:58.940 [DBG] ModMatchingService: Mod matched by GUID: SVM -> Server Value Modifier [SVM]
+2026-01-30 22:21:59.197 [DBG] ModMatchingService: Mod matched by GUID: DrakiaXYZ-BigBrain -> BigBrain
+2026-01-30 22:21:59.421 [DBG] ModMatchingService: Mod matched by GUID: EOTechFix-matsix -> EOTech Fix
+2026-01-30 22:21:59.729 [DBG] ModMatchingService: Mod matched by GUID: Shadow Flicker Fix -> Shadow Flicker Fix
+2026-01-30 22:21:59.920 [DBG] ForgeApiService: Searching for client mod: TaskAutomation
+2026-01-30 22:21:59.920 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?query=Task%20Automation&filter[spt_version]=4.0.11&include=versions,source_code_links
+2026-01-30 22:22:00.175 [DBG] ModMatchingService: Mod matched by GUID: Terkoiz.Skipper -> Skipper
+2026-01-30 22:22:00.443 [DBG] ModMatchingService: Mod matched by GUID: Modding Stats Helper -> Modding Stats Helper - by wara
+2026-01-30 22:22:00.720 [DBG] ModMatchingService: Mod matched by GUID: DrakiaXYZ-Waypoints -> Waypoints - Expanded Navmesh
+2026-01-30 22:22:00.978 [DBG] ModMatchingService: Mod matched by GUID: SAIN -> SAIN - Solarint's AI Modifications - Full AI Combat System Replacement
+2026-01-30 22:22:01.176 [DBG] ModMatchingService: Mod matched by GUID: Level Endurance and Strength -> Level Endurance and Strength
+2026-01-30 22:22:02.519 [DBG] ApplicationService: Checking mod version compatibility
+2026-01-30 22:22:02.522 [DBG] ApplicationService: Enriching mods with version data
+2026-01-30 22:22:02.523 [DBG] ModEnrichmentService: Enriching mods with version data
+2026-01-30 22:22:02.524 [DBG] ModEnrichmentService: Enriching 24 unique mods
+2026-01-30 22:22:02.529 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/updates?mods=865:2.0.4,1342:5.3.1,2097:2.0.11,1431:1.0.5,2310:2.0.11,1358:2.0.0,2482:1.0.3,1594:2.0.11,1873:2.0.3,1971:2.0.4,1675:1.4.0,1895:3.0.8,1569:1.1.0,1023:3.0.0,236:2.0.2,902:1.4.0,2502:1.0.2,1621:1.5.2,2238:1.2.3,1343:1.1.4,1300:1.0,827:1.8.1,791:4.3.1,2438:1.0.0&spt_version=4.0.11
+2026-01-30 22:22:02.828 [DBG] ApplicationService: Checking mod dependencies
+2026-01-30 22:22:02.832 [DBG] ModDependencyService: Analyzing mod dependencies
+2026-01-30 22:22:02.832 [DBG] ModDependencyService: Analyzing dependencies for 24 matched mods
+2026-01-30 22:22:02.834 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=865:2.0.4
+2026-01-30 22:22:02.976 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=1342:5.3.1
+2026-01-30 22:22:03.233 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=2097:2.0.11
+2026-01-30 22:22:03.507 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=1431:1.0.5
+2026-01-30 22:22:03.736 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=2310:2.0.11
+2026-01-30 22:22:03.995 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=1358:2.0.0
+2026-01-30 22:22:04.235 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=2482:1.0.3
+2026-01-30 22:22:04.512 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=1594:2.0.11
+2026-01-30 22:22:04.753 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=1873:2.0.3
+2026-01-30 22:22:04.992 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=1971:2.0.4
+2026-01-30 22:22:05.246 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=1675:1.4.0
+2026-01-30 22:22:05.503 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=1895:3.0.8
+2026-01-30 22:22:05.760 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=1569:1.1.0
+2026-01-30 22:22:06.008 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=1023:3.0.0
+2026-01-30 22:22:06.278 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=236:2.0.2
+2026-01-30 22:22:06.518 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=902:1.4.0
+2026-01-30 22:22:06.768 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=2502:1.0.2
+2026-01-30 22:22:07.009 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=1621:1.5.2
+2026-01-30 22:22:07.282 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=2238:1.2.3
+2026-01-30 22:22:07.549 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=1343:1.1.4
+2026-01-30 22:22:07.790 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=1300:1.0
+2026-01-30 22:22:08.034 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=827:1.8.1
+2026-01-30 22:22:08.281 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=791:4.3.1
+2026-01-30 22:22:08.557 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=2438:1.0.0
+2026-01-30 22:22:08.785 [DBG] ModDependencyService: Dependency analysis complete. Conflicts: 0, Missing: 0
+2026-01-30 22:22:08.797 [DBG] ApplicationService: Displaying results
+2026-01-30 22:22:08.817 [INF] ApplicationService: Mod check workflow completed successfully
+2026-01-30 22:22:08.818 [INF] Program: CheckMods application completed successfully
+
+================================================================================
+  CheckMods Session Started: 2026-01-31 13:39:44
+================================================================================
+
+2026-01-31 13:39:44.249 [INF] Program: CheckMods application starting. Args: 
+2026-01-31 13:39:44.280 [INF] ApplicationService: Starting mod check workflow
+2026-01-31 13:39:44.316 [DBG] ApplicationService: Setting up API key
+2026-01-31 13:39:44.330 [DBG] ForgeApiService: Validating API key
+2026-01-31 13:39:44.331 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/auth/abilities
+2026-01-31 13:39:44.872 [DBG] ForgeApiService: API key validated successfully with read permission
+2026-01-31 13:39:44.874 [DBG] ForgeApiService: Setting API key for Forge API authentication
+2026-01-31 13:39:44.874 [DBG] ApplicationService: Validating SPT path
+2026-01-31 13:39:44.875 [INF] ApplicationService: Using SPT path: G:\SPT-AKI 4011
+2026-01-31 13:39:44.875 [DBG] ApplicationService: Validating SPT installation
+2026-01-31 13:39:44.877 [DBG] ServerModService: Validating SPT installation at: G:\SPT-AKI 4011
+2026-01-31 13:39:44.970 [DBG] ServerModService: Found local SPT version: 4.0.11
+2026-01-31 13:39:44.971 [DBG] ForgeApiService: Validating SPT version: 4.0.11
+2026-01-31 13:39:44.972 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/spt/versions?filter[spt_version]=4.0.11
+2026-01-31 13:39:45.119 [DBG] ForgeApiService: SPT version 4.0.11 validated successfully
+2026-01-31 13:39:45.123 [DBG] ServerModService: Checking for SPT updates. Current version: 4.0.11
+2026-01-31 13:39:45.123 [DBG] ForgeApiService: Fetching all SPT versions from Forge API
+2026-01-31 13:39:45.124 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/spt/versions?sort=-version&per_page=15
+2026-01-31 13:39:45.381 [DBG] ServerModService: Found 0 newer SPT versions
+2026-01-31 13:39:45.382 [INF] ApplicationService: SPT version validated: 4.0.11
+2026-01-31 13:39:45.383 [DBG] ApplicationService: Scanning and reconciling mods
+2026-01-31 13:39:45.384 [DBG] ModScannerService: Scanning server mods at: G:\SPT-AKI 4011
+2026-01-31 13:39:45.385 [DBG] ModScannerService: Found 16 mod directories
+2026-01-31 13:39:47.254 [INF] ModScannerService: Found 15 server mods
+2026-01-31 13:39:47.255 [DBG] ModScannerService: Scanning client mods at: G:\SPT-AKI 4011
+2026-01-31 13:39:47.405 [INF] ModScannerService: Found 14 client mods
+2026-01-31 13:39:47.408 [DBG] ForgeApiService: Getting mod by GUID: com.moddingstatshelper.spt
+2026-01-31 13:39:47.408 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=com.moddingstatshelper.spt&include=versions,source_code_links
+2026-01-31 13:39:47.593 [DBG] ModReconciliationService: Reconciling 15 server mods with 14 client mods
+2026-01-31 13:39:47.598 [DBG] ModReconciliationService: Reconciliation complete. Pairs: 5, Unmatched server: 10, Unmatched client: 9
+2026-01-31 13:39:47.599 [DBG] ForgeApiService: Getting mod by GUID: com.tyfon.uifixes
+2026-01-31 13:39:47.599 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=com.tyfon.uifixes&include=versions,source_code_links
+2026-01-31 13:39:47.844 [INF] ApplicationService: Found 24 mods after reconciliation
+2026-01-31 13:39:47.844 [DBG] ApplicationService: Matching mods with Forge API
+2026-01-31 13:39:47.853 [DBG] ModMatchingService: Matching mod: Gilded Key Storage (GUID: xyz.drakia.gildedkeystorage)
+2026-01-31 13:39:47.853 [DBG] ForgeApiService: Getting mod by GUID: xyz.drakia.gildedkeystorage
+2026-01-31 13:39:47.853 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=xyz.drakia.gildedkeystorage&include=versions,source_code_links
+2026-01-31 13:39:47.854 [DBG] ModMatchingService: Matching mod: Tyfon.UIFixes (GUID: Tyfon.UIFixes)
+2026-01-31 13:39:47.854 [DBG] ForgeApiService: Getting mod by GUID: Tyfon.UIFixes
+2026-01-31 13:39:47.854 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=Tyfon.UIFixes&include=versions,source_code_links
+2026-01-31 13:39:47.855 [DBG] ModMatchingService: Matching mod: Acid's Bot Placement System (GUID: com.acidphantasm.botplacementsystem)
+2026-01-31 13:39:47.855 [DBG] ForgeApiService: Getting mod by GUID: com.acidphantasm.botplacementsystem
+2026-01-31 13:39:47.855 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=com.acidphantasm.botplacementsystem&include=versions,source_code_links
+2026-01-31 13:39:47.855 [DBG] ModMatchingService: Matching mod: Dynamic Maps (GUID: com.mpstark.dynamicmaps)
+2026-01-31 13:39:47.856 [DBG] ForgeApiService: Getting mod by GUID: com.mpstark.dynamicmaps
+2026-01-31 13:39:47.856 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=com.mpstark.dynamicmaps&include=versions,source_code_links
+2026-01-31 13:39:47.856 [DBG] ModMatchingService: Matching mod: WTT-ServerCommonLib (GUID: com.wtt.commonlib)
+2026-01-31 13:39:47.856 [DBG] ForgeApiService: Getting mod by GUID: com.wtt.commonlib
+2026-01-31 13:39:47.856 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=com.wtt.commonlib&include=versions,source_code_links
+2026-01-31 13:39:47.857 [DBG] ModMatchingService: Matching mod: Bright Lasers (GUID: com.acidphantasm.brightlasers)
+2026-01-31 13:39:47.857 [DBG] ForgeApiService: Getting mod by GUID: com.acidphantasm.brightlasers
+2026-01-31 13:39:47.857 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=com.acidphantasm.brightlasers&include=versions,source_code_links
+2026-01-31 13:39:47.857 [DBG] ModMatchingService: Matching mod: Progression Tracker (GUID: com.acidphantasm.progressiontracker)
+2026-01-31 13:39:47.857 [DBG] ForgeApiService: Getting mod by GUID: com.acidphantasm.progressiontracker
+2026-01-31 13:39:47.858 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=com.acidphantasm.progressiontracker&include=versions,source_code_links
+2026-01-31 13:39:47.858 [DBG] ModMatchingService: Matching mod: Acid's Progressive Bot System (GUID: com.acidphantasm.progressivebotsystem)
+2026-01-31 13:39:47.858 [DBG] ForgeApiService: Getting mod by GUID: com.acidphantasm.progressivebotsystem
+2026-01-31 13:39:47.858 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=com.acidphantasm.progressivebotsystem&include=versions,source_code_links
+2026-01-31 13:39:47.858 [DBG] ModMatchingService: Matching mod: Bot Callsigns (GUID: com.harmonyzt.botcallsigns)
+2026-01-31 13:39:47.859 [DBG] ForgeApiService: Getting mod by GUID: com.harmonyzt.botcallsigns
+2026-01-31 13:39:47.859 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=com.harmonyzt.botcallsigns&include=versions,source_code_links
+2026-01-31 13:39:47.859 [DBG] ModMatchingService: Matching mod: Croupier (GUID: com.turbodestroyer.croupier)
+2026-01-31 13:39:47.859 [DBG] ForgeApiService: Getting mod by GUID: com.turbodestroyer.croupier
+2026-01-31 13:39:47.859 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=com.turbodestroyer.croupier&include=versions,source_code_links
+2026-01-31 13:39:47.860 [DBG] ModMatchingService: Matching mod: StartCollectorEarly (GUID: com.mattdokn.startcollectorearly)
+2026-01-31 13:39:47.860 [DBG] ForgeApiService: Getting mod by GUID: com.mattdokn.startcollectorearly
+2026-01-31 13:39:47.860 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=com.mattdokn.startcollectorearly&include=versions,source_code_links
+2026-01-31 13:39:47.860 [DBG] ModMatchingService: Matching mod: Twitch Players (GUID: com.harmonyzt.twitchplayers)
+2026-01-31 13:39:47.860 [DBG] ForgeApiService: Getting mod by GUID: com.harmonyzt.twitchplayers
+2026-01-31 13:39:47.861 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=com.harmonyzt.twitchplayers&include=versions,source_code_links
+2026-01-31 13:39:47.861 [DBG] ModMatchingService: Matching mod: Wolfiks Heavy Troopers (GUID: com.hood.wolfiksheavytroopers)
+2026-01-31 13:39:47.861 [DBG] ForgeApiService: Getting mod by GUID: com.hood.wolfiksheavytroopers
+2026-01-31 13:39:47.861 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=com.hood.wolfiksheavytroopers&include=versions,source_code_links
+2026-01-31 13:39:47.861 [DBG] ModMatchingService: Matching mod: Artem (GUID: com.crackbone.artem-wtt)
+2026-01-31 13:39:47.862 [DBG] ForgeApiService: Getting mod by GUID: com.crackbone.artem-wtt
+2026-01-31 13:39:47.862 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=com.crackbone.artem-wtt&include=versions,source_code_links
+2026-01-31 13:39:47.862 [DBG] ModMatchingService: Matching mod: SVM (GUID: fika.ghostfenixx.svm)
+2026-01-31 13:39:47.862 [DBG] ForgeApiService: Getting mod by GUID: fika.ghostfenixx.svm
+2026-01-31 13:39:47.862 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=fika.ghostfenixx.svm&include=versions,source_code_links
+2026-01-31 13:39:47.863 [DBG] ModMatchingService: Matching mod: DrakiaXYZ-BigBrain (GUID: xyz.drakia.bigbrain)
+2026-01-31 13:39:47.863 [DBG] ForgeApiService: Getting mod by GUID: xyz.drakia.bigbrain
+2026-01-31 13:39:47.863 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=xyz.drakia.bigbrain&include=versions,source_code_links
+2026-01-31 13:39:47.863 [DBG] ModMatchingService: Matching mod: EOTechFix-matsix (GUID: com.matsix.eotechfix)
+2026-01-31 13:39:47.863 [DBG] ForgeApiService: Getting mod by GUID: com.matsix.eotechfix
+2026-01-31 13:39:47.864 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=com.matsix.eotechfix&include=versions,source_code_links
+2026-01-31 13:39:47.864 [DBG] ModMatchingService: Matching mod: Shadow Flicker Fix (GUID: com.pein.shadowflickerfix)
+2026-01-31 13:39:47.864 [DBG] ForgeApiService: Getting mod by GUID: com.pein.shadowflickerfix
+2026-01-31 13:39:47.864 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=com.pein.shadowflickerfix&include=versions,source_code_links
+2026-01-31 13:39:47.864 [DBG] ModMatchingService: Matching mod: TaskAutomation (GUID: com.KnotScripts.TaskAutomation)
+2026-01-31 13:39:47.865 [DBG] ForgeApiService: Getting mod by GUID: com.KnotScripts.TaskAutomation
+2026-01-31 13:39:47.865 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=com.KnotScripts.TaskAutomation&include=versions,source_code_links
+2026-01-31 13:39:47.865 [DBG] ModMatchingService: Matching mod: Terkoiz.Skipper (GUID: com.terkoiz.skipper)
+2026-01-31 13:39:47.865 [DBG] ForgeApiService: Getting mod by GUID: com.terkoiz.skipper
+2026-01-31 13:39:47.865 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=com.terkoiz.skipper&include=versions,source_code_links
+2026-01-31 13:39:47.866 [DBG] ModMatchingService: Matching mod: Modding Stats Helper (GUID: com.moddingstatshelper.spt)
+2026-01-31 13:39:47.866 [DBG] ForgeApiService: Getting mod by GUID: com.moddingstatshelper.spt
+2026-01-31 13:39:47.866 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=com.moddingstatshelper.spt&include=versions,source_code_links
+2026-01-31 13:39:47.866 [DBG] ModMatchingService: Matching mod: DrakiaXYZ-Waypoints (GUID: xyz.drakia.waypoints)
+2026-01-31 13:39:47.866 [DBG] ForgeApiService: Getting mod by GUID: xyz.drakia.waypoints
+2026-01-31 13:39:47.866 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=xyz.drakia.waypoints&include=versions,source_code_links
+2026-01-31 13:39:47.867 [DBG] ModMatchingService: Matching mod: SAIN (GUID: me.sol.sain)
+2026-01-31 13:39:47.867 [DBG] ForgeApiService: Getting mod by GUID: me.sol.sain
+2026-01-31 13:39:47.867 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=me.sol.sain&include=versions,source_code_links
+2026-01-31 13:39:47.867 [DBG] ModMatchingService: Matching mod: Level Endurance and Strength (GUID: xyz.nekogaming.orion.tarkov.levelenduranceandstrength)
+2026-01-31 13:39:47.867 [DBG] ForgeApiService: Getting mod by GUID: xyz.nekogaming.orion.tarkov.levelenduranceandstrength
+2026-01-31 13:39:47.868 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?filter[guid]=xyz.nekogaming.orion.tarkov.levelenduranceandstrength&include=versions,source_code_links
+2026-01-31 13:39:48.092 [DBG] ModMatchingService: Mod matched by GUID: Gilded Key Storage -> Gilded Key Storage
+2026-01-31 13:39:48.317 [DBG] ForgeApiService: Searching for client mod: Tyfon.UIFixes
+2026-01-31 13:39:48.319 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?query=Tyfon.%20UIFixes&filter[spt_version]=4.0.11&include=versions,source_code_links
+2026-01-31 13:39:48.648 [DBG] ModMatchingService: Mod matched by GUID: Acid's Bot Placement System -> ABPS - Acid's Bot Placement System
+2026-01-31 13:39:48.852 [DBG] ModMatchingService: Mod matched by GUID: Dynamic Maps -> Dynamic Maps
+2026-01-31 13:39:49.101 [DBG] ModMatchingService: Mod matched by GUID: WTT-ServerCommonLib -> WTT - CommonLib
+2026-01-31 13:39:49.350 [DBG] ModMatchingService: Mod matched by GUID: Bright Lasers -> BrightLasers
+2026-01-31 13:39:49.626 [DBG] ModMatchingService: Mod matched by GUID: Progression Tracker -> Progression Tracker
+2026-01-31 13:39:49.900 [DBG] ModMatchingService: Mod matched by GUID: Acid's Progressive Bot System -> APBS - Acid's Progressive Bot System
+2026-01-31 13:39:50.106 [DBG] ModMatchingService: Mod matched by GUID: Bot Callsigns -> Bot Callsigns - Reloaded
+2026-01-31 13:39:50.406 [DBG] ModMatchingService: Mod matched by GUID: Croupier -> Croupier - loadout generator + flea quicksell
+2026-01-31 13:39:50.641 [DBG] ModMatchingService: Mod matched by GUID: StartCollectorEarly -> Start Collector Early
+2026-01-31 13:39:50.857 [DBG] ForgeApiService: Searching for server mod: Twitch Players
+2026-01-31 13:39:50.857 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?query=Twitch%20%20Players&filter[spt_version]=4.0.11&include=versions,source_code_links
+2026-01-31 13:39:51.155 [DBG] ModMatchingService: Mod matched by GUID: Wolfiks Heavy Troopers -> Wolfik's Heavy Trooper Masks - Reupload
+2026-01-31 13:39:51.402 [DBG] ModMatchingService: Mod matched by GUID: Artem -> WTT- Artem
+2026-01-31 13:39:51.674 [DBG] ModMatchingService: Mod matched by GUID: SVM -> Server Value Modifier [SVM]
+2026-01-31 13:39:51.909 [DBG] ModMatchingService: Mod matched by GUID: DrakiaXYZ-BigBrain -> BigBrain
+2026-01-31 13:39:52.145 [DBG] ModMatchingService: Mod matched by GUID: EOTechFix-matsix -> EOTech Fix
+2026-01-31 13:39:52.404 [DBG] ModMatchingService: Mod matched by GUID: Shadow Flicker Fix -> Shadow Flicker Fix
+2026-01-31 13:39:52.671 [DBG] ForgeApiService: Searching for client mod: TaskAutomation
+2026-01-31 13:39:52.671 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods?query=Task%20Automation&filter[spt_version]=4.0.11&include=versions,source_code_links
+2026-01-31 13:39:52.918 [DBG] ModMatchingService: Mod matched by GUID: Terkoiz.Skipper -> Skipper
+2026-01-31 13:39:53.190 [DBG] ModMatchingService: Mod matched by GUID: Modding Stats Helper -> Modding Stats Helper - by wara
+2026-01-31 13:39:53.426 [DBG] ModMatchingService: Mod matched by GUID: DrakiaXYZ-Waypoints -> Waypoints - Expanded Navmesh
+2026-01-31 13:39:53.724 [DBG] ModMatchingService: Mod matched by GUID: SAIN -> SAIN - Solarint's AI Modifications - Full AI Combat System Replacement
+2026-01-31 13:39:53.927 [DBG] ModMatchingService: Mod matched by GUID: Level Endurance and Strength -> Level Endurance and Strength
+2026-01-31 13:39:55.264 [DBG] ApplicationService: Checking mod version compatibility
+2026-01-31 13:39:55.267 [DBG] ApplicationService: Enriching mods with version data
+2026-01-31 13:39:55.269 [DBG] ModEnrichmentService: Enriching mods with version data
+2026-01-31 13:39:55.270 [DBG] ModEnrichmentService: Enriching 24 unique mods
+2026-01-31 13:39:55.274 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/updates?mods=865:2.0.4,1342:5.3.1,2097:2.0.11,1431:1.0.5,2310:2.0.11,1358:2.0.0,2482:1.0.3,1594:2.0.11,1873:2.0.3,1971:2.0.4,1675:1.4.0,1895:3.0.8,1569:1.1.0,1023:3.0.0,236:2.0.2,902:1.4.0,2502:1.0.2,1621:1.5.2,2238:1.2.3,1343:1.1.4,1300:1.0,827:1.8.1,791:4.3.1,2438:1.0.0&spt_version=4.0.11
+2026-01-31 13:39:55.569 [DBG] ApplicationService: Checking mod dependencies
+2026-01-31 13:39:55.573 [DBG] ModDependencyService: Analyzing mod dependencies
+2026-01-31 13:39:55.574 [DBG] ModDependencyService: Analyzing dependencies for 24 matched mods
+2026-01-31 13:39:55.576 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=865:2.0.4
+2026-01-31 13:39:55.728 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=1342:5.3.1
+2026-01-31 13:39:55.967 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=2097:2.0.11
+2026-01-31 13:39:56.234 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=1431:1.0.5
+2026-01-31 13:39:56.489 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=2310:2.0.11
+2026-01-31 13:39:56.738 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=1358:2.0.0
+2026-01-31 13:39:56.999 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=2482:1.0.3
+2026-01-31 13:39:57.243 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=1594:2.0.11
+2026-01-31 13:39:57.515 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=1873:2.0.3
+2026-01-31 13:39:57.759 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=1971:2.0.4
+2026-01-31 13:39:58.023 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=1675:1.4.0
+2026-01-31 13:39:58.276 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=1895:3.0.8
+2026-01-31 13:39:58.589 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=1569:1.1.0
+2026-01-31 13:39:58.790 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=1023:3.0.0
+2026-01-31 13:39:59.042 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=236:2.0.2
+2026-01-31 13:39:59.286 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=902:1.4.0
+2026-01-31 13:39:59.557 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=2502:1.0.2
+2026-01-31 13:39:59.809 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=1621:1.5.2
+2026-01-31 13:40:00.051 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=2238:1.2.3
+2026-01-31 13:40:00.315 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=1343:1.1.4
+2026-01-31 13:40:00.584 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=1300:1.0
+2026-01-31 13:40:00.816 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=827:1.8.1
+2026-01-31 13:40:01.071 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=791:4.3.1
+2026-01-31 13:40:01.334 [DBG] ForgeApiService: API Request: GET https://forge.sp-tarkov.com/api/v0/mods/dependencies?mods=2438:1.0.0
+2026-01-31 13:40:01.600 [DBG] ModDependencyService: Dependency analysis complete. Conflicts: 0, Missing: 0
+2026-01-31 13:40:01.611 [DBG] ApplicationService: Displaying results
+2026-01-31 13:40:01.637 [INF] ApplicationService: Mod check workflow completed successfully
+2026-01-31 13:40:01.637 [INF] Program: CheckMods application completed successfully
