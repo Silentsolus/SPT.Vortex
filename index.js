@@ -440,10 +440,14 @@ async function searchWithTerms(modObj, metaObj, stageNameArg, apiKeyArg) {
 
         if (conf > bestScore) { bestScore = conf; best = fb.Result; }
 
+        // Debug log to aid diagnosing fuzzy matches
+        log('debug', `[sptvortex] searchWithTerms: term='${term}' fb.Method='${fb.Method}' conf=${conf} bestScore=${bestScore} bestGuid=${best?.guid || ''}`);
+
         if (bestScore >= 95) break;
       }
 
-      if (bestScore >= MatchingConstants.MinimumFuzzyMatchScorets.MinimumFuzzyMatchScore) break;
+      // If we've reached the configured minimum fuzzy match score, stop searching other terms
+      if (bestScore >= MatchingConstants.MinimumFuzzyMatchScore) break;
     } catch (e) {
       log('debug', `[sptvortex] searchWithTerms: search failed for term='${term}': ${String(e)}`);
     }
