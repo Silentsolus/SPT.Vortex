@@ -66,6 +66,11 @@ async function test() {
   assert(hasForgeGuid, 'Expected forgeGuid attribute to be set');
   assert(hasForgeId, 'Expected forgeId attribute to be set');
 
+  const hasDescription = setAttrs.some(a => a.payload && a.payload.key === 'description' && a.payload.value === 'desc');
+  const hasVersion = setAttrs.some(a => a.payload && a.payload.key === 'version' && a.payload.value === '1.0.0');
+  assert(hasDescription, 'Expected description attribute to be set from teaser');
+  assert(hasVersion, 'Expected version attribute to be set from DLL metadata');
+
   // Cleanup
   try { fs.rmSync(staging, { recursive: true, force: true }); } catch (e) {}
 

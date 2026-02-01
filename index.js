@@ -1532,6 +1532,9 @@ async function enrichMods(api) {
 
     const rootAbs = path.join(staging, stageName);
     const meta = await extractForgeMetaFromStagedFolder(rootAbs, stageName);
+    const guessSample = (meta.guesses || []).slice(0,3).join(',');
+    const evidenceTypes = (meta.evidence || []).slice(0,5).map((e) => `${e.type}${e.guid ? ':' + e.guid : ''}`).join(';');
+    log('debug', `[sptvortex] enrich: meta stage=${stageName} guid=${meta.guid} ver=${meta.version} displayName=${meta.displayName} guesses=${guessSample || 'none'} evidence=${evidenceTypes || 'none'}`);
 
     if (!meta.guid) {
       skipped++;
@@ -1553,9 +1556,11 @@ async function enrichMods(api) {
         try {
           if (mapHit.targetType === 'guid') {
             const m = await forgeClient.getModByGuid(apiKey, mapHit.target);
+            log('debug', `[sptvortex] enrich: mapping lookup for ${mapHit.target} returned ${m ? (m.guid + ' (' + m.name + ')') : 'null/empty'}`);
             if (m) { forgeMod = m; meta.guid = m.guid; log('info', `[sptvortex] enrich: matched via mapping stage=${stageName} -> ${m.guid} (${m.name})`); }
           } else if (mapHit.targetType === 'slug') {
             const m = await forgeClient.getModBySlug(apiKey, mapHit.target);
+            log('debug', `[sptvortex] enrich: mapping lookup for slug ${mapHit.target} returned ${m ? (m.guid + ' (' + m.name + ')') : 'null/empty'}`);
             if (m) { forgeMod = m; meta.guid = m.guid; log('info', `[sptvortex] enrich: matched via mapping stage=${stageName} -> ${m.guid} (${m.name})`); }
           }
         } catch (e) {
@@ -1649,18 +1654,22 @@ async function enrichMods(api) {
       forgeId: String(forgeMod.id),
       forgeSlug: forgeMod.slug,
       forgeName: forgeMod.name,
-      forgeOwner: forgeMod.owner?.name || '',
-      forgeDetailUrl: forgeMod.detail_url || '',
-      forgeThumbnail: forgeMod.thumbnail || '',
-      version: meta.version || mod?.attributes?.version || '',
+      forgeOwner: forgeMod.owner?.name || undefined,
+      forgeDetailUrl: forgeMod.detail_url || undefined,
+      forgeThumbnail: forgeMod.thumbnail || undefined,
+      version: meta.version || mod?.attributes?.version || undefined,
       source: `sptforge:${forgeMod.guid}`,
     };
 
     if (forgeMod.thumbnail) attrUpdates.pictureUrl = forgeMod.thumbnail;
     if (forgeMod.teaser) attrUpdates.description = forgeMod.teaser;
 
+    // Debug: log exactly what attributes we will write for this mod
+    log('debug', `[sptvortex] enrich: attrUpdates for stage=${stageName} mod=${mod.id} -> ${JSON.stringify(attrUpdates)}`);
+
     Object.entries(attrUpdates).forEach(([k, v]) => {
       if (v === undefined || v === null) return;
+      log('debug', `[sptvortex] enrich: dispatch setModAttribute key=${k} value=${String(v)}`);
       api.store.dispatch(actions.setModAttribute(GAME_ID, mod.id, k, v));
     });
 
