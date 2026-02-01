@@ -1,0 +1,16 @@
+[
+  {
+    "key": "sain",
+    "keyRaw": "SAIN",
+    "target": "me.sol.sain",
+    "targetType": "slug",
+    "raw": "SAIN -> me.sol.sain"
+  },
+  {
+    "key": "botcallsigns",
+    "keyRaw": "BotCallsigns",
+    "target": "com.harmonyzt.botcallsigns",
+    "targetType": "guid",
+    "raw": "BotCallsigns -> com.harmonyzt.botcallsigns"
+  }
+]

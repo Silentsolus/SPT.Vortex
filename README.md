@@ -37,6 +37,6 @@ Notes:
 
 - Default destination: `%APPDATA%\Vortex\plugins\SPT.Vortex`.
 - To override Vortex path: pass `-VortexExe 'C:\Path\To\Vortex.exe'`.
-- The script will back up an existing extension folder by renaming it with a `.bak-<timestamp>` suffix unless `-Force` is provided.
+- The installer will overwrite any existing plugin folder by removing it before copying. The script will prompt for confirmation unless you pass `-Force` to skip the prompt.
 
 ---

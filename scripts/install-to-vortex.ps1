@@ -43,12 +43,18 @@ if (-not $SourcePath -or $SourcePath -eq '') {
 $SourcePath = [System.IO.Path]::GetFullPath((Resolve-Path -Path $SourcePath).Path)
 $ExtensionsDir = [System.IO.Path]::GetFullPath($ExtensionsDir)
 
-# If the provided source path equals the script folder, try to detect repository root by
-# walking up parent directories and looking for common root markers (index.js / package.json)
+# If the provided source path equals the script folder, or if the provided path
+# does not appear to contain repository markers, try to detect the repository root
+# by walking up parent directories and looking for common root markers (index.js / package.json)
 $scriptDir = [System.IO.Path]::GetFullPath((Resolve-Path -Path (Split-Path -Parent $MyInvocation.MyCommand.Path)).Path)
-if ($SourcePath -eq $scriptDir) {
-  Log "Source was the script folder; attempting to discover repository root..."
-  $cur = $scriptDir
+$needDiscover = $false
+if ($SourcePath -eq $scriptDir) { $needDiscover = $true }
+# If SourcePath doesn't look like the repo root, attempt discovery
+if (-not (Test-Path (Join-Path $SourcePath 'index.js')) -and -not (Test-Path (Join-Path $SourcePath 'package.json'))) { $needDiscover = $true }
+
+if ($needDiscover) {
+  Log "Attempting to discover repository root from: $SourcePath"
+  $cur = $SourcePath
   $root = [System.IO.Path]::GetPathRoot($cur)
   while ($cur -and ($cur -ne $root)) {
     if ((Test-Path (Join-Path $cur 'index.js')) -or (Test-Path (Join-Path $cur 'package.json'))) {
@@ -56,6 +62,26 @@ if ($SourcePath -eq $scriptDir) {
       break
     }
     $cur = Split-Path -Parent $cur
+  }
+
+  # If discovery from SourcePath failed, try discovering from the script directory
+  if (-not (Test-Path (Join-Path $SourcePath 'index.js')) -and -not (Test-Path (Join-Path $SourcePath 'package.json'))) {
+    Log "Discovery from provided SourcePath failed; attempting discovery from script directory: $scriptDir"
+    $cur = $scriptDir
+    $root = [System.IO.Path]::GetPathRoot($cur)
+    while ($cur -and ($cur -ne $root)) {
+      if ((Test-Path (Join-Path $cur 'index.js')) -or (Test-Path (Join-Path $cur 'package.json'))) {
+        if ($cur -ne $SourcePath) { $SourcePath = $cur; Log "Auto-detected repository root at: $SourcePath (from script directory)" }
+        break
+      }
+      $cur = Split-Path -Parent $cur
+    }
+  }
+
+  # If still not found, abort to avoid copying unrelated directories (e.g., C:\Users\Alex)
+  if (-not (Test-Path (Join-Path $SourcePath 'index.js')) -and -not (Test-Path (Join-Path $SourcePath 'package.json'))) {
+    Log "Could not locate repository root using provided SourcePath or script directory. Aborting to avoid copying unexpected directories."
+    exit 1
   }
 }
 
@@ -73,40 +99,57 @@ if (-not $VortexExe -or $VortexExe -eq '') {
   $NoLaunch = $true
 } else { Log "Vortex executable: $VortexExe" }
 
-# Backup existing extension folder if present (unless Force)
+# Overwrite existing plugin folder if present (no backups)
 if (Test-Path $ExtensionsDir) {
   if (-not $Force) {
-    # Use a Windows-safe timestamp for backup folder names
-    $ts = Get-Date -Format 'yyyyMMddTHHmmss'
-    $bak = "$ExtensionsDir.bak-$ts"
-    Log "Backing up existing extension folder to: $bak"
+    # Prompt the user to confirm destructive overwrite
     try {
-      Move-Item -Force -LiteralPath $ExtensionsDir -Destination $bak -ErrorAction Stop
+      $answer = Read-Host "Destination '$ExtensionsDir' already exists. Overwrite? (y/N)"
     } catch {
-      Log "Move-Item failed: $_. Attempting copy-then-remove fallback."
-      try {
-        Copy-Item -Recurse -Force -LiteralPath $ExtensionsDir -Destination $bak -ErrorAction Stop
-        Remove-Item -Recurse -Force -LiteralPath $ExtensionsDir -ErrorAction Stop
-      } catch {
-        Log "Backup fallback failed: $_"
-        throw $_
-      }
+      Log "Failed to read input; aborting to avoid accidental overwrite."
+      exit 1
+    }
+    if ($answer -ne 'y' -and $answer -ne 'Y') {
+      Log "User declined overwrite. Aborting."
+      exit 1
     }
   } else {
-    Log "Force specified: removing existing extension folder"
-    Remove-Item -Recurse -Force -LiteralPath $ExtensionsDir
+    Log "Force specified: overwriting without prompt."
   }
+
+  Log "Removing existing plugin folder to overwrite: $ExtensionsDir"
+  try { Remove-Item -Recurse -Force -LiteralPath $ExtensionsDir -ErrorAction Stop } catch { Log "Remove-Item failed: $_"; throw $_ }
 }
 
 # Ensure parent dir exists
 $parent = Split-Path -Parent $ExtensionsDir
 if (-not (Test-Path $parent)) { New-Item -ItemType Directory -Force -Path $parent | Out-Null }
 
-# Copy files
-Log "Copying files..."
-Copy-Item -Recurse -Force -LiteralPath $SourcePath\* -Destination $ExtensionsDir
-Log "Copied extension to $ExtensionsDir"
+# Copy files into a temporary folder then move to destination to avoid partial/collision issues
+Log "Copying files into temp folder..."
+$ts = Get-Date -Format 'yyyyMMddTHHmmss'
+$tmpDest = Join-Path ([System.IO.Path]::GetTempPath()) "sptvortex-install-$ts"
+if (Test-Path $tmpDest) { Remove-Item -Recurse -Force -LiteralPath $tmpDest }
+New-Item -ItemType Directory -Path $tmpDest | Out-Null
+# Use -Path with a wildcard to support globbing
+$copyPattern = Join-Path $SourcePath '*'
+try {
+  Copy-Item -Recurse -Force -Path $copyPattern -Destination $tmpDest -ErrorAction Stop
+  Log "Copied files to temp folder $tmpDest"
+} catch {
+  Log "Copy to temp folder failed: $_"
+  try { Remove-Item -Recurse -Force -LiteralPath $tmpDest } catch {}
+  exit 1
+}
 
+try {
+  Move-Item -Force -LiteralPath $tmpDest -Destination $ExtensionsDir -ErrorAction Stop
+  Log "Moved temp install to $ExtensionsDir"
+} catch {
+  Log "Move-Item failed: $_"
+  Log "Falling back to direct copy into destination..."
+  try { Copy-Item -Recurse -Force -Path $copyPattern -Destination $ExtensionsDir -ErrorAction Stop; Log "Copied extension to $ExtensionsDir" } catch { Log "Direct copy failed: $_"; exit 1 }
+}
 if ($NoLaunch) { Log "NoLaunch specified - done."; exit 0 }
 
 # Set environment variables for this process (inherited by started process)

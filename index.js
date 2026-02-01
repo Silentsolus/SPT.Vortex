@@ -333,37 +333,156 @@ function fuzzyScorePercent(a, b) {
   return Math.max(levPercent, substrPercent);
 }
 
+// Matching constants (ported from SPT-Check-Mods MatchingConstants)
+const MatchingConstants = {
+  MinimumFuzzyMatchScore: 70,
+  NameSearchFuzzyThreshold: 80,
+  ExactGuidConfidence: 100,
+  ExactNameConfidence: 95,
+  FuzzyNameConfidence: 85,
+  AlternateGuidConfidenceReduction: 5,
+};
+
+// Minimal port of SPT-Check-Mods FindBestMatch logic (returns { Result, Confidence, Method } or null)
+function findBestMatch(mod, searchResults) {
+  if (!searchResults || !searchResults.length) return null;
+
+  const rawName = (mod && (mod.attributes && (mod.attributes.name || mod.attributes.title)) )
+    ? (mod.attributes.name || mod.attributes.title)
+    : (mod && (mod.LocalName || mod.localName) ? (mod.LocalName || mod.localName) : '');
+  const localName = (typeof rawName === 'string') ? rawName.trim() : '';
+
+  // 1. Exact normalized name match
+  for (const r of searchResults) {
+    if (normalizeName(r.name) === normalizeName(localName)) {
+      return { Result: r, Confidence: MatchingConstants.ExactNameConfidence, Method: 'ExactName' };
+    }
+  }
+
+  // 2. Exact match with component suffix removed
+  const nameWithoutSuffix = removeComponentSuffix(localName);
+  if (nameWithoutSuffix && nameWithoutSuffix !== localName) {
+    for (const r of searchResults) {
+      if (normalizeName(r.name) === normalizeName(nameWithoutSuffix)) {
+        return { Result: r, Confidence: MatchingConstants.ExactNameConfidence - 2, Method: 'ExactName' };
+      }
+    }
+  }
+
+  // 3. Try matching by slug (normalized) and compare GUID-derived name to slug
+  for (const r of searchResults) {
+    if (r.slug && normalizeName(r.slug) === normalizeName(localName)) {
+      return { Result: r, Confidence: MatchingConstants.ExactNameConfidence - 3, Method: 'ExactName' };
+    }
+    if (mod && mod.attributes && mod.attributes.guid && r.slug) {
+      const guidName = extractNameFromGuid(mod.attributes.guid);
+      if (normalizeName(guidName) === normalizeName(r.slug)) {
+        return { Result: r, Confidence: MatchingConstants.ExactNameConfidence - 3, Method: 'ExactName' };
+      }
+    }
+  }
+
+  // 4. Author + name combination
+  const author = (mod && mod.attributes && (mod.attributes.author || mod.attributes.owner)) ? (mod.attributes.author || mod.attributes.owner) : '';
+  if (author && !/unknown/i.test(author)) {
+    for (const r of searchResults) {
+      if (r.owner && r.owner.name && r.owner.name.toLowerCase() === String(author).toLowerCase() && normalizeName(r.name) === normalizeName(localName)) {
+        return { Result: r, Confidence: MatchingConstants.ExactNameConfidence - 5, Method: 'ExactName' };
+      }
+    }
+  }
+
+  // 5. Fuzzy matching with minimum threshold
+  let best = null;
+  let bestScore = 0;
+  for (const r of searchResults) {
+    const nameScore = fuzzyScorePercent(localName, r.name || '');
+    const slugScore = r.slug ? fuzzyScorePercent(localName, r.slug) : 0;
+    const score = Math.max(nameScore, slugScore);
+    if (score > bestScore) { bestScore = score; best = r; }
+  }
+
+  if (!best || bestScore < MatchingConstants.MinimumFuzzyMatchScore) return null;
+
+  const confidence = Math.floor((bestScore * MatchingConstants.FuzzyNameConfidence) / 100.0);
+  return { Result: best, Confidence: confidence, Method: 'FuzzyName' };
+}
+
+
 // Build ordered search terms following SPT-Check-Mods strategy
 function buildSearchTerms(mod, meta, stageName) {
   const terms = [];
   const seen = new Set();
 
-  const localName = (mod?.attributes?.name || stripTrailingVersion(stripArchiveExt(stageName)) || '').trim();
+  const rawName = (mod?.attributes?.name || stripTrailingVersion(stripArchiveExt(stageName)) || '').trim();
+  // Prefer stripping trailing version from the provided attribute name as well (handles names like 'Croupier_2_0_4')
+  const localName = stripTrailingVersion(rawName);
   function add(t) { if (t && !seen.has(t.toLowerCase())) { seen.add(t.toLowerCase()); terms.push(t); } }
 
-  add(localName);
+  // Add main name and a suffix-trimmed form. Keep only if they contain letters.
+  if (/[a-z]/i.test(localName)) add(localName);
   const withoutSuffix = removeComponentSuffix(localName);
-  if (withoutSuffix && withoutSuffix !== localName) add(withoutSuffix);
+  if (withoutSuffix && withoutSuffix !== localName && /[a-z]/i.test(withoutSuffix)) add(withoutSuffix);
 
-  // Extract from GUIDs
-  if (meta?.guid) add(extractNameFromGuid(meta.guid));
+  // Extract from GUIDs (skip numeric-only results)
+  if (meta?.guid) {
+    const gname = extractNameFromGuid(meta.guid);
+    if (/[a-z]/i.test(gname)) add(gname);
+  }
   if (meta?.guesses && meta.guesses.length) {
-    for (const g of meta.guesses) add(extractNameFromGuid(g));
+    for (const g of meta.guesses) {
+      const gname = extractNameFromGuid(g);
+      if (/[a-z]/i.test(gname)) add(gname);
+    }
   }
 
-  // DLL display names
+  // DLL display names (ignore numeric-only names)
   const dllNames = (meta?.evidence || []).filter(e => e.type === 'dll' && e.displayName).map(e => e.displayName);
-  dllNames.forEach(add);
+  dllNames.forEach((dn) => { if (/[a-z]/i.test(dn)) add(dn); });
 
-  // Slugified forms
-  add(slugify(localName));
-  add(slugify(withoutSuffix));
+  // Slugified forms (ignore ones that are numeric-only)
+  const s1 = slugify(localName);
+  if (s1 && /[a-z]/i.test(s1)) add(s1);
+  const s2 = slugify(withoutSuffix);
+  if (s2 && /[a-z]/i.test(s2)) add(s2);
+
+  // Version-augmented forms (e.g. "Croupier 2.0.4", "Croupier v2.0.4", slug with version)
+  let ver = (meta && meta.version) ? String(meta.version).trim() : null;
+  // If meta didn't provide a version, try to extract it from the stageName (e.g., Croupier_2_0_4)
+  if (!ver && stageName) {
+    const vm = /(?:^|[._-])v?(\d+(?:[._-]\d+)+)(?:$|[._-])/i.exec(stageName);
+    if (vm && vm[1]) {
+      ver = vm[1].replace(/[._-]/g, '.');
+    }
+  }
+
+  if (ver) {
+    add(`${localName} ${ver}`);
+    add(`${localName} v${ver}`);
+    add(`${localName}-${ver}`);
+    add(slugify(`${localName}-${ver}`));
+    add(slugify(`${withoutSuffix}-${ver}`));
+  }
 
   // Author + name if available
   const author = (mod?.attributes?.author || mod?.attributes?.owner || '').trim();
-  if (author && !/unknown/i.test(author)) add(`${author} ${localName}`);
+  if (author && !/unknown/i.test(author) && /[a-z]/i.test(author)) add(`${author} ${localName}`);
 
-  return terms;
+  // Filter out noisy numeric-only tokens (e.g., '30319' or 'v2') and very short tokens
+  const filtered = terms.filter((t) => {
+    if (!t || typeof t !== 'string') return false;
+    const low = t.trim();
+    if (!low) return false;
+    // Remove tokens that are version-only (v2, 30319) or purely numeric
+    if (/^v?\d+[\.\d_-]*$/.test(low)) return false;
+    // Remove pure numeric tokens
+    if (/^[0-9_-]+$/.test(low)) return false;
+    // Require at least one letter
+    if (!/[a-z]/i.test(low)) return false;
+    return true;
+  });
+
+  return filtered;
 }
 
 async function forgeGetUpdates(apiKey, sptVersion, modsList) {
@@ -847,8 +966,13 @@ function stripArchiveExt(name) {
 }
 
 function stripTrailingVersion(name) {
-  // Examples: Tyfon-UIFixes-5.3.0 -> Tyfon-UIFixes
-  return String(name || '').replace(/([._-])\d+(?:\.\d+)*$/i, '').replace(/[-_.]+$/g, '');
+  // Examples:
+  //   Tyfon-UIFixes-5.3.0 -> Tyfon-UIFixes
+  //   BotCallsigns_v2.0.3 -> BotCallsigns
+  //   Name-v2 -> Name
+  const s = String(name || '');
+  // Strip trailing patterns like [-_.]v?1.2.3 or _v1_2_3 or -1_2_3 etc.
+  return s.replace(/([._-]?v?)\d+(?:[._-]\d+)*$/i, '').replace(/[-_.]+$/g, '');
 }
 
 async function listDirsOnce(root) {
@@ -1027,6 +1151,29 @@ async function extractFromDll(dllPath) {
     const bestGuid = pickBestGuid(guids);
 
     let version = null;
+    // Prefer slug-like tokens that have a nearby version even if a com.* guid exists
+    const slugRe = /\b[a-z][a-z0-9_.-]+(?:\.[a-z0-9_.-]+){2,}\b/ig;
+    const slugs = [];
+    while ((m = slugRe.exec(text)) !== null) {
+      slugs.push(m[0]);
+      if (slugs.length >= 50) break;
+    }
+
+    // If any slug has a version nearby, prefer it
+    if (slugs.length) {
+      for (const s of slugs) {
+        const idx2 = text.toLowerCase().indexOf(s.toLowerCase());
+        if (idx2 >= 0) {
+          const window = text.slice(Math.max(0, idx2 - 200), Math.min(text.length, idx2 + 200));
+          const verRe = /\b\d+\.\d+\.\d+(?:\.\d+)?\b/;
+          const vm = verRe.exec(window);
+          if (vm) {
+            return { guid: normalizeGuid(s), version: vm[0], displayName: asmName || null, matchType: 'pattern' };
+          }
+        }
+      }
+    }
+
     if (bestGuid) {
       const idx = text.toLowerCase().indexOf(bestGuid.toLowerCase());
       if (idx >= 0) {
@@ -1034,6 +1181,14 @@ async function extractFromDll(dllPath) {
         const verRe = /\b\d+\.\d+\.\d+(?:\.\d+)?\b/;
         const vm = verRe.exec(window);
         if (vm) version = vm[0];
+      }
+    }
+
+    // If we didn't find a 'com.' style GUID and didn't find a slug, try returning the best com.* guid
+    if (!bestGuid) {
+      if (slugs.length) {
+        const s0 = slugs[0];
+        return { guid: normalizeGuid(s0), version: null, displayName: asmName || null, matchType: 'pattern' };
       }
     }
 
@@ -1424,6 +1579,18 @@ async function enrichMods(api) {
             }
           }
 
+          // If meta.version is present, prefer candidates that include the version (as exact or compact) in name/slug/guid
+          if (best && meta && meta.version) {
+            try {
+              const ver = String(meta.version).toLowerCase();
+              const verCompact = ver.replace(/\./g, '');
+              const candidateText = `${best.name || ''} ${best.slug || ''} ${best.guid || ''}`.toLowerCase();
+              if (candidateText.includes(ver) || candidateText.includes(verCompact)) {
+                bestScore = Math.min(100, bestScore + 25);
+              }
+            } catch (_) {}
+          }
+
           if (bestScore >= MIN_FUZZY_SCORE) break;
         } catch (e) {
           log('debug', `[sptvortex] enrich: search failed for term='${term}': ${String(e)}`);
@@ -1698,6 +1865,26 @@ function main(context) {
     context.api.showDialog('info', 'SPT Forge: Diagnostic report', { text: report }, [{ label: 'Close' }]);
   });
 
+  // Also register in Mods toolbar so it's visible per-mod
+  context.registerAction('mod-icons', 220, 'info', {}, 'Forge: Diagnose mod', async () => {
+    try {
+      const staging = getStagingPath(context.api, GAME_ID);
+      const dirs = staging ? await listDirsOnce(staging) : [];
+      const res = await context.api.showDialog('question', 'SPT Forge: Diagnose mod', {
+        text: `Enter staging folder name to diagnose. Available: ${dirs.slice(0,40).join(', ')}`,
+        input: [{ id: 's', label: 'Stage folder name', type: 'text' }],
+      }, [{ label: 'Cancel' }, { label: 'Run' }]);
+      if (res?.action !== 'Run') return;
+      const stage = String(res.input?.s || '').trim();
+      const report = await produceDiagnostic(context.api, stage);
+      context.api.showDialog('info', 'SPT Forge: Diagnostic report', { text: report }, [{ label: 'Close' }]);
+    } catch (e) {
+      log('warn', `[sptvortex] mod-icons diagnose action failed: ${String(e)}`);
+    }
+  });
+
+  log('info', '[sptvortex] registered Diagnose action in game-tools and mod-icons');
+
   // Import mapping action (paste content from SPT-Check-Mods export or logs)
   context.registerAction('game-tools', 230, 'download', {}, 'Forge: Import SPT mapping', async () => {
     const res = await context.api.showDialog('question', 'Import SPT-Check-Mods mapping', {
@@ -1751,6 +1938,8 @@ module.exports.helpers = {
   extractFromDll,
   fuzzyScorePercent,
   buildSearchTerms,
+  findBestMatch,
+  MatchingConstants,
   extractForgeMetaFromStagedFolder,
   forgeGetModByGuid,
   forgeFuzzySearch,

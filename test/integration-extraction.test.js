@@ -29,6 +29,16 @@ async function test() {
   assert(dllInfo.version === '2.3.4', 'Expected version from DLL via extractFromDll');
   assert(dllInfo.displayName && dllInfo.displayName.includes('Test Mod'));
 
+  // Now create a fake DLL that contains multiple tokens including a slug-like guid (me.sol.sain) and other com.* guids
+  const dllPath2 = path.join(dllDir, 'SAIN.dll');
+  const weird = '... AllowMultiple \u0001\u000Bme.sol.sain\u0004SAIN\u00054.3.1 ... com.dvize.BushNoESP ...';
+  fs.writeFileSync(dllPath2, weird, 'latin1');
+
+  const dllInfo2 = await extractFromDll(dllPath2);
+  console.log('DLL info 2:', dllInfo2);
+  assert(dllInfo2.guid === 'me.sol.sain', 'Expected to extract slug GUID me.sol.sain from weird DLL');
+  assert(dllInfo2.version === '4.3.1', 'Expected to extract version 4.3.1 from weird DLL');
+
   const meta = await extractForgeMetaFromStagedFolder(modFolder, 'TestMod');
   console.log('Extracted meta:', meta);
 
