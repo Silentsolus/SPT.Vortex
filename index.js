@@ -2138,6 +2138,8 @@ module.exports.helpers = {
   downloadAndImportUpdates,
   downloadAndImportUpdatesInteractive,
   downloadUpdateForMod,
+  // Export small helpers useful for tests
+  pickAssetFromModDetail,
   // Expose higher-level consumer-facing functions for tests
   enrichMods,
   forgeClient,

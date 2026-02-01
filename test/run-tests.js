@@ -53,3 +53,11 @@ require('./download-verify.integration.test.js');
 require('./download-retry.integration.test.js');
 require('./download-resume.integration.test.js');
 require('./download-jitter.integration.test.js');
+
+// CI-stable deterministic tests (no network)
+const _pickAssetCi = require('./pick-asset.ci.test.js');
+if (typeof _pickAssetCi === 'function') {
+  // support async test functions
+  const p = _pickAssetCi();
+  if (p && typeof p.then === 'function') p.catch(err => { console.error(err.stack || err); process.exitCode = 1; });
+}
