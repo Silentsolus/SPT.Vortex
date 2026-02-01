@@ -2,10 +2,24 @@
   "name": "spt-vortex",
   "version": "1.0.0",
   "description": "SPT-Forge integration for Vortex (download, verify, import)",
+  "main": "index.js",
   "scripts": {
     "test": "node test/run-tests.js",
+    "clean": "node scripts/clean.js",
+    "lint": "echo \"No linter configured\" && exit 0",
     "install:vortex": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/install-to-vortex.ps1"
   },
-  "author": "",
-  "license": "MIT"
+  "author": "whereismysockat, refringe, sp-tarkov (contributors)",
+  "contributors": [
+    { "name": "whereismysockat", "url": "https://github.com/whereismysockat" },
+    { "name": "refringe", "url": "https://github.com/refringe" },
+    { "name": "sp-tarkov", "url": "https://github.com/sp-tarkov" }
+  ],
+  "license": "MIT",
+  "repository": { "type": "git", "url": "https://github.com/your/repo.git" },
+  "bugs": { "url": "https://github.com/your/repo/issues" },
+  "homepage": "https://github.com/your/repo#readme",
+  "keywords": ["vortex", "spt", "forge", "tarkov", "plugins"],
+  "engines": { "node": ">=16" },
+  "files": ["index.js", "scripts/", "docs/", "test/"]
 }
