@@ -1460,7 +1460,13 @@ function findMappingForMeta(entries, meta, stageName) {
   const keys = [];
   if (meta?.guid) keys.push(normalizeMappingKey(meta.guid));
   if (meta?.displayName) keys.push(normalizeMappingKey(meta.displayName));
-  if (stageName) keys.push(normalizeMappingKey(stageName));
+
+  // Normalize stageName by stripping archive ext / trailing version so keys like 'DynamicMaps-1.0.5' match 'dynamicmaps'
+  if (stageName) {
+    const stripped = stripTrailingVersion(stripArchiveExt(stageName));
+    keys.push(normalizeMappingKey(stripped));
+  }
+
   const dllNames = (meta?.evidence || []).filter(e => e.type === 'dll' && e.displayName).map(e => e.displayName);
   dllNames.forEach(d => keys.push(normalizeMappingKey(d)));
 
@@ -2142,6 +2148,8 @@ module.exports.helpers = {
   downloadAndImportUpdates,
   downloadAndImportUpdatesInteractive,
   downloadUpdateForMod,
+  // Expose mapping helper for testability
+  findMappingForMeta,
   // Export small helpers useful for tests
   pickAssetFromModDetail,
   // Expose higher-level consumer-facing functions for tests

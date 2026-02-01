@@ -12,5 +12,12 @@
     "target": "com.harmonyzt.botcallsigns",
     "targetType": "guid",
     "raw": "BotCallsigns -> com.harmonyzt.botcallsigns"
+  },
+  {
+    "key": "dynamicmaps",
+    "keyRaw": "DynamicMaps",
+    "target": "com.mpstark.dynamicmaps",
+    "targetType": "guid",
+    "raw": "DynamicMaps -> com.mpstark.dynamicmaps"
   }
 ]

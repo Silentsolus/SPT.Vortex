@@ -57,6 +57,7 @@ require('./download-jitter.integration.test.js');
 // CI-stable deterministic tests (no network)
 const _pickAssetCi = require('./pick-asset.ci.test.js');
 require('./searchWithTerms.test.js');
+require('./mapping.dynamicmaps.test.js');
 if (typeof _pickAssetCi === 'function') {
   // support async test functions
   const p = _pickAssetCi();
